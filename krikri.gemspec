@@ -7,17 +7,21 @@ require "krikri/version"
 Gem::Specification.new do |s|
   s.name        = "krikri"
   s.version     = Krikri::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of Krikri."
-  s.description = "TODO: Description of Krikri."
+  s.authors     = ["Tom Johnson"]
+  s.email       = ["tech@dp.la"]
+  s.homepage    = "http://github.com/dpla/KriKri"
+  s.summary     = "KriKri ingests objects."
+  s.description = "Metadata aggregation and enrichment for cultural heritage institutions."
   s.license     = "Unspecified"
 
   s.files = Dir["{app,config,db,lib}/**/*", "Rakefile", "README.rdoc"]
-  s.test_files = Dir["test/**/*"]
+  s.test_files = Dir["spec/**/*"]
 
   s.add_dependency "rails", "~> 4.1.6"
 
   s.add_development_dependency "sqlite3"
+  s.add_development_dependency "marmottawrapper", '>=0.0.5'
+  s.add_development_dependency "rspec-rails"
+  s.add_development_dependency 'factory_girl_rails'
+  s.add_development_dependency 'pry-rails'
 end
