@@ -5,13 +5,20 @@ require 'rspec/rails'
 require 'rspec/autorun'
 require 'factory_girl_rails'
 
+require 'dpla/map/factories'
+
 Rails.backtrace_cleaner.remove_silencers!
 
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 RSpec.configure do |config|
+  config.color = true
+  config.formatter = :progress
   config.mock_with :rspec
+
+  config.include FactoryGirl::Syntax::Methods
+
   config.use_transactional_fixtures = true
   config.infer_base_class_for_anonymous_controllers = false
   config.order = "random"
