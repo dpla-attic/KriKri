@@ -22,6 +22,12 @@ Bundler::GemHelper.install_tasks
 require 'rspec/core'
 require 'rspec/core/rake_task'
 
+require 'engine_cart/rake_task'
+
+task :ci => ['engine_cart:generate'] do
+  Rake::Task["spec"].invoke
+end
+
 desc "Run all specs in spec directory (excluding plugin specs)"
 RSpec::Core::RakeTask.new(:spec => 'app:db:test:prepare')
-task :default => :spec
+task :default => :ci
