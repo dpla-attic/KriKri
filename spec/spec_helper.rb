@@ -5,6 +5,7 @@ EngineCart.load_application!
 
 require 'rspec/rails'
 require 'rspec/autorun'
+require 'webmock/rspec'
 require 'factory_girl_rails'
 
 require 'dpla/map/factories'
@@ -13,6 +14,8 @@ Rails.backtrace_cleaner.remove_silencers!
 
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
+
+WebMock.disable_net_connect!(:allow_localhost => true)
 
 RSpec.configure do |config|
   config.color = true
