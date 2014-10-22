@@ -17,9 +17,9 @@ Development
 Check out this repository and run:
 
     bundle install
-	rake jetty:unzip
-    # rake app:marmotta:fetch
-    # rake app:marmotta:install
+    rake jetty:unzip
+    rake marmotta:fetch
+    rake marmotta:install
 
 Run the tests with:
 
@@ -27,9 +27,10 @@ Run the tests with:
 
 Or you can start the dummy application with:
 
+    rake engine_cart:generate
     rake jetty:start
-	cd spec/internal
-	rails s
+    cd spec/internal
+    rails s
 
 Copyright & License
 --------------------
