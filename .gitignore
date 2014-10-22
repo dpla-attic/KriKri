@@ -8,4 +8,6 @@ spec/dummy/tmp/
 spec/dummy/.sass-cache
 Gemfile.lock
 
-
+spec/internal
+jetty
+tmp

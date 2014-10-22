@@ -19,9 +19,12 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> 4.1.6"
   s.add_dependency "dpla-map", "~>4.0.0.0-pre"
+  s.add_dependency "blacklight", ">= 5.3.0"
+  s.add_dependency "therubyracer"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "marmottawrapper", '>=0.0.5'
+  s.add_development_dependency "jettywrapper"
   s.add_development_dependency "rspec-rails"
   s.add_development_dependency 'factory_girl_rails'
   s.add_development_dependency 'pry-rails'

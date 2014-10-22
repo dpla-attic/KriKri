@@ -17,12 +17,19 @@ Development
 Check out this repository and run:
 
     bundle install
-    rake app:marmotta:fetch
-    rake app:marmotta:install
+	rake jetty:unzip
+    # rake app:marmotta:fetch
+    # rake app:marmotta:install
 
 Run the tests with:
 
-    rake spec
+    rake ci
+
+Or you can start the dummy application with:
+
+    rake jetty:start
+	cd spec/internal
+	rails s
 
 Copyright & License
 --------------------
