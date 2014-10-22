@@ -11,3 +11,5 @@ Gemfile.lock
 spec/internal
 jetty
 tmp
+tomcat
+marmotta
