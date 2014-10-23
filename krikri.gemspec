@@ -26,6 +26,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "marmottawrapper", '>=0.0.5'
   s.add_development_dependency "jettywrapper"
   s.add_development_dependency "rspec-rails"
-  s.add_development_dependency 'factory_girl_rails'
+  s.add_development_dependency 'factory_girl_rails', '~>4.4.0'
   s.add_development_dependency 'pry-rails'
 end
