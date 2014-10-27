@@ -21,6 +21,11 @@ Check out this repository and run:
     rake marmotta:fetch
     rake marmotta:install
 
+Copy the solr schema to jetty
+
+    cp solr_conf/schema.xml jetty/solr/blacklight-core/conf/schema.xml 
+    cp solr_conf/solrconfig.xml jetty/solr/blacklight-core/conf/solrconfig.xml
+
 Run the tests with:
 
     rake ci
@@ -28,9 +33,16 @@ Run the tests with:
 Or you can start the dummy application with:
 
     rake engine_cart:generate
+    bundle update
     rake jetty:start
     cd spec/internal
     rails s
+
+To index a sample record into solr:
+    rake krikri:index_sample_data
+
+To delete the sample record:
+    rake krikri:delete_sample_data
 
 Copyright & License
 --------------------

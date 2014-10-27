@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.test_files = Dir["spec/**/*"]
 
   s.add_dependency "rails", "~> 4.1.6"
-  s.add_dependency "dpla-map", "~>4.0.0.0-pre"
+  s.add_dependency "dpla-map", "~>4.0.0.0.pre.4"
   s.add_dependency "blacklight", ">= 5.3.0"
   s.add_dependency "therubyracer"
 

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!--
+ This is a stripped down config file used for a simple example...  
+ It is *not* a good example to work from. 
+-->
+<config>
+  <luceneMatchVersion>LUCENE_40</luceneMatchVersion>
+  <!--  The DirectoryFactory to use for indexes.
+        solr.StandardDirectoryFactory, the default, is filesystem based.
+        solr.RAMDirectoryFactory is memory based, not persistent, and doesn't work with replication. -->
+  <directoryFactory name="DirectoryFactory" class="${solr.directoryFactory:solr.StandardDirectoryFactory}"/>
+
+  <lib dir="../lib/contrib/analysis-extras/lib" />
+  <lib dir="../lib/contrib/analysis-extras/lucene-libs" />
+
+  <dataDir>${solr.blacklight-core.data.dir:}</dataDir>
+  
+  <requestHandler name="/replication" class="solr.ReplicationHandler" startup="lazy" /> 
+
+  <requestDispatcher handleSelect="true" >
+    <requestParsers enableRemoteStreaming="false" multipartUploadLimitInKB="2048" />
+  </requestDispatcher>
+  
+  <requestHandler name="standard" class="solr.StandardRequestHandler" />
+  <requestHandler name="/analysis/field" startup="lazy" class="solr.FieldAnalysisRequestHandler" />
+  <requestHandler name="/update" class="solr.UpdateRequestHandler"  />
+  <requestHandler name="/admin/" class="org.apache.solr.handler.admin.AdminHandlers" />
+     
+  <requestHandler name="/admin/ping" class="solr.PingRequestHandler">
+    <lst name="invariants">
+      <str name="q">solrpingquery</str>
+    </lst>
+    <lst name="defaults">
+      <str name="echoParams">all</str>
+    </lst>
+  </requestHandler>
+   
+  <!-- config for the admin interface --> 
+  <admin>
+    <defaultQuery>solr</defaultQuery>
+  </admin>
+
+  <!-- SearchHandler
+
+       http://wiki.apache.org/solr/SearchHandler
+
+       For processing Search Queries, the primary Request Handler
+       provided with Solr is "SearchHandler" It delegates to a sequent
+       of SearchComponents (see below) and supports distributed
+       queries across multiple shards
+    -->
+  <requestHandler name="search" class="solr.SearchHandler" default="true">
+    <!-- default values for query parameters can be specified, these
+         will be overridden by parameters in the request
+      -->
+     <lst name="defaults">
+       <str name="defType">dismax</str>
+       <str name="echoParams">explicit</str>
+       <int name="rows">10</int>
+
+       <str name="q.alt">*:*</str>
+       <str name="mm">2&lt;-1 5&lt;-2 6&lt;90%</str>
+
+       <!-- TODO: Configure qf and pf for better search results -->
+
+       <!-- this qf and pf are used by default, if not otherwise specified by
+            client. The default blacklight_config will use these for the
+            "keywords" search. See the author_qf/author_pf, title_qf, etc 
+            below, which the default blacklight_config will specify for
+            those searches. You may also be interested in:
+            http://wiki.apache.org/solr/LocalParams
+       -->
+
+       <str name="qf">
+         dataProvider_name 
+         sourceResource_collection_title
+         sourceResource_creator_name
+         sourceResource_date_providedLabel
+         sourceResource_description
+         sourceResource_format
+         sourceResource_rights
+         sourceResource_spatial_name
+         sourceResource_subject_name
+         sourceResource_title
+         sourceResource_type_id
+         text
+       </str>
+
+       <str name="pf">
+         dataProvider_name 
+         sourceResource_collection_title
+         sourceResource_creator_name
+         sourceResource_date_providedLabel
+         sourceResource_description
+         sourceResource_format
+         sourceResource_rights
+         sourceResource_spatial_name
+         sourceResource_subject_name
+         sourceResource_title
+         sourceResource_type_id
+         text
+       </str>
+       
+       <int name="ps">3</int>
+       <float name="tie">0.01</float>
+
+       <str name="fl">
+         id,
+         dataProvider_name, 
+         preview_id,
+         sourceResource_collection_title,
+         sourceResource_creator_name,
+         sourceResource_date_providedLabel,
+         sourceResource_description,
+         sourceResource_format,
+         sourceResource_rights,
+         sourceResource_spatial_name,
+         sourceResource_subject_name,
+         sourceResource_title,
+         sourceResource_type_id
+       </str>
+
+       <str name="facet">true</str>
+       <str name="facet.mincount">1</str>
+       <str name="facet.limit">10</str>
+       <str name="facet.field">dataProvider_name</str>
+
+     </lst>
+      
+  </requestHandler>
+
+  <!-- for requests to get a single document; use id=666 instead of q=id:666 -->
+  <requestHandler name="document" class="solr.SearchHandler" >
+    <lst name="defaults">
+      <str name="echoParams">all</str>
+      <str name="fl">*</str>
+      <str name="rows">1</str>
+      <str name="q">{!raw f=id v=$id}</str> <!-- use id=666 instead of q=id:666 -->
+    </lst>
+  </requestHandler>
+
+</config>
+
