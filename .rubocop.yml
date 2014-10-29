@@ -1,0 +1,33 @@
+AllCops:
+  Exclude: 
+    # not maintained manually
+    - 'bin/rails'
+    - 'spec/internal/**/*'
+    # excluded
+    - 'spec/models/harvesters/oai_harvester_spec.rb' # has some longlines
+    # grandfathered; cleanup over time
+    - 'Rakefile'
+    - 'krikri.gemspec'
+    - 'lib/krikri.rb'
+    - 'lib/krikri/engine.rb'
+    - 'lib/krikri/version.rb'
+    - 'lib/generators/krikri/install_generator.rb'
+    - 'spec/spec_helper.rb'
+    - 'spec/test_app_templates/lib/generators/test_app_generator.rb'
+    - 'app/helpers/krikri/application_helper.rb'
+
+# We like Ruby 1.8 hash syntax for dynamic key support
+HashSyntax:
+  Enabled: false
+
+# While we like guard clauses, nested conditionals are okay sometimes
+GuardClause:
+  Enabled: false
+
+# `raise` and `fail` are both fine 
+SignalException:
+  Enabled: false
+
+# Compact class/module nesting is fine
+ClassAndModuleChildren:
+  Enabled: false
