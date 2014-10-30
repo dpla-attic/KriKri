@@ -1,3 +1,6 @@
+require 'active_support'
+require 'oai/client'
+
 module Krikri
   class Engine < ::Rails::Engine
     isolate_namespace Krikri
