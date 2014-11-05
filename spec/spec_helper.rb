@@ -9,6 +9,7 @@ require 'webmock/rspec'
 require 'factory_girl_rails'
 
 require 'dpla/map/factories'
+require 'rdf/marmotta'
 
 Rails.backtrace_cleaner.remove_silencers!
 
@@ -26,5 +27,17 @@ RSpec.configure do |config|
 
   config.use_transactional_fixtures = true
   config.infer_base_class_for_anonymous_controllers = false
-  config.order = "random"
+  config.order = 'random'
+
+  def clear_repository
+    RDF::Marmotta.new(Krikri::Settings['marmotta']['base']).clear!
+  end
+
+  config.before(:suite) do
+    clear_repository
+  end
+
+  config.after(:suite) do
+    clear_repository
+  end
 end
