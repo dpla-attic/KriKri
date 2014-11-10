@@ -37,7 +37,7 @@ module Krikri::Harvesters
     #
     def records
       client.list_records.full.lazy.flat_map do |rec|
-        Krikri::OriginalRecord.new(rec.metadata.to_s)
+        Krikri::OriginalRecord.build(rec.header.identifier, rec.metadata.to_s)
       end
     end
 
@@ -45,7 +45,8 @@ module Krikri::Harvesters
     # for different requests
     def get_record(identifier)
       Krikri::OriginalRecord
-        .new(client.get_record(:identifier => identifier).doc.to_s)
+        .build(identifier,
+               client.get_record(:identifier => identifier).doc.to_s)
     end
   end
 end

@@ -27,9 +27,9 @@ module Krikri
     extend SoftwareAgent
 
     ##
-    # This is an interface intended to be overridden in subclasses. It
-    # should provide a low-memory, lazy enumerable for record ids. The
-    # following usage should be safe:
+    # @abstract Provide a low-memory, lazy enumerable for record ids.
+    #
+    # The following usage should be safe:
     #
     #     record_ids.each do |id|
     #        some_operation(id)
@@ -49,18 +49,18 @@ module Krikri
     end
 
     ##
-    # This is an interface intended to be overridden in subclasses.
+    # @abstract Provide a low-memory, lazy enumerable for records.
     # @return [Enumerable<Krikri::OriginalRecord>] The harvested records.
     def records
       raise NotImplementedError
     end
 
     ##
-    # This is an interface intended to be overridden in subclasses.
+    # @abstract Get a single record by identifier.
     # @param identifier [#to_s] the identifier for the record to be
     #   retrieved
     # @return [Krikri::OriginalRecord]
-    def get_record(identifier)
+    def get_record(_)
       raise NotImplementedError
     end
 

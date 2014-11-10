@@ -29,6 +29,26 @@ shared_examples 'a harvester' do
     it 'returns OriginalRecords' do
       subject.records.each { |r| expect(r).to be_a Krikri::OriginalRecord }
     end
+
+    context 'after first harvest' do
+      it 'builds same record' do
+        r = subject.records.first
+        r.save
+        expect(subject.records.first.local_name).to eq r.local_name
+        expect(subject.records.first).to be == r
+      end
+
+      it 'idempotent reharvests' do
+        subject.records.each(&:save)
+        records = subject.records
+        records_2 = subject.records
+        loop do
+          r1 = records.next
+          r2 = records_2.next
+          expect(r1).to be == r2
+        end
+      end
+    end
   end
 
   it 'can get an individual record' do
@@ -38,6 +58,8 @@ shared_examples 'a harvester' do
 
   describe '#run' do
     it 'runs as an Activity' do
+      allow_any_instance_of(Krikri::OriginalRecord).to receive(:save)
+        .and_return(true)
       expect(harvester.run).to be_a Krikri::Activity
     end
 
