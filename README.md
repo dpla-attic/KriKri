@@ -23,7 +23,7 @@ Check out this repository and run:
 
 Copy the solr schema to jetty
 
-    cp solr_conf/schema.xml jetty/solr/blacklight-core/conf/schema.xml 
+    cp solr_conf/schema.xml jetty/solr/blacklight-core/conf/schema.xml
     cp solr_conf/solrconfig.xml jetty/solr/blacklight-core/conf/solrconfig.xml
 
 Run the tests with:
@@ -44,8 +44,16 @@ To index a sample record into solr:
 To delete the sample record:
     rake krikri:delete_sample_data
 
+Contribution Guidelines
+-----------------------
+Please observe the following guidelines:
+
+  - Write tests for your contributions.
+  - Document methods you add using YARD annotations.
+  - Follow the included style guidelines (i.e. run `rubocop` before committing).
+  - Use well formed commit messages.
+
 Copyright & License
 --------------------
-	
-Copyright Digital Public Library of America, 2014
 
+Copyright Digital Public Library of America, 2014
