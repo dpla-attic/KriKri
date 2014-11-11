@@ -1,8 +1,8 @@
 require 'active_support'
 require 'rails_config'
+require 'rdf/marmotta'
 
 require 'oai/client'
-require 'krikri/ldp'
 
 module Krikri
   ##
