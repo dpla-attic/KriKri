@@ -1,0 +1,16 @@
+<% # krikri/institutions/show %>
+<h1>Institution Profile</h1>
+<p>Name: <%= @institution.name %></p>
+<p>Harvest Sources:</p>
+<ul>
+<% @harvest_sources.each do |harvest_source| %>
+  <li>
+    <%= link_to harvest_source.name,
+      controller: "harvest_sources",
+      action: "show",
+      id: harvest_source.id
+    %>
+  </li>
+</ul>
+<p>Notes: <%= @institution.notes %></p>
+<% end %>

@@ -1,0 +1,13 @@
+<% # krikri/institutions/index %>
+<h1>Institutions</h1>
+<ul>
+<% @institutions.each do |institution| %>
+  <li>
+    <%= link_to institution.name,
+      controller: "institutions", 
+      action: "show",
+      id: institution.id
+    %>
+  </li>
+<% end %>
+</ul>

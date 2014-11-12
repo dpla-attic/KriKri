@@ -22,6 +22,19 @@ module Krikri
       generate "blacklight:install --devise"
     end
 
+    def copy_migrations
+      rake "krikri:install:migrations"
+    end
+
+    ##
+    # Add the krikri routes
+    # This will add routes at with the krikri namespace in the name
+    # For example:
+    #   /krikri/institutions
+    def inject_krikri_routes
+      route "mount Krikri::Engine => '/krikri'"
+    end
+
     ##
     # Copy files from KriKri
     #

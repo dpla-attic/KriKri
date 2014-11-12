@@ -25,7 +25,8 @@ RSpec.configure do |config|
 
   config.include FactoryGirl::Syntax::Methods
 
-  config.use_transactional_fixtures = true
+  # use_transactional_fixtures is false to comply with database cleaner configs
+  config.use_transactional_fixtures = false
   config.infer_base_class_for_anonymous_controllers = false
   config.order = 'random'
 
@@ -40,4 +41,5 @@ RSpec.configure do |config|
   config.after(:suite) do
     clear_repository
   end
+  
 end

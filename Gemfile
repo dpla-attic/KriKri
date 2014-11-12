@@ -7,6 +7,8 @@ gem 'engine_cart'
 
 gem 'rubocop', require: false
 
+gem 'database_cleaner', '~> 1.3.0', require: false
+
 file = File.expand_path('Gemfile',
                         ENV['ENGINE_CART_DESTINATION'] ||
                         ENV['RAILS_ROOT'] ||
