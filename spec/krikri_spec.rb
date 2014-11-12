@@ -5,10 +5,10 @@ describe Krikri::Engine do
     before do
       settings_path =
         Krikri::Engine.root.join('config', 'settings.local.yml').to_s
-      File.stub(:exists?).and_call_original
-      File.stub(:exists?).with(settings_path).and_return(true)
-      IO.stub(:read).and_call_original
-      IO.stub(:read).with(settings_path)
+      allow(File).to receive(:exists?).and_call_original
+      allow(File).to receive(:exists?).with(settings_path).and_return(true)
+      allow(IO).to receive(:read).and_call_original
+      allow(IO).to receive(:read).with(settings_path)
         .and_return("---\n\nqa_test: 'test!'")
 
       Krikri::Settings.reload!
@@ -20,8 +20,8 @@ describe Krikri::Engine do
 
     it 'allows app to override configuration' do
       app_settings_path = Rails.root.join('config', 'settings.local.yml').to_s
-      File.stub(:exists?).with(app_settings_path).and_return(true)
-      IO.stub(:read).with(app_settings_path)
+      allow(File).to receive(:exists?).with(app_settings_path).and_return(true)
+      allow(IO).to receive(:read).with(app_settings_path)
         .and_return("---\n\napi_test: 'app!'")
       Krikri::Settings.reload!
 
