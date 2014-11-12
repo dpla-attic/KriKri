@@ -23,13 +23,22 @@ require 'engine_cart/rake_task'
 require 'jettywrapper'
 require 'marmottawrapper'
 
+import 'lib/tasks/jetty.rake'
+
 ZIP_URL = "https://github.com/projectblacklight/blacklight-jetty/archive/v4.9.0.zip"
 
 desc "Run all specs in spec directory (excluding plugin specs) in an engine_cart-generated app"
-task :ci => ['engine_cart:generate'] do
+task :ci => ['jetty:clean', 'engine_cart:generate'] do
+  Rake::Task['jetty:config'].invoke
+  Rake::Task["marmotta:fetch"].invoke
+  Rake::Task["marmotta:install"].invoke
+  Rake::Task["marmotta:start"].invoke
+
   Jettywrapper.wrap(quiet: true, jetty_port: 8983, :startup_wait => 30) do
     Rake::Task["spec"].invoke
   end
+
+  Rake::Task["marmotta:stop"].invoke
 end
 
 desc "Run all specs in spec directory (excluding plugin specs)"

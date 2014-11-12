@@ -18,13 +18,9 @@ Check out this repository and run:
 
     bundle install
     rake jetty:unzip
+    rake jetty:config
     rake marmotta:fetch
     rake marmotta:install
-
-Copy the solr schema to jetty
-
-    cp solr_conf/schema.xml jetty/solr/blacklight-core/conf/schema.xml
-    cp solr_conf/solrconfig.xml jetty/solr/blacklight-core/conf/solrconfig.xml
 
 Run the tests with:
 
