@@ -19,8 +19,6 @@ Check out this repository and run:
     bundle install
     rake jetty:unzip
     rake jetty:config
-    rake marmotta:fetch
-    rake marmotta:install
 
 Run the tests with:
 

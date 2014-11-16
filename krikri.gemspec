@@ -27,7 +27,6 @@ Gem::Specification.new do |s|
   s.add_dependency "oai"
 
   s.add_development_dependency "sqlite3"
-  s.add_development_dependency "marmottawrapper", '>=0.0.5'
   s.add_development_dependency "jettywrapper"
   s.add_development_dependency "rspec-rails"
   s.add_development_dependency 'webmock'
