@@ -1,4 +1,4 @@
 ---
 marmotta:
-  base: 'http://localhost:8080/marmotta/'
-  ldp: 'http://localhost:8080/marmotta/ldp'
+  base: 'http://localhost:8983/marmotta/'
+  ldp: 'http://localhost:8983/marmotta/ldp'
