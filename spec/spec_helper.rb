@@ -10,6 +10,8 @@ require 'factory_girl_rails'
 require 'dpla/map/factories'
 require 'rdf/marmotta'
 
+require 'devise'
+
 Rails.backtrace_cleaner.remove_silencers!
 
 # Load support files
@@ -23,6 +25,10 @@ RSpec.configure do |config|
   config.mock_with :rspec
 
   config.include FactoryGirl::Syntax::Methods
+
+  # These are for ensuring that controller tests are authenticated:
+  config.include Devise::TestHelpers, type: :controller
+  config.extend ControllerMacros, type: :controller
 
   # use_transactional_fixtures is false to comply with database cleaner configs
   config.use_transactional_fixtures = false

@@ -18,12 +18,26 @@ module Krikri
       end
     end
 
-    def run_required_generators
-      generate "blacklight:install --devise"
+    ##
+    # Devise is a dependency, and is specified in krikri.gemspec,
+    # but it requires some setup if it's generated into
+    # a development environment.
+    def install_devise_dependency
+      append_to_file "Gemfile" do
+        <<-EOT.strip_heredoc
+
+        # Devise is used for authentication by KriKri and Blacklight.
+        gem 'devise', '~>3.4.1'
+
+        EOT
+      end
+      generate "devise:install"
+      generate "devise User"
+      rake("db:migrate")
     end
 
-    def copy_migrations
-      rake "krikri:install:migrations"
+    def run_required_generators
+      generate "blacklight:install"
     end
 
     ##

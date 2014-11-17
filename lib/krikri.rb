@@ -1,4 +1,5 @@
 require 'rails'
+require 'devise'
 require "krikri/engine"
 require 'blacklight'
 

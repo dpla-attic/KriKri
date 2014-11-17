@@ -35,5 +35,14 @@ module Krikri
       RailsConfig.load_and_set_settings(source_paths)
       Krikri::Settings = Kernel.const_get(RailsConfig.const_name)
     end
+
+    initializer :append_migrations do |app|
+      unless app.root.to_s == root.to_s
+        config.paths['db/migrate'].expanded.each do |exp_path|
+          app.config.paths['db/migrate'] << exp_path
+        end
+      end
+    end
+
   end
 end
