@@ -4,7 +4,6 @@ require 'engine_cart'
 EngineCart.load_application!
 
 require 'rspec/rails'
-require 'rspec/autorun'
 require 'webmock/rspec'
 require 'factory_girl_rails'
 

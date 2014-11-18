@@ -19,7 +19,8 @@ describe Krikri::Harvesters::OAIHarvester do
         OAI::Header.new(element)
       end
 
-      subject.client.stub_chain(:list_identifiers, :full).and_return(records)
+      allow(subject.client).to receive_message_chain(:list_identifiers, :full)
+        .and_return(records)
 
       # TODO: better way of maintaining example OAI record results?
       # GetRecord -- Single record OAI Request
@@ -126,12 +127,12 @@ describe Krikri::Harvesters::OAIHarvester do
       end
       it 'follows resumption token' do
         subject.records.each { |r| r }
-        WebMock.should have_requested(:get, resumed_uri).once
+        expect(WebMock).to have_requested(:get, resumed_uri).once
       end
 
       it 'only follows resumption token as far as requested' do
         subject.records.take(4).each { |r| r }
-        WebMock.should_not have_requested(:get, resumed_uri)
+        expect(WebMock).not_to have_requested(:get, resumed_uri)
       end
     end
 

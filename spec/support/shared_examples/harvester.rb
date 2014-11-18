@@ -44,7 +44,7 @@ shared_examples 'a harvester' do
     it 'saves the OriginalRecords' do
       # TODO: Is this fragile? Should it change when original records have
       #   persistence?
-      harvester.stub(:records)
+      allow(harvester).to receive(:records)
         .and_return [double('Original Record 1'), double('Record 2')]
 
       harvester.records.each do |r|
