@@ -6,10 +6,10 @@ A Rails engine for metadata aggregation, enhancement, and quality control.
 Installation
 -------------
 
-Add `krikri` to your Gemfile, and mount it by editing your application's `config/routes.rb`
-to include:
+Add `krikri` to your Gemfile.  Kri-Kri will mount automatically by editing your 
+application's `config/routes.rb` to include:
 
-    mount Krikri::Engine, at: "/"
+    mount Krikri::Engine => '/krikri'
 
 Development
 -----------
@@ -32,7 +32,7 @@ Or you can start the dummy application with:
     cd spec/internal
     rails s
 
-To index a sample record into solr:
+To index a sample record into solr, from `/krikri/spec/internal`:
     rake krikri:index_sample_data
 
 To delete the sample record:
@@ -52,6 +52,12 @@ To update/restart jetty, from the root KriKri directory:
     rake jetty:stop
     rake jetty:config
     rake jetty:start
+
+To create a sample institution and harvest source, from `/krikri/spec/internal`:
+    rake krikri:create_sample_institution
+
+To delete the sample institution and harvest source:
+    rake krikri:delete_sample_institution
 
 Contribution Guidelines
 -----------------------
