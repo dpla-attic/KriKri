@@ -50,12 +50,6 @@ Or you can start the dummy application with:
     cd spec/internal
     rails s
 
-To index a sample record into solr, from `/krikri/spec/internal`:
-    rake krikri:index_sample_data
-
-To delete the sample record:
-    rake krikri:delete_sample_data
-
 To update/restart dummy application, from the root KriKri directory:
 
     git pull
@@ -72,6 +66,39 @@ To update/restart jetty, from the root KriKri directory:
     rake jetty:stop
     rake jetty:config
     rake jetty:start
+
+Customization
+-------------
+
+Krikri uses Blacklight.  Blacklight's installation process includes the 
+creation of some routes that Krikri does not use.  Blacklight also roots to one
+of these un-used routes.  We suggested removing both the un-used routes and the
+root route by deleting the following line from `config/routes.rb`:
+
+    blacklight_for :catalog
+    root :to => "catalog#index"
+
+You can then choose a different route to root to, for example:
+
+  root :to => "krikri_records#index"
+
+Note that whether or not you delete the un-used Blacklight routes, Blacklight's
+controllers, models, and views still exists within your application.  Be careful
+not to unintentionally open them by using identical names for your controllers,
+models, and views.  For more information, see [Blacklight's website](https://github.com/projectblacklight/blacklight).
+
+
+Sample Data
+-----------
+
+To index a sample aggregation into solr, from `/krikri/spec/internal`:
+    rake krikri:index_sample_aggregation
+
+To index an _invalid_ sample aggregation into solr:
+    rake krikri:index_invalid_aggregation
+
+To delete the sample aggregation:
+    rake krikri:delete_sample_aggregation
 
 To create a sample institution and harvest source, from `/krikri/spec/internal`:
 

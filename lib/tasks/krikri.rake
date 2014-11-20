@@ -9,23 +9,36 @@ require 'krikri/index_service'
 namespace :krikri do
 
   # Tasks will execute in spec/internal unless directory is changed
-  desc 'Index sample data in solr'
-  task :index_sample_data do
+  desc 'Index a valid sample aggregation'
+  task :index_sample_aggregation do
     agg = build(:aggregation)
 
     graph = agg.to_jsonld['@graph'][0]
 
     # prepend "krikri_sample" to @id so that sample data can be identified for
     # deletion
-    # TODO: add ids with prefixes (or similar identification) to factories
     graph['@id'] = 'krikri_sample' + graph['@id']
 
     Krikri::IndexService.add graph.to_json
     Krikri::IndexService.commit
   end
 
-  desc 'Delete sample data from solr'
-  task :delete_sample_data do
+  desc 'Index aggregations with missing required values'
+  task :index_invalid_aggregation do
+
+    agg = build(:aggregation,
+                :sourceResource => build(:source_resource, title: nil)
+    )
+
+    graph = agg.to_jsonld['@graph'][0]
+    graph['@id'] = 'krikri_sample_invalid'
+
+    Krikri::IndexService.add graph.to_json
+    Krikri::IndexService.commit
+  end
+
+  desc 'Delete all sample aggregations from solr'
+  task :delete_sample_aggregation do
     Krikri::IndexService.delete_by_query 'id:krikri_sample*'
     Krikri::IndexService.commit
   end
