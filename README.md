@@ -6,10 +6,21 @@ A Rails engine for metadata aggregation, enhancement, and quality control.
 Installation
 -------------
 
-Add `krikri` to your Gemfile.  Kri-Kri will mount automatically by editing your 
-application's `config/routes.rb` to include:
+1. Add the `krikri` gem to your Gemfile.
 
-    mount Krikri::Engine => '/krikri'
+2. Run `bundle exec rails g krikri:install`
+
+   This will modify your Gemfile, so you should check it for redundancies.
+
+3. The install task will have added `mount Krikri::Engine => '/krikri'` to
+   your routes.rb.  You may customize the path.
+
+4. Run `bundle exec rake db:migrate`
+
+5. You may run `bundle exec rails routes` to inspect the new routes that
+   will have been added, and `bundle exec rails s` to check that the new
+   resources are served.
+
 
 Development
 -----------
@@ -58,6 +69,14 @@ To create a sample institution and harvest source, from `/krikri/spec/internal`:
 
 To delete the sample institution and harvest source:
     rake krikri:delete_sample_institution
+
+Known Issues
+------------
+
+Our `krikri:install` generator will install Blacklight.  Blacklight is known not to
+work well with `turbolinks`, so you should uninstall that if it's installed already:
+
+http://blog.steveklabnik.com/posts/2013-06-25-removing-turbolinks-from-rails-4
 
 Contribution Guidelines
 -----------------------
