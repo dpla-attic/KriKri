@@ -9,6 +9,8 @@ describe Krikri::HarvestSourcesController, :type => :controller do
   end
 
   describe '#show' do
+    login_user
+
     it 'assigns the requested harvest source to @harvest_source' do
       get :show, id: @harvest_sources_factory.id
       expect(assigns(:harvest_source)).to eq(@harvest_sources_factory)

@@ -26,6 +26,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency "oai"
 
+  s.add_dependency "devise", "~>3.4.1"
+
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "jettywrapper"
   s.add_development_dependency "rspec-rails"

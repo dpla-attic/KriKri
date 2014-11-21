@@ -15,6 +15,7 @@ describe Krikri::InstitutionsController, :type => :controller do
   end
 
   describe 'GET #index' do
+    login_user
 
     it 'assigns all institutions to @institutions' do
       get :index
@@ -29,6 +30,7 @@ describe Krikri::InstitutionsController, :type => :controller do
   end
 
   describe 'GET #show' do
+    login_user
 
     it 'assigns the requested institution to @institution' do
       get :show, id: @institutions_factory.id
