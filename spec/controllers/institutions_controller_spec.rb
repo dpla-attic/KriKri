@@ -4,14 +4,14 @@ require 'database_cleaner'
 describe Krikri::InstitutionsController, :type => :controller do
 
   routes { Krikri::Engine.routes }
+  let (:harvest_source) { create(:krikri_harvest_source) }
+  let (:institution) { harvest_source.institution }
 
   before(:all) do
     # This clean statement is a safety precaution
     # Occasionally there is an extra institution written to the test db
     # for a reason I am yet to ascertain
     DatabaseCleaner.clean_with(:truncation)
-    @harvest_sources_factory = create(:krikri_harvest_sources)
-    @institutions_factory = @harvest_sources_factory.institution
   end
 
   describe 'GET #index' do
@@ -19,7 +19,7 @@ describe Krikri::InstitutionsController, :type => :controller do
 
     it 'assigns all institutions to @institutions' do
       get :index
-      expect(assigns(:institutions)).to eq([@institutions_factory])
+      expect(assigns(:institutions)).to eq([institution])
     end
 
     it 'renders the :index view' do
@@ -33,17 +33,17 @@ describe Krikri::InstitutionsController, :type => :controller do
     login_user
 
     it 'assigns the requested institution to @institution' do
-      get :show, id: @institutions_factory.id
-      expect(assigns(:institution)).to eq(@institutions_factory)
+      get :show, id: institution.id
+      expect(assigns(:institution)).to eq(institution)
     end
 
     it 'assigns associated harvest sources to @harvest_sources' do
-      get :show, id: @institutions_factory.id
-      expect(assigns(:harvest_sources)).to eq([@harvest_sources_factory])
+      get :show, id: institution.id
+      expect(assigns(:harvest_sources)).to eq([harvest_source])
     end
 
     it 'renders the :show view' do
-      get :show, id: @institutions_factory.id
+      get :show, id: institution.id
       expect(response).to render_template('krikri/institutions/show')
     end
   end
