@@ -2,3 +2,4 @@
 marmotta:
   base: 'http://localhost:8983/marmotta/'
   ldp: 'http://localhost:8983/marmotta/ldp'
+  record_container: 'http://localhost:8983/marmotta/ldp/original_record'

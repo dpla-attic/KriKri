@@ -120,11 +120,11 @@ describe Krikri::Harvesters::OAIHarvester do
     end
 
     describe 'resumption' do
-
       let(:resumed_uri) do
         'http://example.org/endpoint?resumptionToken='\
         'MToxMHwyOnwzOnw0Onw1Om9haV9kYw==&verb=ListRecords'
       end
+
       it 'follows resumption token' do
         subject.records.each { |r| r }
         expect(WebMock).to have_requested(:get, resumed_uri).once
