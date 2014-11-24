@@ -50,6 +50,7 @@ To delete the sample record:
     rake krikri:delete_sample_data
 
 To update/restart dummy application, from the root KriKri directory:
+
     git pull
     bundle update
     rake engine_cart:clean
@@ -58,6 +59,7 @@ To update/restart dummy application, from the root KriKri directory:
     rails s
 
 To update/restart jetty, from the root KriKri directory:
+
     git pull
     bundle update
     rake jetty:stop
@@ -65,9 +67,11 @@ To update/restart jetty, from the root KriKri directory:
     rake jetty:start
 
 To create a sample institution and harvest source, from `/krikri/spec/internal`:
+
     rake krikri:create_sample_institution
 
 To delete the sample institution and harvest source:
+
     rake krikri:delete_sample_institution
 
 Known Issues
