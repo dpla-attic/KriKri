@@ -24,7 +24,7 @@ require 'jettywrapper'
 
 import 'lib/tasks/jetty.rake'
 
-ZIP_URL = "https://github.com/dpla/marmotta-jetty/archive/3.3.0-SNAPSHOT-20141115.zip"
+ZIP_URL = "https://github.com/dpla/marmotta-jetty/archive/3.3.0-SNAPSHOT-da254a79.zip"
 
 desc "Run all specs in spec directory (excluding plugin specs) in an engine_cart-generated app"
 task :ci => ['jetty:clean', 'engine_cart:generate'] do
