@@ -1,0 +1,19 @@
+<%= form_for @institution do |f| %>
+
+    <%= render partial: 'krikri/shared/model_errors',
+               locals: {thing: @institution}
+    %>
+
+    <div>
+        <%= f.label :name %>
+        <%= f.text_field :name %>
+    </div>
+    <div>
+        <%= f.label :notes %>
+        <%= f.text_area :notes %>
+    </div>
+    <div>
+        <%= f.submit %>
+    </div>
+
+<% end %>

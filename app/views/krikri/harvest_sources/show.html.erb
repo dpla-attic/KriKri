@@ -1,7 +1,25 @@
-<% # krikri/harvest_sources/show %>
-<h1>Harvest Source</h1>
-<p>Name: <%= @harvest_source.name %></p>
-<p>Source type: <%= @harvest_source.source_type %></p>
-<p>Metadata schema: <%= @harvest_source.metadata_schema %></p>
-<p>URI: <%= @harvest_source.uri %></p>
-<p>Notes: <%= @harvest_source.notes %></p>
+<% content_for :title do %><%= @harvest_source.name %><% end %>
+
+<h1>Harvest Source: <%= @harvest_source.name %></h1>
+
+<dl>
+    <dt>Name</dt> <dd><%= @harvest_source.name %></dd>
+    <dt>Source type</dt> <dd><%= @harvest_source.source_type %></dd>
+    <dt>Metadata schema</dt> <dd><%= @harvest_source.metadata_schema %></dd>
+    <dt>URI</dt> <dd><%= @harvest_source.uri %></dd>
+    <dt>Notes</dt> <dd><%= @harvest_source.notes %></dd>
+</dl>
+
+<%= link_to 'Edit', edit_harvest_source_path(@harvest_source) %>
+<%= button_to 'Delete', harvest_source_path(@harvest_source),
+                      method: :delete,
+                      data:
+                        { confirm: 'Do you really want to delete this ' \
+                                   'harvest source?' }
+%>
+
+<%= link_to 'Back',
+    institution_harvest_sources_path(
+      institution_id: @harvest_source.institution_id
+    )
+%>

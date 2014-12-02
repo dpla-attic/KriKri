@@ -1,0 +1,25 @@
+<% content_for :title do %>Harvest Sources for <%= @institution.name %><% end %>
+
+<h1>Harvest Sources for <%= @institution.name %></h1>
+
+<% @harvest_sources.each do |harvest_source| %>
+    <article>
+        <h1><%= harvest_source.name %></h1>
+        <p><%= harvest_source.notes %></p>
+        <div>
+        <%= link_to 'Show', harvest_source_path(harvest_source) %>
+        <%= link_to 'Edit', edit_harvest_source_path(harvest_source) %>
+        <%= button_to 'Delete', harvest_source_path(harvest_source),
+                                method: :delete,
+                                data:
+                                  { confirm: 'Do you really want to delete ' \
+                                             'this harvest source?' }
+        %>
+      </div>
+  </article>
+<% end %>
+
+<%= link_to 'New',
+    new_institution_harvest_source_path(institution_id: @institution.id)
+%>
+<%= link_to 'Back', institution_path(@institution) %>

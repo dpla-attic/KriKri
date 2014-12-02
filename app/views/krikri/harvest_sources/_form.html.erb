@@ -1,0 +1,31 @@
+<%= form_for @harvest_source, url: { action: action } do |f| %>
+
+    <%= render partial: 'krikri/shared/model_errors',
+               locals: {thing: @harvest_source}
+    %>
+
+    <div>
+        <%= f.label :name %>
+        <%= f.text_field :name %>
+    </div>
+    <div>
+        <%= f.label :source_type %>
+        <%= f.text_field :source_type %>
+    </div>
+    <div>
+        <%= f.label :metadata_schema %>
+        <%= f.text_field :metadata_schema %>
+    </div>
+    <div>
+        <%= f.label :uri %>
+        <%= f.text_field :uri %>
+    </div>
+    <div>
+        <%= f.label :notes %>
+        <%= f.text_area :notes %>
+    </div>
+    <div>
+        <%= f.submit %>
+    </div>
+
+<% end %>

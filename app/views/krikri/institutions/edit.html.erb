@@ -1,0 +1,10 @@
+<% content_for :title do %>Edit <%= @institution.name %><% end %>
+
+<h1>Edit <%= @institution.name %></h1>
+
+<%= render 'form' %>
+
+<%= link_to 'Harvest Sources',
+    institution_harvest_sources_path(institution_id: @institution.id)
+%>
+<%= link_to 'Back', institutions_path %>

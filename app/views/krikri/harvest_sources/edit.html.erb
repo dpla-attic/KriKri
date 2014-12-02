@@ -1,0 +1,11 @@
+<% content_for :title do %>Edit <%= @harvest_source.name %><% end %>
+
+<h1>Edit <%= @harvest_source.name %></h1>
+
+<%= render partial: 'form', locals: { action: 'update' } %>
+
+<%= link_to 'Back',
+    institution_harvest_sources_path(
+      institution_id: @harvest_source.institution_id
+    )
+%>

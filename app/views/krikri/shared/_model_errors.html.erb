@@ -1,0 +1,14 @@
+<% # display errors for invalid form elements %>
+
+<% if thing.errors.any? %>
+<div id="error_explanation">
+    <h2><%= pluralize(thing.errors.count, 'error') %>
+        prevented this
+        <%= thing.class.model_name.human.downcase %> from being saved</h2>
+    <ul>
+        <% thing.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+        <% end %>
+    </ul>
+</div>
+<% end %>
