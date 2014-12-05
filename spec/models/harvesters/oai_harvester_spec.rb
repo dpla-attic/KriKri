@@ -136,6 +136,78 @@ describe Krikri::Harvesters::OAIHarvester do
       end
     end
 
+    describe 'options' do
+      let(:result) { double }
+      let(:args) do
+        {endpoint: 'http://example.org/endpoint', metadata_prefix: 'mods'}
+      end
+      let(:request_opts) { {set: 'moomin'} }
+
+      shared_context 'oai options' do
+        before do
+          allow(result).to receive(:full).and_return([])
+        end
+      end
+
+      shared_examples 'send options' do
+        it 'sends request with option' do
+          expect(subject.client).to receive(request_type)
+            .with(:metadata_prefix => args[:metadata_prefix])
+            .and_return(result)
+          subject.send(method)
+        end
+        it 'adds options passed into request' do
+          expect(subject.client).to receive(request_type)
+            .with(:metadata_prefix => args[:metadata_prefix],
+                  :set => request_opts[:set])
+            .and_return(result)
+          subject.send(method, request_opts)
+        end
+      end
+
+      describe '#records' do
+        include_context 'oai options'
+        include_examples 'send options'
+
+        let(:request_type) { :list_records }
+        let(:method) { :records }
+      end
+
+      describe 'record_ids' do
+        include_context 'oai options'
+        include_examples 'send options'
+
+        let(:request_type) { :list_identifiers }
+        let(:method) { :record_ids }
+      end
+
+      describe '#get_record' do
+        before do
+          allow(result).to receive(:doc).and_return('')
+        end
+
+        let(:identifier) { 'comet_moominland' }
+        let(:request_type) { :get_record }
+
+        it 'sends request with option' do
+          expect(subject.client).to receive(request_type)
+            .with(:identifier => identifier,
+                  :metadata_prefix => args[:metadata_prefix])
+            .and_return(result)
+          subject.get_record(identifier)
+        end
+
+        it 'adds options passed into request' do
+          expect(subject.client).to receive(request_type)
+            .with(:identifier => identifier,
+                  :metadata_prefix => args[:metadata_prefix],
+                  :set => request_opts[:set])
+            .and_return(result)
+          subject.get_record(identifier, request_opts)
+        end
+      end
+    end
+
     it_behaves_like 'a harvester'
   end
 end
