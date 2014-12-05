@@ -1,6 +1,7 @@
 require 'krikri/mapping_dsl/property_declaration'
 require 'krikri/mapping_dsl/child_declaration'
 require 'krikri/mapping_dsl/parser_methods'
+require 'krikri/mapping_dsl/rdf_subjects'
 
 module Krikri
   ##
@@ -10,6 +11,7 @@ module Krikri
   module MappingDSL
     extend ActiveSupport::Concern
     include ParserMethods
+    include RdfSubjects
 
     def properties
       @properties ||= []
