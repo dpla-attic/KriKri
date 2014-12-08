@@ -2,6 +2,7 @@ require 'active_support'
 require 'rails_config'
 require 'krikri/ldp'
 
+require 'dpla/map'
 require 'rdf/marmotta'
 require 'oai/client'
 
