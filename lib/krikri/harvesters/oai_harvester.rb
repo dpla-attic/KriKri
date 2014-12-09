@@ -3,7 +3,7 @@ module Krikri::Harvesters
   # A harvester implementation for OAI-PMH
   class OAIHarvester
     include Krikri::Harvester
-    attr_accessor :client
+    attr_accessor :client, :name
 
     ##
     # @param opts [Hash] options to pass through to client requests.
@@ -13,11 +13,8 @@ module Krikri::Harvesters
     # @see #expected_opts
     def initialize(opts = {})
       uri = opts.delete(:uri)
-      if opts.include?(:oai)
-        @opts = opts[:oai]
-      else
-        @opts = {}
-      end
+      @name = opts.fetch(:name, nil)
+      @opts = opts.fetch(:oai, {})
       @client = OAI::Client.new(uri)
     end
 
@@ -51,7 +48,10 @@ module Krikri::Harvesters
     def records(opts = {})
       opts = opts.merge(@opts)
       client.list_records(opts).full.lazy.flat_map do |rec|
-        Krikri::OriginalRecord.build(rec.header.identifier, build_record(rec))
+        Krikri::OriginalRecord
+          .build(Krikri::Md5Minter.create(rec.header.identifier, name),
+                 build_record(rec))
+
       end
     end
 
@@ -61,7 +61,7 @@ module Krikri::Harvesters
       opts[:identifier] = identifier
       opts = opts.merge(@opts)
       Krikri::OriginalRecord
-        .build(identifier,
+        .build(Krikri::Md5Minter.create(identifier, name),
                build_record(client.get_record(opts).record))
     end
 

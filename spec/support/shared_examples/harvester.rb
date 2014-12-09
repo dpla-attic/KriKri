@@ -2,6 +2,7 @@
 shared_examples 'a harvester' do
 
   let(:harvester) { subject || described_class.new }
+  let(:name) { :test_harvester }
 
   it 'is a harvester' do
     expect(harvester).to be_a Krikri::Harvester
@@ -18,6 +19,29 @@ shared_examples 'a harvester' do
 
     it 'gives ids as strings' do
       harvester.record_ids.each { |i| expect(i).to be_a String }
+    end
+  end
+
+  describe 'local_name creation' do
+    before { harvester.name = name }
+
+    let(:gen_id) { 'my_id' }
+
+    it 'mints md5 identifiers with #records' do
+      expect(Krikri::Md5Minter).to receive(:create)
+        .with('oai:oaipmh.huygens.knaw.nl:arthurianfiction:MAN0000000010',
+              harvester.name)
+        .and_return(gen_id)
+
+      expect(harvester.records.first.local_name).to eq gen_id
+    end
+
+    it 'mints md5 identifiers with #get_record' do
+      expect(Krikri::Md5Minter).to receive(:create)
+        .with(harvester.record_ids.first, harvester.name)
+        .and_return(gen_id)
+      expect(harvester.get_record(harvester.record_ids.first).local_name)
+        .to eq gen_id
     end
   end
 
@@ -57,11 +81,16 @@ shared_examples 'a harvester' do
         .to be_a Krikri::OriginalRecord
     end
 
+    it 'escapes identifiers' do
+      expect(subject.records.first.local_name).not_to include(':')
+    end
+
     it 'returns a normalized record' do
       expect(harvester.get_record(harvester.record_ids.first).content)
         .to eq harvester.records.first.content
     end
   end
+
   describe '#run' do
     it 'saves the OriginalRecords' do
       # TODO: Is this fragile? Should it change when original records have
@@ -77,6 +106,12 @@ shared_examples 'a harvester' do
     end
   end
 
-  it_behaves_like 'a software agent'
+  describe '#name' do
+    it 'has name accessors' do
+      harvester.name = name
+      expect(subject).to have_attributes(:name => name)
+    end
+  end
 
+  it_behaves_like 'a software agent'
 end
