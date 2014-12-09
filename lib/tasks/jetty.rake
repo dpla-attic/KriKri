@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'jettywrapper'
 
 namespace :jetty do
 
@@ -8,4 +9,11 @@ namespace :jetty do
     cp('solr_conf/solrconfig.xml',
        'jetty/solr/development-core/conf/solrconfig.xml')
   end
+
+  desc 'Remove the jetty and marmotta directories and recreate them'
+  task :clean do
+    FileUtils.rm_rf(MARMOTTA_HOME)
+    Jettywrapper.clean
+  end
+
 end
