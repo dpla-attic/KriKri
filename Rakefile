@@ -24,6 +24,8 @@ require 'jettywrapper'
 
 import 'lib/tasks/jetty.rake'
 
+MARMOTTA_HOME = ENV['MARMOTTA_HOME'] || File.expand_path(File.join(Jettywrapper.app_root, 'marmotta'))
+
 Jettywrapper.url = "https://github.com/dpla/marmotta-jetty/archive/3.3.0-release-candidate.zip"
 
 desc "Run all specs in spec directory (excluding plugin specs) in an engine_cart-generated app"
