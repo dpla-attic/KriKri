@@ -19,6 +19,17 @@ module Krikri
     end
 
     ##
+    # Add jettywrapper dependency for development
+    # jettywrapper is used to spin up Jetty running Solr and Marmotta
+    # This must execute before run_required_generators
+    def insert_jettywrapper_dependency
+      append_to_file "Gemfile" do
+        "\n\n#KriKri uses Factory Girl to generate sample data
+        gem 'jettywrapper', '~>1.8.3', group: :development"
+      end
+    end
+
+    ##
     # Devise is a dependency, and is specified in krikri.gemspec,
     # but it requires some setup if it's generated into
     # a development environment.
