@@ -1,16 +1,29 @@
 <% # krikri/institutions/show %>
-<h1>Institution Profile</h1>
-<p>Name: <%= @institution.name %></p>
-<p>Harvest Sources:</p>
-<ul>
-<% @harvest_sources.each do |harvest_source| %>
-  <li>
-    <%= link_to harvest_source.name,
-      controller: "harvest_sources",
-      action: "show",
-      id: harvest_source.id
-    %>
-  </li>
-</ul>
-<p>Notes: <%= @institution.notes %></p>
+
+<% content_for :title do %><%= @institution.name %><% end %>
+
+<h1><%= @institution.name %></h1>
+
+<p><%= @institution.notes %></p>
+
+<h2>Harvest Sources</h2>
+
+<% if @harvest_sources.count == 0 %>
+    <p>This institution has no harvest sources.</p>
+<% else %>
+    <ul>
+    <% @harvest_sources.each do |harvest_source| %>
+      <li>
+          <%= link_to harvest_source.name,
+              harvest_source_path(harvest_source)
+          %>
+      </li>
+    <% end %>
+    </ul>
 <% end %>
+
+<%= link_to 'Edit', edit_institution_path(@institution) %>
+<%= link_to 'New Harvest Source',
+    new_institution_harvest_source_path(@institution)
+%>
+<%= link_to 'All Institutions', institutions_path %>

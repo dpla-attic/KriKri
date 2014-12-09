@@ -1,13 +1,23 @@
-<% # krikri/institutions/index %>
+<% content_for :title do %>Institutions<% end %>
+
 <h1>Institutions</h1>
-<ul>
+
 <% @institutions.each do |institution| %>
-  <li>
-    <%= link_to institution.name,
-      controller: "institutions", 
-      action: "show",
-      id: institution.id
-    %>
-  </li>
+    <article>
+        <h1><%= institution.name %></h1>
+        <p><%= institution.notes %></p>
+        <div>
+        <%= link_to 'Show', institution_path(institution) %>
+        <%= link_to 'Edit', edit_institution_path(institution) %>
+        <%= button_to 'Delete', institution_path(institution),
+                                method: :delete,
+                                data:
+                                  { confirm: 'Do you really want to delete ' \
+                                             'this institution?'}
+        %>
+      </div>
+  </article>
 <% end %>
-</ul>
+
+<%= link_to 'New', new_institution_path %>
+<%= link_to 'Home', main_app.root_path %>

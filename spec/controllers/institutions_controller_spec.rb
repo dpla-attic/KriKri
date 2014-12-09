@@ -4,8 +4,8 @@ require 'database_cleaner'
 describe Krikri::InstitutionsController, :type => :controller do
 
   routes { Krikri::Engine.routes }
-  let (:harvest_source) { create(:krikri_harvest_source) }
-  let (:institution) { harvest_source.institution }
+  let(:harvest_source) { create(:krikri_harvest_source) }
+  let(:institution) { harvest_source.institution }
 
   before(:all) do
     # This clean statement is a safety precaution
@@ -45,6 +45,18 @@ describe Krikri::InstitutionsController, :type => :controller do
     it 'renders the :show view' do
       get :show, id: institution.id
       expect(response).to render_template('krikri/institutions/show')
+    end
+  end
+
+  describe '#update' do
+    login_user
+    it 'updates the institution' do
+      institution
+      patch :update,
+            id: institution.id,
+            institution: { name: 'Something Else' }
+      institution.reload
+      expect(institution.name).to eq('Something Else')
     end
   end
 
