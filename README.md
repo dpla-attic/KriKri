@@ -74,6 +74,9 @@ To delete the sample institution and harvest source:
 
     rake krikri:delete_sample_institution
 
+Guard is configured with RSpec; you can run `guard` to enable specs to run as
+configured in the `Guardfile`.
+
 Known Issues
 ------------
 
