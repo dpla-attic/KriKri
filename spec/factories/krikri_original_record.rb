@@ -19,4 +19,20 @@ FactoryGirl.define do
 </oai_dc:dc></metadata></record></GetRecord></OAI-PMH>'
   end
 
+  factory :json_record, parent: :krikri_original_record do
+    rec = {
+      'creator' => 'Tove Jansson',
+      'title' => 'Christmas in Moominvalley',
+      'subject' => 'Moomin Papa',
+      'identifier' => 'https://example.org/moomin/M00000000M1N',
+      'date' => '2012-07-13T14:27:31Z',
+      'language' => 'eng',
+      'contributor' => [{ 'name' => 'Snorkmaiden',
+                          'role' => 'Actor (leading role)'},
+                        { 'name' => 'Snufkin',
+                          'role' => 'Director'}]
+    }
+
+    content rec.to_json
+  end
 end
