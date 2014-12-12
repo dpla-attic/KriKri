@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.homepage    = "http://github.com/dpla/KriKri"
   s.summary     = "KriKri ingests objects."
   s.description = "Metadata aggregation and enrichment for cultural heritage institutions."
-  s.license     = "Unspecified"
+  s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "Rakefile", "README.rdoc"]
   s.test_files = Dir["spec/**/*"]

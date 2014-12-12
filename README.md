@@ -98,3 +98,4 @@ Copyright & License
 --------------------
 
 Copyright Digital Public Library of America, 2014
+License: MIT
