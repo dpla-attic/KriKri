@@ -24,7 +24,7 @@ module Krikri
     # This must execute before run_required_generators
     def insert_jettywrapper_dependency
       append_to_file "Gemfile" do
-        "\n\n#KriKri uses Factory Girl to generate sample data
+        "\n\n# jettywrapper provides a Jetty container for Marmotta and Solr
         gem 'jettywrapper', '~>1.8.3', group: :development"
       end
     end
