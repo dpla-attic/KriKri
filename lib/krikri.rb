@@ -14,4 +14,8 @@ module Krikri
   # parsers
   autoload :XmlParser,      'krikri/parsers/xml_parser'
   autoload :OaiDcParser,    'krikri/parsers/oai_dc_parser'
+
+  # Enrichments
+  autoload :Enrichment,     'krikri/enrichment'
+  autoload :Enrichments,    'krikri/enrichments'
 end
