@@ -6,6 +6,8 @@ require 'dpla/map'
 require 'rdf/marmotta'
 require 'oai/client'
 
+require 'resque'
+
 module Krikri
   ##
   # Krikri provides metadata aggregation and enhancement services.

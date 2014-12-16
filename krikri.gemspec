@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency "oai"
 
   s.add_dependency "devise", "~>3.4.1"
+  s.add_dependency "resque", "~>1.0"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "jettywrapper"
@@ -34,4 +35,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'webmock'
   s.add_development_dependency 'factory_girl_rails', '~>4.4.0'
   s.add_development_dependency 'pry-rails'
+  s.add_development_dependency 'timecop'
 end

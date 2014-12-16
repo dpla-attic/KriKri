@@ -57,12 +57,6 @@ shared_examples 'a harvester' do
   end
 
   describe '#run' do
-    it 'runs as an Activity' do
-      allow_any_instance_of(Krikri::OriginalRecord).to receive(:save)
-        .and_return(true)
-      expect(harvester.run).to be_a Krikri::Activity
-    end
-
     it 'saves the OriginalRecords' do
       # TODO: Is this fragile? Should it change when original records have
       #   persistence?
