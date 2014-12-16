@@ -74,6 +74,49 @@ To delete the sample institution and harvest source:
 
     rake krikri:delete_sample_institution
 
+
+Using Vagrant for development (experimental)
+--------------------------------------------
+
+Prerequisites:
+
+* [VirtualBox](https://www.virtualbox.org/) (Version 4.3)
+* [Vagrant](http://www.vagrantup.com/) (Version 1.6)
+* [vagrant-vbguest](https://github.com/dotless-de/vagrant-vbguest/) (`vagrant plugin install vagrant-vbguest`)
+* [Ansible](http://www.ansible.com/) (Version 1.7 or greater; [installation instructions](http://docs.ansible.com/intro_installation.html))
+
+
+For installation:
+
+    vagrant up
+    vagrant reload  # Because of o/s packages having been upgraded
+    vagrant ssh
+    cd /vagrant
+    bundle exec rake jetty:start
+    cd spec/internal
+    bundle exec rake krikri:index_sample_data
+    bundle exec rails s
+
+Then access the wrapper application at http://localhost:3000/
+
+From then on, to start things up, do:
+
+    vagrant up
+    vagrant ssh
+    cd /vagrant
+    bundle exec rake jetty:start
+    cd /vagrant/spec/internal
+    bundle exec rails s
+
+You may re-run the provisioning with `vagrant provision`.  This will
+clean and re-create the Jetty installation.  (So don't do it if you want to
+preserve your Marmotta or Solr.)  A future update will include more
+specific configuration and update tasks.
+
+
+Using Guard for tests
+---------------------
+
 Guard is configured with RSpec; you can run `guard` to enable specs to run as
 configured in the `Guardfile`.
 
