@@ -11,6 +11,8 @@ module Krikri
     def enrich(record, *fields)
       record = record.clone
       return enrich_all(record) if (fields.empty? || fields == [:all])
+      fields.each { |f| enrich_field(record, field_to_chain(f)) }
+      record
     end
 
     ##
@@ -38,6 +40,7 @@ module Krikri
       list_fields(record).each do |field|
         enrich_field(record, field_to_chain(field))
       end
+      record
     end
 
     ##

@@ -5,6 +5,7 @@ shared_examples 'an enrichment' do
   end
 
   let(:record) { build(:aggregation) }
+  let(:updated_value) { 'Christmas in Moominvalley' }
 
   describe '#list_fields' do
     let(:list) { subject.list_fields(record) }
@@ -17,7 +18,6 @@ shared_examples 'an enrichment' do
   describe '#enrich_field' do
     let(:field_chain) { [:aggregatedCHO, :creator, :providedLabel] }
     let(:klass) { record.aggregatedCHO.first.creator.first.class }
-    let(:updated_value) { 'Christmas in Moominvalley' }
     let(:enriched) { subject.enrich_field(record, field_chain) }
 
     before do
@@ -72,9 +72,72 @@ shared_examples 'an enrichment' do
   end
 
   describe '#enrich_all' do
-    xit 'runs enrichment over all fields' do
+    it 'runs enrichment over all fields' do
+      expect(subject).to receive(:enrich_field)
+        .exactly(subject.list_fields(record).count).times
       subject.enrich_all(record)
-      #expect something here
+    end
+
+    it 'sets fields to new value' do
+      allow(subject).to receive(:enrich_value).and_return(updated_value)
+      subject.enrich_all(record)
+      record.class.properties.each do |prop, _|
+        expect(record.send(prop)).to eq [updated_value]
+      end
+    end
+
+    it 'returns the record' do
+      expect(subject.enrich_all(record)).to eq record
+    end
+  end
+
+  describe 'enrich' do
+    it 'defaults to all fields' do
+      expect(subject).to receive(:enrich_all)
+      subject.enrich(record)
+    end
+
+    it 'accepts :all for fields' do
+      expect(subject).to receive(:enrich_all)
+      subject.enrich(record, :all)
+    end
+
+    it 'is a copy of the input record' do
+      expect(subject.enrich(record)).to eq record
+      expect(subject.enrich(record)).not_to eql record
+    end
+
+    context 'with field arguments' do
+      let(:simple_field) { :preview }
+      let(:deep_field)   { {:aggregatedCHO => {:creator => :providedLabel}} }
+      let(:deep_field_2) { {:aggregatedCHO => {:spatial => :parentFeature}} }
+
+      let(:deep_field_chain)   { [:aggregatedCHO, :creator, :providedLabel] }
+      let(:deep_field_2_chain)   { [:aggregatedCHO, :spatial, :parentFeature] }
+
+      it 'runs against simple fields' do
+        expect(subject).to receive(:enrich_field).with(record, [simple_field])
+        subject.enrich(record, simple_field)
+      end
+
+      it 'runs against deep fields' do
+        expect(subject).to receive(:enrich_field).with(record, deep_field_chain)
+        subject.enrich(record, deep_field)
+      end
+
+      it 'runs against multiple fields' do
+        expect(subject).to receive(:enrich_field).with(record, [simple_field])
+        expect(subject).to receive(:enrich_field).with(record, deep_field_chain)
+        expect(subject).to receive(:enrich_field).with(record, deep_field_2_chain)
+        subject.enrich(record, simple_field, deep_field, deep_field_2)
+      end
+
+      it 'is a copy of the input record' do
+        expect(subject.enrich(record, simple_field, deep_field, deep_field_2))
+          .to eq record
+        expect(subject.enrich(record, simple_field, deep_field, deep_field_2))
+          .not_to eql record
+      end
     end
   end
 end
