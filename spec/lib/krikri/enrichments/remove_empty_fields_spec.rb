@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Krikri::Enrichments::RemoveEmptyFields do
-  it_behaves_like 'an enrichment'
+  it_behaves_like 'a field enrichment'
 
   describe '#enrich_value' do
     it 'strips empty fields' do

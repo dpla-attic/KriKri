@@ -1,6 +1,6 @@
 module Krikri::Enrichments
   class SplitAtDelimiter
-    include Krikri::Enrichment
+    include Krikri::FieldEnrichment
 
     attr_accessor :delimiter
 

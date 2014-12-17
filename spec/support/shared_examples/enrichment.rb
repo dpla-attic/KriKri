@@ -1,5 +1,5 @@
 
-shared_examples 'an enrichment' do
+shared_examples 'a field enrichment' do
   it 'is an enrichment' do
     expect(subject).to be_a Krikri::Enrichment
   end

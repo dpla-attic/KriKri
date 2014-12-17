@@ -16,6 +16,7 @@ module Krikri
   autoload :OaiDcParser,    'krikri/parsers/oai_dc_parser'
 
   # Enrichments
-  autoload :Enrichment,     'krikri/enrichment'
-  autoload :Enrichments,    'krikri/enrichments'
+  autoload :Enrichment,       'krikri/enrichment'
+  autoload :FieldEnrichment,  'krikri/field_enrichment'
+  autoload :Enrichments,      'krikri/enrichments'
 end
