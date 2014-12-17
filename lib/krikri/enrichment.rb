@@ -35,10 +35,9 @@ module Krikri
     end
 
     def enrich_all(record)
-      # list_fields(record).each do |field|
-      #   enrich_field(record)
-      # end
-      # record
+      list_fields(record).each do |field|
+        enrich_field(record, field_to_chain(field))
+      end
     end
 
     ##
@@ -54,9 +53,12 @@ module Krikri
         prop = prop.to_sym
 
         fields << prop
-        resources = resources(record.send(prop))
-        fields << {prop => resources.map { |r| list_fields(r) }.flatten} unless
-          resources.empty?
+        resources = resources(record.send(prop)).map { |r| list_fields(r) }
+        next if resources.empty?
+
+        resources.flatten.each do |resource|
+          fields << {prop => resource}
+        end
       end
       fields
     end
@@ -71,18 +73,9 @@ module Krikri
       values.select { |v| !v.is_a?(ActiveTriples::Resource) }
     end
 
-    def for_each_property(record, &block)
-      record.class.properties.each do |prop, _|
-        new_vals = record.send(prop.to_sym).map do |value|
-          if value.is_a? ActiveTriples::Resource
-            enrich_all(value, &block)
-          else
-            yield value
-          end
-        end
-        new_vals.select! { |v| ! v.nil? }
-        record.send("#{prop}=".to_sym, new_vals)
-      end
+    def field_to_chain(field)
+      return Array(field) if field.is_a? Symbol
+      [field.keys.first, field_to_chain(field.values.first)].flatten
     end
   end
 end

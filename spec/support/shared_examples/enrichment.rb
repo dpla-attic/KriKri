@@ -73,7 +73,8 @@ shared_examples 'an enrichment' do
 
   describe '#enrich_all' do
     xit 'runs enrichment over all fields' do
-      expect(subject).to receive(:enrich_value)
+      subject.enrich_all(record)
+      #expect something here
     end
   end
 end
