@@ -1,13 +1,9 @@
 module Krikri::Enrichments
-  module RemoveEmptyFields
-    extend Krikri::Enrichment
+  class RemoveEmptyFields
+    include Krikri::Enrichment
 
-    module_function
-
-    def enrich(record)
-      n = for_fields_in(record) do |val|
-        val unless val.respond_to?(:empty?) and val.empty?
-      end
+    def enrich_value(value)
+      (value.respond_to?(:empty?) && value.empty?) ? nil : value
     end
   end
 end
