@@ -28,7 +28,7 @@ module Krikri
       field = field_chain.first
       values = record.send(field)
       if field_chain.length == 1
-        new_values = values.map { |v| enrich_value(v) }.compact
+        new_values = values.map { |v| enrich_value(v) }.flatten.compact
         record.send("#{field}=".to_sym, new_values)
       else
         resources(values).each { |v| enrich_field(v, field_chain[1..-1]) }
