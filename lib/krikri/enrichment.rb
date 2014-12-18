@@ -2,25 +2,17 @@ module Krikri
   module Enrichment
     extend SoftwareAgent
 
-    ##
-    # The main enrichment method; runs the enrichment against a record
-    #
-    # @param record [ActiveTriples::Resource] the record to enrich
-    # @param fields [Array] the fields on which to apply the enrichment
-    # @return [ActiveTriples::Resource] the enriched record
-    def enrich(record, *fields)
-      record = record.clone
-      return enrich_all(record) if (fields.empty? || fields == [:all])
-      fields.each { |f| enrich_field(record, field_to_chain(f)) }
-      record
+    def enrich(record, input_fields, output_fields)
+      input_fields.map! { |f| field_to_chain(f) }
+      enrich_value(record, input_fields)
     end
 
     ##
     # @abstract Runs the enrichment against a field
     #
-    # @param [ActiveTriples::Resource, RDF::Literal] value the value to process
+    # @param [ActiveTriples::Resource, RDF::Literal] the value(s) to process
     # @return [ActiveTriples::Resource] the enriched record
-    def enrich_value(value)
+    def enrich_value(_)
       raise NotImplementedError
     end
 
@@ -45,6 +37,22 @@ module Krikri
         end
       end
       fields
+    end
+
+    def values_for_field(record, field_chain)
+      field = field_chain.shift
+      values = record.send(field)
+      return values if field_chain.length == 0
+      resources(values).map { |v| values_for_field(v, field_chain) }.flatten
+        .compact
+    end
+
+    def set_field(record, field_chain, values)
+      field = field_chain.pop
+      return record.send("#{field}=".to_sym, values) if field_chain.length == 0
+      values_for_field(record, field_chain).each do |obj|
+        obj.send("#{field}=".to_sym, values)
+      end
     end
 
     private
