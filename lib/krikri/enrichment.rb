@@ -3,8 +3,21 @@ module Krikri
     extend SoftwareAgent
 
     def enrich(record, input_fields, output_fields)
-      input_fields.map! { |f| field_to_chain(f) }
-      enrich_value(record, input_fields)
+      record = record.clone
+      output_fields.map! { |f| field_to_chain(f) }
+
+      values =
+        input_fields.map { |f| values_for_field(record, field_to_chain(f)) }
+      values = enrich_value(values)
+
+      raise 'field/value mismatch.' /
+        "#{values.count} values for #{output_fields.count} fields." unless
+        values.count == output_fields.count
+
+      output_fields.each do |field|
+        set_field(record, field, values.shift)
+      end
+      record
     end
 
     ##
