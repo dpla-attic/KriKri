@@ -1,11 +1,9 @@
+shared_examples 'an enrichment' do
+  let(:record) { build(:aggregation) }
 
-shared_examples 'a field enrichment' do
   it 'is an enrichment' do
     expect(subject).to be_a Krikri::Enrichment
   end
-
-  let(:record) { build(:aggregation) }
-  let(:updated_value) { 'Christmas in Moominvalley' }
 
   describe '#list_fields' do
     let(:list) { subject.list_fields(record) }
@@ -14,6 +12,16 @@ shared_examples 'a field enrichment' do
       expect(list).to include(an_instance_of(Symbol), an_instance_of(Hash))
     end
   end
+
+  describe '#values_for_field' do
+    # it { require 'pry'; binding.pry }
+  end
+end
+
+shared_examples 'a field enrichment' do
+  include_examples 'an enrichment'
+
+  let(:updated_value) { 'Christmas in Moominvalley' }
 
   describe '#enrich_field' do
     let(:field_chain) { [:aggregatedCHO, :creator, :providedLabel] }
