@@ -21,19 +21,21 @@ describe Krikri::OriginalRecord do
   end
 
   describe '#new' do
+    it 'sets #local_name' do
+      expect(described_class.new(identifier).local_name).to eq identifier
+    end
+  end
+
+  describe '#load' do
     context 'existing record' do
       before { subject.save }
 
-      it 'loads resource with correct #local_name' do
-        expect(described_class.new(identifier).local_name).to eq identifier
-      end
-
       it 'loads resource with correct content' do
-        expect(described_class.new(identifier).content).to eq subject.content
+        expect(described_class.load(identifier).content).to eq subject.content
       end
 
       it 'loads resource with correct content_type' do
-        expect(described_class.new(identifier).content_type)
+        expect(described_class.load(identifier).content_type)
           .to eq subject.content_type
       end
     end
@@ -80,7 +82,7 @@ describe Krikri::OriginalRecord do
 
     it 'updates existing record' do
       result
-      new_subject = described_class.new(identifier)
+      new_subject = described_class.load(identifier)
       new_subject.content = 'abc'
       new_subject.save
       subject.reload

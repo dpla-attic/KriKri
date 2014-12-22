@@ -4,27 +4,46 @@ module Krikri
   class OriginalRecord
     include Krikri::LDP::Resource
 
-    attr_accessor :content, :local_name
-    attr_reader :rdf_subject
+    attr_accessor :content, :local_name, :rdf_subject
     attr_writer :content_type
 
     def initialize(identifier)
       @local_name = identifier
-      return self unless exists?
-      @rdf_subject ||= nr_uri_from_headers(http_head)
-      reload
     end
 
     class << self
+      def load(identifier)
+        record = new(identifier)
+        raise 'No #{self} found with id: identifier' unless record.exists?
+        record.rdf_subject = nr_uri_from_headers(record.http_head)
+        record.reload
+      end
+
       def build(identifier, content, content_type = nil)
         raise(ArgumentError,
               '`content` must be a readable IO object or String.'\
               "Got a #{content.class}") unless
           content.is_a?(String) || content.respond_to?(:read)
         record = new(identifier)
+        record.reload if record.exists?
         record.content = content
         record.content_type = content_type
         record
+      end
+
+      ##
+      # Gets the URI for the ldp:NonRDFSource from the Headers returned by the
+      # containing ldp:RDFSource.
+      #
+      # @see http://www.w3.org/TR/ldp/#ldpc-post-createbinlinkmetahdr
+      # @todo figure out how to handle situations where more than one NR is
+      #   described by the same RDFSource (second file PUT to same URI)
+      def nr_uri_from_headers(headers)
+        links = headers['link'].split(',').select! do |link|
+          link.include? 'rel="content"'
+        end
+
+        links.first[/.*<(.*)>/, 1]
       end
     end
 
@@ -74,6 +93,7 @@ module Krikri
     # @raise (see Krikri::LDP::Resource#get)
     # @return [OriginalRecord] self
     def reload
+      @rdf_subject ||= self.class.nr_uri_from_headers(http_head)
       response = get(nil, true)
       self.content_type = response.env.response_headers['content-type']
       self.content = response.env.body
@@ -106,21 +126,6 @@ module Krikri
     #   requests.
     def headers
       { 'Content-Type' => content_type }
-    end
-
-    ##
-    # Gets the URI for the ldp:NonRDFSource from the Headers returned by the
-    # containing ldp:RDFSource.
-    #
-    # @see http://www.w3.org/TR/ldp/#ldpc-post-createbinlinkmetahdr
-    # @todo figure out how to handle situations where more than one NR is
-    #   described by the same RDFSource (second file PUT to same URI)
-    def nr_uri_from_headers(headers)
-      links = headers['link'].split(',').select! do |link|
-        link.include? 'rel="content"'
-      end
-
-      links.first[/.*<(.*)>/, 1]
     end
   end
 end
