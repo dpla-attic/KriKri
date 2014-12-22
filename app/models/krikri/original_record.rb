@@ -49,10 +49,10 @@ module Krikri
 
     def ==(other)
       return false unless other.is_a? OriginalRecord
-      return false unless etag == other.etag
-      return false unless content == other.content
       return false unless local_name == other.local_name
+      return false unless content == other.content
       return false unless content_type == other.content_type
+      return false unless etag == other.etag
       true
     end
 
