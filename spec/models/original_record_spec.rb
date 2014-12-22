@@ -60,6 +60,45 @@ describe Krikri::OriginalRecord do
     end
   end
 
+  describe '#==' do
+    let(:other) { subject.clone }
+
+    it 'gives equality for equivalent objects' do
+      expect(subject == other).to be true
+    end
+
+    shared_examples 'is false' do
+      it 'compares false' do
+        expect(subject == other).to be false
+      end
+    end
+
+    context 'when comparing wrong type' do
+      let(:other) { Object.new }
+      include_examples 'is false'
+    end
+
+    context 'when one object is saved' do
+      before { other.save }
+      include_examples 'is false'
+    end
+
+    context'when local name is different' do
+      before { other.local_name = 'new_mummi' }
+      include_examples 'is false'
+    end
+
+    context 'content is different' do
+      before { other.content = 'new_mummi_content' }
+      include_examples 'is false'
+    end
+
+    context 'content_type is different' do
+      before { other.content_type = 'application/xml+moomin' }
+      include_examples 'is false'
+    end
+  end
+
   context 'with string input' do
     let(:record) { '<record><title>Comet in Moominland</title></record>' }
 

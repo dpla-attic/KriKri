@@ -99,6 +99,26 @@ describe Krikri::LDP::Resource do
     end
 
     describe '#delete!' do
+      context 'before saved' do
+        it 'raises an error' do
+          expect { subject.delete! }
+            .to raise_error('Cannot delete ' \
+                            "#{subject.rdf_subject}, does not exist.")
+        end
+      end
+
+      context 'with saved object' do
+        before { subject.save }
+
+        it 'deletes object from LDP endpoint' do
+          expect(subject.delete!.env.status).to eq 204
+        end
+
+        it 'no longer exists' do
+          subject.delete!
+          expect(subject).not_to exist
+        end
+      end
     end
 
     describe '#exist?' do
@@ -109,6 +129,22 @@ describe Krikri::LDP::Resource do
       it 'knows when it does exist' do
         subject.save
         expect(subject).to exist
+      end
+    end
+
+    describe '#etag' do
+      context 'before saved' do
+        it 'returns nil' do
+          expect(subject.etag).to be_nil
+        end
+      end
+
+      context 'with etag' do
+        before { subject.save }
+
+        it 'returns an etag' do
+          expect(subject.etag).to be_a String
+        end
       end
     end
   end

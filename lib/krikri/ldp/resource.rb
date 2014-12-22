@@ -20,13 +20,13 @@ module Krikri::LDP
     ##
     # @return [String] the current cached HTTP ETag for the resource
     def etag
-      http_head['etag']
+      http_head['etag'] if exists?
     end
 
     ##
     # @return [String] the current cached Last-Modified date for the resource
     def modified_date
-      http_head['last-modified']
+      http_head['last-modified'] if exists?
     end
 
     ##
@@ -68,7 +68,11 @@ module Krikri::LDP
       false
     rescue Faraday::ResourceNotFound
       false
+    rescue Faraday::ClientError => e
+      return false if e.response[:status] == 410
+      raise e
     end
+    alias_method :exist?, :exists?
 
     ##
     # Sends PUT request to the resource's #rdf_subject via #ldp_connection.
@@ -97,10 +101,12 @@ module Krikri::LDP
     #
     #    If-Match: "#{etag}" (uses idempotent put if an Entity Tag is cached)
     #
-    #
     def delete!(headers = {})
-      headers['If-Match'] ||= etag if exists?
-      make_request(:delete, headers)
+      raise "Cannot delete #{rdf_subject}, does not exist." unless exist?
+      headers['If-Match'] ||= etag
+      response = make_request(:delete, nil, headers)
+      @http_headers = nil
+      response
     end
 
     private
