@@ -1,3 +1,4 @@
+require 'resque/server'
 
 Krikri::Engine.routes.draw do
   # TODO: remove unnecessary :harvest_sources and :institutions routes once we
@@ -5,4 +6,5 @@ Krikri::Engine.routes.draw do
   resources :institutions do
     resources :harvest_sources, shallow: true
   end
+  mount Resque::Server.new, at: '/resque'
 end

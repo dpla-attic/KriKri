@@ -208,6 +208,24 @@ describe Krikri::Harvesters::OAIHarvester do
       end
     end
 
+    describe '#enqueue' do
+      let(:args) do
+        {endpoint: 'http://example.org/endpoint', metadata_prefix: 'mods'}
+      end
+      before do
+        Resque.remove_queue('harvest')  # Not strictly necessary. Future?
+        Krikri::Activity.delete_all
+      end
+      it 'saves harvest options correctly when creating an activity' do
+        # Ascertain that options particular to this harvester type are
+        # serialized and deserialized properly.
+        described_class.enqueue(Krikri::HarvestJob, opts = args)
+        activity = Krikri::Activity.first
+        opts = JSON.parse(activity.opts, symbolize_names: true)
+        expect(opts).to eq(args)
+      end
+    end
+
     it_behaves_like 'a harvester'
   end
 end

@@ -21,6 +21,11 @@ Installation
    will have been added, and `bundle exec rails s` to check that the new
    resources are served.
 
+6. See [the Resque documentation](https://github.com/resque/resque/tree/1-x-stable)
+   on how to run queue workers.  There will be a console for the Resque job
+   queue available as '/resque' under the Krikri base path in your web
+   application.
+
 
 Development
 -----------

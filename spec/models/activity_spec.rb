@@ -1,23 +1,29 @@
 require 'spec_helper'
+require 'timecop'
 
-describe Krikri::Activity do
 
-  subject { described_class.new(agent_class.new) }
-  let(:agent_class) { Class.new { extend Krikri::SoftwareAgent } }
-
-  describe '#agent' do
-    it 'has an agent' do
-      expect(subject.agent).to be_a agent_class
-    end
+##
+# Custom matcher that verifies whether the period represented by the start
+# and end timestamps of the given model is close enough to the given duration.
+RSpec::Matchers.define :have_duration_of do |duration|
+  match do |actual|
+    real_dur = actual.end_time - actual.start_time
+    (real_dur - duration).abs < 0.1
   end
+end
 
-  describe '#start_time' do
+
+describe Krikri::Activity, type: :model do
+
+  subject { create(:krikri_activity) }
+
+  describe 'start_time' do
     before do
       subject.set_start_time
     end
 
     it 'marks start time' do
-      expect(subject.start_time).to be_a DateTime
+      expect(subject.start_time).to be_a ActiveSupport::TimeWithZone
     end
   end
 
@@ -25,35 +31,17 @@ describe Krikri::Activity do
     it 'raises an error if not started' do
       expect { subject.set_end_time }.to raise_error
     end
-
-    context 'with start time' do
-      before do
-        subject.set_start_time
-        subject.set_end_time
-      end
-
-      it 'marks end time' do
-        subject.set_start_time
-        expect(subject.end_time).to be_a DateTime
-      end
-    end
   end
 
-  describe 'running activities' do
-    subject do
-      described_class.new(agent_class) {}
+  describe '#run' do
+    it 'runs the given block' do
+      expect { |b| subject.run(&b) }.to yield_control
     end
-
-    it 'runs block passed in' do
-      expect { |b| described_class.new(agent_class, &b) }.to yield_control
-    end
-
-    it 'sets start time' do
-      expect(subject.start_time).to be_within(1.second).of(DateTime.now)
-    end
-
-    it 'sets end time' do
-      expect(subject.end_time).to be_within(1.second).of(DateTime.now)
+    it 'sets start and end times when running a block' do
+      duration = 30     # seconds
+      subject.run { Timecop.travel(duration) }
+      Timecop.return    # come back to the present for future tests
+      expect(subject).to have_duration_of(duration)
     end
   end
 

@@ -21,10 +21,11 @@ module Krikri
   #      Enumerable returned by #record_ids. If not, it is strongly
   #      recommended to override this method in your subclass with
   #      an efficient implementation.
-  #    - #run. Wraps persistence of each record returned by #records
-  #      in an Activity to run a full harvest.
+  #    - #run. Wraps persistence of each record returned by #records.
+  #      Runs a full harvest, inserting Original Records into the database,
+  #      given the options passed to #initialize.
   class Harvester
-    extend SoftwareAgent
+    include SoftwareAgent
 
     ##
     # @abstract Provide a low-memory, lazy enumerable for record ids.
@@ -65,14 +66,17 @@ module Krikri
     end
 
     ##
-    # Creates a harvest activity and runs harvest.
+    # Run the harvest.
     # This should be idempotent so it can be safely retried on errors.
     #
     # @return [Boolean]
     def run
-      Krikri::Activity.new(self) do
-        records.each(&:save)
-      end
+      mname = self.class.to_s + '#' + __method__.to_s
+      Rails.logger.debug(mname + ' is running')
+      records.each(&:save)
+      Rails.logger.debug(mname + ' is done')
+      true
     end
+
   end
 end

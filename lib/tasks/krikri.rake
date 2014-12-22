@@ -2,6 +2,7 @@ require 'factory_girl_rails'
 include FactoryGirl::Syntax::Methods
 require 'dpla/map/factories'
 require 'open-uri'
+require 'resque/tasks'
 
 namespace :krikri do
 
