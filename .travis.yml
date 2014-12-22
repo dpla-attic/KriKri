@@ -3,3 +3,4 @@ bundler_args: --without debug
 script: "bundle exec rake ci"
 rvm:
   - 2.1.3
+sudo: false
