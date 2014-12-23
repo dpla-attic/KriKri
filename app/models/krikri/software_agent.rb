@@ -6,6 +6,8 @@ module Krikri
   module SoftwareAgent
     extend ActiveSupport::Concern
 
+    Logger = ActiveSupport::TaggedLogging.new(Rails.logger)
+
     ##
     # Return an agent name suitable for saving in an Activity.
     # This is the name of the most-derived class upon which this is invoked.
@@ -31,14 +33,14 @@ module Krikri
     # Class methods for extension by ActiveSupport::Concern
     module ClassMethods
 
-      @@logger = ActiveSupport::TaggedLogging.new(Rails.logger)
-
       ##
       # Log a message, tagged in a way suitable for software agents.
       # @see Krikri::SoftwareAgent::method_missing
       def log(priority, msg)
-        @@logger.tagged(Time.now.to_s, Process.pid, to_s) do
-          @@logger.send(priority, msg)
+        Krikri::SoftwareAgent::Logger.tagged(
+          Time.now.to_s, Process.pid, to_s
+        ) do
+          Krikri::SoftwareAgent::Logger.send(priority, msg)
         end
       end
 
