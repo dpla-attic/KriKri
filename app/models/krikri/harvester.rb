@@ -71,10 +71,9 @@ module Krikri
     #
     # @return [Boolean]
     def run
-      mname = self.class.to_s + '#' + __method__.to_s
-      Rails.logger.debug(mname + ' is running')
+      log :info, 'harvest is running'
       records.each(&:save)
-      Rails.logger.debug(mname + ' is done')
+      log :info, 'harvest is done'
       true
     end
 
