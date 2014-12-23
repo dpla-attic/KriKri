@@ -1,9 +1,12 @@
 AllCops:
-  Exclude: 
+  Exclude:
     # not maintained manually
     - 'bin/rails'
     - 'spec/internal/**/*'
     # excluded
+    - 'Vagrantfile'
+    - 'Guardfile'
+    - 'spec/factories/krikri_original_record.rb' # has some longlines
     - 'spec/models/harvesters/oai_harvester_spec.rb' # has some longlines
     # grandfathered; cleanup over time
     - 'Rakefile'
@@ -24,7 +27,7 @@ HashSyntax:
 GuardClause:
   Enabled: false
 
-# `raise` and `fail` are both fine 
+# `raise` and `fail` are both fine
 SignalException:
   Enabled: false
 
