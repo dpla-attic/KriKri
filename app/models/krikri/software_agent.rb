@@ -22,8 +22,25 @@ module Krikri
     end
 
     ##
+    # @see Krikri::SoftwareAgent#log
+    def log(priority, msg)
+      self.class.log(priority, msg)
+    end
+
+    ##
     # Class methods for extension by ActiveSupport::Concern
     module ClassMethods
+
+      @@logger = ActiveSupport::TaggedLogging.new(Rails.logger)
+
+      ##
+      # Log a message, tagged in a way suitable for software agents.
+      # @see Krikri::SoftwareAgent::method_missing
+      def log(priority, msg)
+        @@logger.tagged(Time.now.to_s, Process.pid, to_s) do
+          @@logger.send(priority, msg)
+        end
+      end
 
       ##
       # @see SoftwareAgent#agent_name
@@ -57,14 +74,17 @@ module Krikri
       # @see Krikri::SoftwareAgent#agent_name
       # @return [Boolean]
       def enqueue(job_class, opts = {})
-        fail 'the given class has no #perform method' \
-          unless job_class.respond_to?(:perform)
+        fail "#{job_class} has no #perform method" unless
+          job_class.respond_to?(:perform)
         fail 'opts is not a hash' unless opts.is_a?(Hash)
         activity = Krikri::Activity.create do |a|
           a.agent = agent_name
           a.opts = JSON.generate(opts)
         end
+        log :info, "created activity #{activity.id}"
         Resque.enqueue(job_class, activity.id)
+        log :info, "enqueued #{job_class}"
+        true
       end
 
     end
