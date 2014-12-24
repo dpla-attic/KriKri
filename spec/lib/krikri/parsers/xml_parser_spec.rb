@@ -18,4 +18,5 @@ describe Krikri::XmlParser::Value do
   let(:record) { build(:oai_dc_record) }
 
   it_behaves_like 'a parser value'
+  it_behaves_like 'a parser value that has attributes'
 end
