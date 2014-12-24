@@ -14,6 +14,9 @@ module Krikri
   class Engine < ::Rails::Engine
     isolate_namespace Krikri
 
+    # Autoload various classes and modules in lib
+    config.autoload_paths += Dir["#{config.root}/lib/**/"]
+
     config.generators do |g|
       g.test_framework :rspec, :fixture => false
       g.fixture_replacement :factory_girl, :dir => 'spec/factories'
