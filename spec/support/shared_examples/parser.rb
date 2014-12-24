@@ -15,6 +15,46 @@ shared_examples_for 'a parser value' do
   let(:child) { value.children.first }
   let(:attr) { value.attributes.first }
 
+  describe '#children' do
+    it 'has children' do
+      expect(value.children).to all(be_a(String))
+    end
+  end
+
+  describe '#[]' do
+    it 'retrieves a child node' do
+      expect(value[child]).to include(an_instance_of(described_class))
+    end
+  end
+
+  describe '#child?' do
+    it 'knows its children' do
+      expect(value.child?(child)).to be true
+    end
+
+    it 'knows its non-children' do
+      expect(value.child?(:fake)).to be false
+    end
+  end
+
+  describe '#value' do
+    it 'gives a datatype representation' do
+      expect(value[child].first.value).to respond_to :to_s
+    end
+  end
+
+  describe '#values?' do
+    it 'has typed values' do
+      expect(value[child].first.values?).to be true
+    end
+  end
+end
+
+shared_examples_for 'a parser value that has attributes' do
+  let(:value) { subject || described_class.new }
+  let(:child) { value.children.first }
+  let(:attr) { value.attributes.first }
+
   describe '#attributes' do
     it 'has an attribute list as symbols' do
       expect(value.attributes).to all(be_a(Symbol))
@@ -38,34 +78,6 @@ shared_examples_for 'a parser value' do
 
     it 'raises not found if attribute does not exist' do
       expect { value.send(:fake) }.to raise_error NoMethodError
-    end
-  end
-
-  describe '#children' do
-    it 'has children' do
-      expect(value.children).to all(be_a(String))
-    end
-  end
-
-  describe '#[]' do
-    it 'retrieves a child node' do
-      expect(value[child]).to contain_exactly(an_instance_of(described_class))
-    end
-  end
-
-  describe '#child?' do
-    it 'knows its children' do
-      expect(value.child?(child)).to be true
-    end
-
-    it 'knows its non-children' do
-      expect(value.child?(:fake)).to be false
-    end
-  end
-
-  describe '#value' do
-    it 'gives a datatype representation' do
-      expect(value[child].first.value).to respond_to :to_s
     end
   end
 end

@@ -8,4 +8,5 @@ module Krikri
   autoload :XmlParser,      'krikri/parsers/xml_parser'
   # autoload Krikri::OaiDcParser
   autoload :OaiDcParser,    'krikri/parsers/oai_dc_parser'
+  autoload :JsonParser,     'krikri/parsers/json_parser'
 end
