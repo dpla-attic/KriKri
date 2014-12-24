@@ -229,3 +229,14 @@ describe Krikri::Harvesters::OAIHarvester do
     it_behaves_like 'a harvester'
   end
 end
+
+
+describe Krikri::Harvester::Registry do
+  describe '#registered?' do
+    it 'knows OAIHarvester is registered' do
+      # It should have been registered by the engine initializer, engine.rb.
+      expect(described_class.registered?(:oai)).to be true
+    end
+  end
+end
+

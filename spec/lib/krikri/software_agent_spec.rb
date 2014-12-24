@@ -2,13 +2,16 @@ require 'spec_helper'
 
 describe Krikri::SoftwareAgent do
 
+  # Use OAIHarvester as a representative SoftwareAgent ...
+
   it 'represents its agent name as the correct string, as a class' do
-    expect(Krikri::Harvester.agent_name).to eq('Krikri::Harvester')
+    expect(Krikri::Harvesters::OAIHarvester.agent_name)
+      .to eq('Krikri::Harvesters::OAIHarvester')
   end
 
   it 'represents its agent name as the correct string, as an instance' do
-    h = Krikri::Harvester.new
-    expect(h.agent_name).to eq('Krikri::Harvester')
+    h = Krikri::Harvesters::OAIHarvester.new({endpoint: 'http://example.org/'})
+    expect(h.agent_name).to eq('Krikri::Harvesters::OAIHarvester')
   end
 
   describe '#enqueue' do
@@ -16,7 +19,7 @@ describe Krikri::SoftwareAgent do
       { endpoint: 'http://example.org/endpoint', metadata_prefix: 'mods' }
     end
     # Use these classes as representatives for the tests
-    let(:agent_class) { Krikri::Harvester }
+    let(:agent_class) { Krikri::Harvesters::OAIHarvester }
     let(:job_class) { Krikri::HarvestJob }
     let(:queue_name) { job_class.instance_variable_get('@queue') }
     before do

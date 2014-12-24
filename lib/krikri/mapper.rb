@@ -60,34 +60,8 @@ module Krikri
     end
 
     ##
-    # @private
     # An application-wide registry of defined mappings
-    class Registry
-      include Singleton
-      include Enumerable
-
-      attr_reader :mappings
-      delegate :each, :[], :[]=, to: :mappings
-
-      def initialize
-        @mappings = {}
-      end
-
-      class << self
-        def get(name)
-          raise "#{name} is not a registered mapping." unless registered?(name)
-          instance[name]
-        end
-
-        def register(name, mapping)
-          raise "#{name} already registered." if registered? name
-          instance[name] = mapping
-        end
-
-        def registered?(name)
-          instance.mappings.keys.include? name
-        end
-      end
-    end
+    Registry = Class.new(Krikri::Registry)
+    
   end
 end
