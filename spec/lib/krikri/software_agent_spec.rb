@@ -10,13 +10,16 @@ describe Krikri::SoftwareAgent do
   end
 
   it 'represents its agent name as the correct string, as an instance' do
-    h = Krikri::Harvesters::OAIHarvester.new({endpoint: 'http://example.org/'})
+    h = Krikri::Harvesters::OAIHarvester.new({uri: 'http://example.org/'})
     expect(h.agent_name).to eq('Krikri::Harvesters::OAIHarvester')
   end
 
   describe '#enqueue' do
     let(:args) do
-      { endpoint: 'http://example.org/endpoint', metadata_prefix: 'mods' }
+      {
+        uri: 'http://example.org/endpoint',
+        oai: {metadata_prefix: 'mods', set: 'set1'}
+      }
     end
     # Use these classes as representatives for the tests
     let(:agent_class) { Krikri::Harvesters::OAIHarvester }

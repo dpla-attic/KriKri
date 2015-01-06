@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe Krikri::Harvesters::OAIHarvester do
 
-  let(:args) { { endpoint: 'http://example.org/endpoint' } }
+  let(:args) { { uri: 'http://example.org/endpoint' } }
   subject { described_class.new(args) }
 
   it 'has a client' do
@@ -136,7 +136,7 @@ describe Krikri::Harvesters::OAIHarvester do
     describe 'options' do
       let(:result) { double }
       let(:args) do
-        {endpoint: 'http://example.org/endpoint', metadata_prefix: 'mods'}
+        {uri: 'http://example.org/endpoint', oai: {metadata_prefix: 'mods'}}
       end
       let(:request_opts) { {set: 'moomin'} }
 
@@ -149,13 +149,13 @@ describe Krikri::Harvesters::OAIHarvester do
       shared_examples 'send options' do
         it 'sends request with option' do
           expect(subject.client).to receive(request_type)
-            .with(:metadata_prefix => args[:metadata_prefix])
+            .with(:metadata_prefix => args[:oai][:metadata_prefix])
             .and_return(result)
           subject.send(method)
         end
         it 'adds options passed into request' do
           expect(subject.client).to receive(request_type)
-            .with(:metadata_prefix => args[:metadata_prefix],
+            .with(:metadata_prefix => args[:oai][:metadata_prefix],
                   :set => request_opts[:set])
             .and_return(result)
           subject.send(method, request_opts)
@@ -189,7 +189,7 @@ describe Krikri::Harvesters::OAIHarvester do
         it 'sends request with option' do
           expect(subject.client).to receive(request_type)
             .with(:identifier => identifier,
-                  :metadata_prefix => args[:metadata_prefix])
+                  :metadata_prefix => args[:oai][:metadata_prefix])
             .and_return(result)
           subject.get_record(identifier)
         end
@@ -197,7 +197,7 @@ describe Krikri::Harvesters::OAIHarvester do
         it 'adds options passed into request' do
           expect(subject.client).to receive(request_type)
             .with(:identifier => identifier,
-                  :metadata_prefix => args[:metadata_prefix],
+                  :metadata_prefix => args[:oai][:metadata_prefix],
                   :set => request_opts[:set])
             .and_return(result)
           subject.get_record(identifier, request_opts)
@@ -207,7 +207,7 @@ describe Krikri::Harvesters::OAIHarvester do
 
     describe '#enqueue' do
       let(:args) do
-        {endpoint: 'http://example.org/endpoint', metadata_prefix: 'mods'}
+        {uri: 'http://example.org/endpoint', oai: {metadata_prefix: 'mods'}}
       end
       before do
         Resque.remove_queue('harvest')  # Not strictly necessary. Future?

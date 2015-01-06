@@ -2,8 +2,8 @@ FactoryGirl.define do
 
   factory :krikri_activity, class: Krikri::Activity do
     agent 'Krikri::Harvesters::OAIHarvester'
-    opts '{"endpoint": "http://example.org/endpoint", ' \
-         ' "metadata_prefix": "mods"}'
+    opts '{"uri": "http://example.org/endpoint", ' \
+         '"oai": {"metadata_prefix": "mods", "set": "set1"}}'
   end
 
 end
