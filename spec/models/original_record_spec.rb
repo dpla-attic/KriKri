@@ -147,9 +147,10 @@ describe Krikri::OriginalRecord do
 
     it 'reloads content_type' do
       subject.save
+      ctype = subject.content_type
       subject.content_type = 'application/xml'
       subject.reload
-      expect(subject.content_type).to eq 'application/octet-stream'
+      expect(subject.content_type).to eq ctype
     end
   end
 

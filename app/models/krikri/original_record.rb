@@ -61,7 +61,7 @@ module Krikri
     end
 
     def content_type
-      @content_type || 'application/octet-stream'
+      @content_type || 'text/xml'
     end
 
     ##
