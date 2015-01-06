@@ -14,7 +14,7 @@ module Krikri
     class << self
       def load(identifier)
         record = new(identifier)
-        raise 'No #{self} found with id: identifier' unless record.exists?
+        raise "No #{self} found with id: identifier" unless record.exists?
         record.rdf_subject = nr_uri_from_headers(record.http_head)
         record.reload
       end
@@ -61,7 +61,7 @@ module Krikri
     end
 
     def content_type
-      @content_type || 'application/octet-stream'
+      @content_type || 'text/xml'
     end
 
     ##
