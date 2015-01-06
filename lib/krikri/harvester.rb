@@ -24,7 +24,14 @@ module Krikri
   #    - #run. Wraps persistence of each record returned by #records.
   #      Runs a full harvest, inserting Original Records into the database,
   #      given the options passed to #initialize.
-  class Harvester
+  #
+  # When including, add a call to Krikri::Harvester::Registry.register() to
+  # put it in the registry so that it can be looked up.
+  # See lib/krikri/engine.rb.
+  # @see Krikri::Engine
+  #
+  module Harvester
+    extend ActiveSupport::Concern
     include SoftwareAgent
 
     ##
@@ -76,6 +83,10 @@ module Krikri
       log :info, 'harvest is done'
       true
     end
+
+    ##
+    # An application-wide registry of defined Harvesters.
+    Registry = Class.new(Krikri::Registry)
 
   end
 end

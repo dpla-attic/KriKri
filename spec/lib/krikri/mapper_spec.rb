@@ -93,34 +93,4 @@ describe Krikri::Mapper do
     end
   end
 
-  describe Krikri::Mapper::Registry do
-    before(:all) { described_class.register :tove, Krikri::Mapping.new }
-
-    describe '#get' do
-      it 'gets a registered mapping' do
-        expect(described_class.get(:tove)).to be_a Krikri::Mapping
-      end
-
-      it 'errors when unregistered' do
-        expect { described_class.get(:not_registered) }
-          .to raise_error 'not_registered is not a registered mapping.'
-      end
-    end
-
-    describe '#register' do
-      it 'creates a registry entry' do
-        expect(described_class.instance.mappings).to include :tove
-      end
-    end
-
-    describe '#registered?' do
-      it 'knows it is registered' do
-        expect(described_class.registered?(:tove)).to be true
-      end
-
-      it 'knows it is not registered' do
-        expect(described_class.registered?(:not_mapped)).to be false
-      end
-    end
-  end
 end

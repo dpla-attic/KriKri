@@ -1,7 +1,8 @@
 module Krikri::Harvesters
   ##
   # A harvester implementation for OAI-PMH
-  class OAIHarvester < Krikri::Harvester
+  class OAIHarvester
+    include Krikri::Harvester
     attr_accessor :client
 
     ##

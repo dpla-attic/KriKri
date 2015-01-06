@@ -51,5 +51,10 @@ module Krikri
       end
     end
 
+    initializer :register_harvesters do
+      Krikri::Harvester::Registry
+        .register(:oai, Krikri::Harvesters::OAIHarvester)
+    end
+
   end
 end
