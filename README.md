@@ -1,6 +1,8 @@
 Kri-Kri
 =======
 
+[![Build Status](https://travis-ci.org/dpla/KriKri.svg?branch=develop)](https://travis-ci.org/dpla/KriKri) [![Code Climate](https://codeclimate.com/github/dpla/KriKri/badges/gpa.svg)](https://codeclimate.com/github/dpla/KriKri)
+
 A Rails engine for metadata aggregation, enhancement, and quality control.
 
 Installation
@@ -128,8 +130,9 @@ configured in the `Guardfile`.
 Known Issues
 ------------
 
-Our `krikri:install` generator will install Blacklight.  Blacklight is known not to
-work well with `turbolinks`, so you should uninstall that if it's installed already:
+Our `krikri:install` generator will install [Blacklight](https://github.com/projectblacklight/blacklight).
+Blacklight is known not to  work well with `turbolinks`, so you should
+uninstall that if it's installed already:
 
 http://blog.steveklabnik.com/posts/2013-06-25-removing-turbolinks-from-rails-4
 
@@ -145,5 +148,5 @@ Please observe the following guidelines:
 Copyright & License
 --------------------
 
-Copyright Digital Public Library of America, 2014
-License: MIT
+  - Copyright Digital Public Library of America, 2014-2015
+  - License: MIT
