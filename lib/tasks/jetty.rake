@@ -2,6 +2,9 @@ require 'fileutils'
 require 'jettywrapper'
 
 namespace :jetty do
+  Jettywrapper.url = "https://github.com/dpla/marmotta-jetty/archive/3.3.0-solr-4.9.0.zip"
+
+  MARMOTTA_HOME = ENV['MARMOTTA_HOME'] || File.expand_path(File.join(Jettywrapper.app_root, 'marmotta'))
 
   desc 'Configure solr schema'
   task :config do

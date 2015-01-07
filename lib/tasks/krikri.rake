@@ -4,6 +4,8 @@ require 'dpla/map/factories'
 require 'open-uri'
 require 'resque/tasks'
 
+require 'krikri/index_service'
+
 namespace :krikri do
 
   # Tasks will execute in spec/internal unless directory is changed

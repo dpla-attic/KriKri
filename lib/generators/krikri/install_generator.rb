@@ -12,10 +12,7 @@ module Krikri
     # Factory girl is used to generate sample data
     # This must execute before run_required_generators
     def insert_factory_girl_dependency
-      append_to_file "Gemfile" do 
-        "\n\n#KriKri uses Factory Girl to generate sample data
-        gem 'factory_girl_rails', '~>4.4.0', group: :development"
-      end
+      gem 'factory_girl_rails', group: :development, version: '~> 4.4.0'
     end
 
     ##
@@ -23,10 +20,14 @@ module Krikri
     # jettywrapper is used to spin up Jetty running Solr and Marmotta
     # This must execute before run_required_generators
     def insert_jettywrapper_dependency
-      append_to_file "Gemfile" do
-        "\n\n# jettywrapper provides a Jetty container for Marmotta and Solr
-        gem 'jettywrapper', '~>1.8.3', group: :development"
-      end
+      gem 'jettywrapper', group: :development, version: '~> 1.8.3'
+    end
+
+    ##
+    # Add solr configuration
+    def configure_solr
+      copy_file 'schema.xml', 'solr_conf/schema.xml', :force => true
+      copy_file 'solrconfig.xml', 'solr_conf/solrconfig.xml', :force => true
     end
 
     ##
@@ -34,14 +35,7 @@ module Krikri
     # but it requires some setup if it's generated into
     # a development environment.
     def install_devise_dependency
-      append_to_file "Gemfile" do
-        <<-EOT.strip_heredoc
-
-        # Devise is used for authentication by KriKri and Blacklight.
-        gem 'devise', '~>3.4.1'
-
-        EOT
-      end
+      gem 'devise', version: '~> 3.4.1'
       generate "devise:install"
       generate "devise User"
       rake("db:migrate")
@@ -63,11 +57,10 @@ module Krikri
     ##
     # Copy files from KriKri
     #
-    # :force => true prevents user from having to manually accept 
+    # :force => true prevents user from having to manually accept
     # overwrite for files that are generated elsewhere
-
     def catalog_controller
-      copy_file "catalog_controller.rb", 
+      copy_file "catalog_controller.rb",
         "app/controllers/catalog_controller.rb", :force => true
     end
 
