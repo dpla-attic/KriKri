@@ -10,10 +10,15 @@ module Krikri::Harvesters
     #   Allowable options are specified in OAI::Const::Verbs. Currently :from,
     #   :until, :set, and :metadata_prefix.
     # @see OAI::Client
+    # @see #expected_opts
     def initialize(opts = {})
-      endpoint = opts.delete(:endpoint)
-      @opts = opts
-      @client = OAI::Client.new(endpoint)
+      uri = opts.delete(:uri)
+      if opts.include?(:oai)
+        @opts = opts[:oai]
+      else
+        @opts = {}
+      end
+      @client = OAI::Client.new(uri)
     end
 
     ##
@@ -59,5 +64,18 @@ module Krikri::Harvesters
         .build(identifier,
                client.get_record(opts).doc.to_s)
     end
+
+    ##
+    # @see Krikri::Harvester::expected_opts
+    def self.expected_opts
+      {
+        key: :oai,
+        opts: {
+          set: {type: :string, required: false, multiple_ok: true},
+          metadata_prefix: {type: :string, required: true}
+        }
+      }
+    end
+
   end
 end

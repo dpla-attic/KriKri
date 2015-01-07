@@ -88,5 +88,42 @@ module Krikri
     # An application-wide registry of defined Harvesters.
     Registry = Class.new(Krikri::Registry)
 
+    ##
+    # @abstract Return initialization options for the harvester.
+    #   The harvester will expect to receive these upon instantiation (in the
+    #   opts argument to #initialize), in the form:
+    #   {
+    #      key: <symbol for this harvester>,
+    #      opts: {
+    #        option_name: {type: :type, required: <boolean>,
+    #                      multiple_ok: <boolean, default false>}
+    #      }
+    #   }
+    #   ... where type could be :uri, :string, :int, etc.
+    #   ... and multiple_ok means whether it's allowed to be an array
+    #   ... for example, for OAI this might be:
+    #   {key: :oai,
+    #    set: {type: :string, required: false, multiple_ok: true},
+    #    metadata_prefix: {type: string, required: true}}
+    #
+    # @todo The actual type token values and how they'll be used is to be
+    #   determined, but something should exist for providing validation
+    #   guidelines to a client so it doesn't have to have inside knowledge of
+    #   the harvester's code.
+    #
+    # @note The options are going to vary between harvesters.  Some options
+    #   are going to be constant for the whole harvest, and some are going to
+    #   be lists that get iterated over.  For example, a set or collection.
+    #   There will be an ingestion event where we want multiple jobs enqueued,
+    #   one per set or collection.  The one option (a list) that would vary
+    #   from harvest job to harvest job might be 'set' (in the case of OAI).
+    #   This method doesn't solve how that's going to happen, but simply
+    #   provides, as a convenience, the options that the harvester wants to
+    #   see.
+    #
+    def self.expected_opts
+      raise NotImplementedError
+    end
+
   end
 end

@@ -58,8 +58,8 @@ module Krikri
       #   Krikri::Harvesters::OAIHarvester.enqueue(
       #     Krikri::HarvestJob,
       #     opts = {
-      #       endpoint: 'http://vcoai.lib.harvard.edu/vcoai/vc',
-      #       set: 'dag'
+      #       uri: 'http://vcoai.lib.harvard.edu/vcoai/vc',
+      #       oai: { set: 'dag', metadata_prefix: 'mods' }
       #     }
       #   )
       #
@@ -74,6 +74,7 @@ module Krikri
       # @see https://github.com/resque/resque/tree/1-x-stable
       # @see Krikri::HarvestJob
       # @see Krikri::SoftwareAgent#agent_name
+      # @see Krikri::Harvester::expected_opts
       # @return [Boolean]
       def enqueue(job_class, opts = {})
         fail "#{job_class} has no #perform method" unless
