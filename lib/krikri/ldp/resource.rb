@@ -69,7 +69,7 @@ module Krikri::LDP
     rescue Faraday::ResourceNotFound
       false
     rescue Faraday::ClientError => e
-      return false if e.response[:status] == 410
+      return false if !e.response.nil? && e.response[:status] == 410
       raise e
     end
     alias_method :exist?, :exists?

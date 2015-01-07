@@ -31,6 +31,21 @@ describe Krikri::LDP::Resource do
       RDF::Marmotta.new(Krikri::Settings['marmotta']['base']).clear!
     end
 
+    context 'without marmotta connection' do
+      before do
+        @real_connection = Krikri::Settings['marmotta']['ldp']
+        Krikri::Settings['marmotta']['ldp'] = 'http://localhost:0/marmotta/'
+      end
+
+      after do
+        Krikri::Settings['marmotta']['ldp'] = @real_connection
+      end
+
+      it 'raises an appropriate error' do
+        expect { subject.exists? }.to raise_error Faraday::ConnectionFailed
+      end
+    end
+
     describe '#save' do
       let(:response) { subject.save }
 
