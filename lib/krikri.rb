@@ -9,6 +9,7 @@ module Krikri
   # autoload Krikri::OaiDcParser
   autoload :OaiDcParser,    'krikri/parsers/oai_dc_parser'
   autoload :JsonParser,     'krikri/parsers/json_parser'
+  autoload :ModsParser,     'krikri/parsers/mods_parser'
 
   # Enrichments
   autoload :Enrichment,       'krikri/enrichment'
