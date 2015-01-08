@@ -34,7 +34,7 @@ describe Krikri::LDP::Resource do
     context 'without marmotta connection' do
       before do
         @real_connection = Krikri::Settings['marmotta']['ldp']
-        Krikri::Settings['marmotta']['ldp'] = 'http://localhost:0/marmotta/'
+        Krikri::Settings['marmotta']['ldp'] = 'http://localhost:4/marmotta/'
       end
 
       after do
