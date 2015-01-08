@@ -3,9 +3,17 @@ module Krikri
   # An XmlParser
   # @see Krikri::Parser
   class XmlParser < Krikri::Parser
-    def initialize(record, root_path = '/')
+    ##
+    # @param record [Krikri::OriginalRecord] a record whose properties can
+    # be parsed by the parser instance.
+    # @param root_path [String] XPath that identifies the root path for
+    # the desired parse root.
+    # @param ns [Hash] A hash containing namespaces to identify up front.
+    # For each hash item, the key refers to the prefix used, and its value
+    # is the associated namespace URI.
+    def initialize(record, root_path = '/', ns = {})
       xml = Nokogiri::XML(record.to_s)
-      ns = namespaces_from_xml(xml)
+      ns = namespaces_from_xml(xml).merge(ns)
       @root = Value.new(xml.at_xpath(root_path, ns), ns)
       super(record)
     end
