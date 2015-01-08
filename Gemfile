@@ -14,6 +14,10 @@ group :development do
   gem 'guard-rspec', require: false
 end
 
+group :test do
+  gem "codeclimate-test-reporter", require: false
+end
+
 file = File.expand_path('Gemfile',
                         ENV['ENGINE_CART_DESTINATION'] ||
                         ENV['RAILS_ROOT'] ||

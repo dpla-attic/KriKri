@@ -1,3 +1,6 @@
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
+
 ENV['RAILS_ENV'] ||= 'test'
 
 require 'engine_cart'
@@ -45,6 +48,6 @@ RSpec.configure do |config|
 
   config.after(:suite) do
     clear_repository
+    WebMock.disable_net_connect!(:allow => 'codeclimate.com')
   end
-  
 end

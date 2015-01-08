@@ -1,7 +1,7 @@
 Kri-Kri
 =======
 
-[![Build Status](https://travis-ci.org/dpla/KriKri.svg?branch=develop)](https://travis-ci.org/dpla/KriKri) [![Code Climate](https://codeclimate.com/github/dpla/KriKri/badges/gpa.svg)](https://codeclimate.com/github/dpla/KriKri)
+[![Build Status](https://travis-ci.org/dpla/KriKri.svg?branch=develop)](https://travis-ci.org/dpla/KriKri) [![Code Climate](https://codeclimate.com/github/dpla/KriKri/badges/gpa.svg)](https://codeclimate.com/github/dpla/KriKri)[![Test Coverage](https://codeclimate.com/github/dpla/KriKri/badges/coverage.svg)](https://codeclimate.com/github/dpla/KriKri)
 
 A Rails engine for metadata aggregation, enhancement, and quality control.
 
