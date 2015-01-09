@@ -48,7 +48,7 @@ shared_examples 'a generic enrichment' do
   include_context 'with record'
 
   let(:enrich_args) do
-    [record, [{ :aggregatedCHO => :title }], [{ :aggregatedCHO => :creator }]]
+    [record, [{ :sourceResource => :title }], [{ :sourceResource => :creator }]]
   end
 
   describe '#enrich' do
@@ -58,13 +58,13 @@ shared_examples 'a generic enrichment' do
 
     shared_examples 'multiple input fields' do
       before do
-        record.aggregatedCHO.first.spatial.first.name = 'NY'
-        enrich_args[1] << { :aggregatedCHO => { :spatial => :name } }
+        record.sourceResource.first.spatial.first.name = 'NY'
+        enrich_args[1] << { :sourceResource => { :spatial => :name } }
       end
 
       let(:input_values) do
-        [record.aggregatedCHO.map(&:title).flatten,
-         record.aggregatedCHO.map { |sr| sr.spatial.map(&:name) }.flatten]
+        [record.sourceResource.map(&:title).flatten,
+         record.sourceResource.map { |sr| sr.spatial.map(&:name) }.flatten]
       end
 
       it 'enriches with values for input fields' do
@@ -79,7 +79,7 @@ shared_examples 'a generic enrichment' do
       let(:new_value) { ['snufkin'] }
 
       it 'enriches targeted field' do
-        subject.enrich(*enrich_args).aggregatedCHO.map do |cho|
+        subject.enrich(*enrich_args).sourceResource.map do |cho|
           expect(cho.creator).to eq new_value
         end
       end
@@ -89,13 +89,13 @@ shared_examples 'a generic enrichment' do
       include_examples 'multiple input fields'
 
       before do
-        enrich_args[2] << { :aggregatedCHO => :spatial }
+        enrich_args[2] << { :sourceResource => :spatial }
       end
 
       let(:new_value) { [['snufkin'], ['moominvalley']] }
 
       it 'enriches targeted fields' do
-        subject.enrich(*enrich_args).aggregatedCHO.map do |cho|
+        subject.enrich(*enrich_args).sourceResource.map do |cho|
           expect(cho.creator).to eq new_value.first
           expect(cho.spatial).to eq new_value[1]
         end
@@ -111,8 +111,8 @@ shared_examples 'a field enrichment' do
   let(:updated_value) { 'Christmas in Moominvalley' }
 
   describe '#enrich_field' do
-    let(:field_chain) { [:aggregatedCHO, :creator, :providedLabel] }
-    let(:klass) { record.aggregatedCHO.first.creator.first.class }
+    let(:field_chain) { [:sourceResource, :creator, :providedLabel] }
+    let(:klass) { record.sourceResource.first.creator.first.class }
     let(:enriched) { subject.enrich_field(record, field_chain) }
 
     before do
@@ -120,17 +120,17 @@ shared_examples 'a field enrichment' do
     end
 
     it 'updates value with enriched version' do
-      expect(enriched.aggregatedCHO.first.creator.first.providedLabel)
+      expect(enriched.sourceResource.first.creator.first.providedLabel)
         .to eq [updated_value]
     end
 
     context 'when targeted value is empty' do
       before do
-        enriched.aggregatedCHO.first.creator.first.providedLabel = nil
+        enriched.sourceResource.first.creator.first.providedLabel = nil
       end
 
       it 'passes over value' do
-        expect(enriched.aggregatedCHO.first.creator.first.providedLabel)
+        expect(enriched.sourceResource.first.creator.first.providedLabel)
           .to eq []
       end
     end
@@ -139,19 +139,19 @@ shared_examples 'a field enrichment' do
       before do
         new_creator = klass.new
         new_creator.providedLabel = 'old value'
-        record.aggregatedCHO.first.creator << new_creator
-        record.aggregatedCHO.first.creator << 'literal value'
+        record.sourceResource.first.creator << new_creator
+        record.sourceResource.first.creator << 'literal value'
       end
 
       it 'retains literal values' do
-        expect(enriched.aggregatedCHO.first.creator)
+        expect(enriched.sourceResource.first.creator)
           .to contain_exactly('literal value',
                               an_instance_of(klass),
                               an_instance_of(klass))
       end
 
       it 'updates values with enriched versions' do
-        creators = enriched.aggregatedCHO.first.creator.select do |o|
+        creators = enriched.sourceResource.first.creator.select do |o|
           o.is_a?(klass)
         end
         creators.each { |val| expect(val.providedLabel).to eq [updated_value] }
@@ -159,7 +159,7 @@ shared_examples 'a field enrichment' do
 
       context 'when node is missing property' do
         before do
-          enriched.aggregatedCHO.first.creator << ActiveTriples::Resource.new
+          enriched.sourceResource.first.creator << ActiveTriples::Resource.new
         end
 
         it 'leaves node unaltered'
@@ -201,14 +201,14 @@ shared_examples 'a field enrichment' do
     context 'with field arguments' do
       let(:simple_field) { :preview }
       let(:deep_field) do
-        { :aggregatedCHO => { :creator => :providedLabel } }
+        { :sourceResource => { :creator => :providedLabel } }
       end
       let(:deep_field_2) do
-        { :aggregatedCHO => { :spatial => :parentFeature } }
+        { :sourceResource => { :spatial => :parentFeature } }
       end
 
-      let(:deep_field_chain)   { [:aggregatedCHO, :creator, :providedLabel] }
-      let(:deep_field_2_chain)   { [:aggregatedCHO, :spatial, :parentFeature] }
+      let(:deep_field_chain)   { [:sourceResource, :creator, :providedLabel] }
+      let(:deep_field_2_chain)   { [:sourceResource, :spatial, :parentFeature] }
 
       it 'runs against simple fields' do
         expect(subject).to receive(:enrich_field).with(record, [simple_field])

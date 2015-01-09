@@ -4,7 +4,7 @@ describe Krikri::Mapper do
   describe 'integration' do
     before do
       Krikri::Mapper.define(:integration) do
-        aggregatedCHO :class => DPLA::MAP::SourceResource do
+        sourceResource :class => DPLA::MAP::SourceResource do
           title record { |rec| rec['dc:title'].map(&:value) }
 
           creator :class => DPLA::MAP::Agent do
@@ -18,7 +18,7 @@ describe Krikri::Mapper do
 
     it 'maps nested values' do
       mapped = Krikri::Mapper.map(:integration, record).first
-      expect(mapped.aggregatedCHO.first.creator.first.providedLabel)
+      expect(mapped.sourceResource.first.creator.first.providedLabel)
         .to eq record.root['dc:creator'].map(&:value)
     end
   end

@@ -49,7 +49,7 @@ describe Krikri::MappingDSL do
 
   describe '#add_child' do
     before do
-      mapping.aggregatedCHO :class => DPLA::MAP::SourceResource do
+      mapping.sourceResource :class => DPLA::MAP::SourceResource do
         title 'Comet in Moominland'
 
         creator :class => DPLA::MAP::Agent do
@@ -61,7 +61,7 @@ describe Krikri::MappingDSL do
     it 'builds resource params as property value' do
       mapped = DPLA::MAP::Aggregation.new
       mapping.properties.first.to_proc.call(mapped, '')
-      expect(mapped.aggregatedCHO.first.creator.first.label)
+      expect(mapped.sourceResource.first.creator.first.label)
         .to contain_exactly('Tove Jansson')
     end
   end
