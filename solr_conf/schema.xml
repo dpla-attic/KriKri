@@ -595,6 +595,12 @@ v         currently supported on types that are sorted internally as strings
    <field name="sourceResource_isReplacedBy" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_replaces" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_rights" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="sourceResource_rightsHolder" type="string" indexed="true" stored="true" multiValued="true" />
+
+   <field name="sourceResource_rightsHolder_id" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="sourceResource_rightsHolder_type" type="string" indexed="false" stored="false" />
+   <field name="sourceResource_rightsHolder_name" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="sourceResource_rightsHolder_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
 
    <field name="sourceResource_spatial_id" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_spatial_type" type="string" indexed="false" stored="false" />
