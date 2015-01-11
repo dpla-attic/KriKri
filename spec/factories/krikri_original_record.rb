@@ -17,7 +17,17 @@ FactoryGirl.define do
    <dc:contributor>Bart Besamusca</dc:contributor>
    <dc:type>model</dc:type>
    <dc:language>eng</dc:language>
-</oai_dc:dc></metadata></record></GetRecord></OAI-PMH>
+</oai_dc:dc></metadata>
+<about>
+  <oaiProvenance:provenance xmlns:oaiProvenance="http://www.openarchives.org/OAI/2.0/provenance" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/provenance http://www.openarchives.org/OAI/2.0/provenance.xsd">
+    <oaiProvenance:originDescription harvestDate="2015-01-07" altered="true">
+    <oaiProvenance:baseURL>http://cdm16694.contentdm.oclc.org/oai/oai.php</oaiProvenance:baseURL>
+    <oaiProvenance:identifier>oai:cdm16694.contentdm.oclc.org:R6A001/1</oaiProvenance:identifier>
+    <oaiProvenance:datestamp>2015-01-07</oaiProvenance:datestamp>
+    <oaiProvenance:metadataNamespace>http://www.openarchives.org/OAI/2.0/</oaiProvenance:metadataNamespace>
+  </oaiProvenance:originDescription>
+</oaiProvenance:provenance>
+</about></record></GetRecord></OAI-PMH>
 EOS
   end
 

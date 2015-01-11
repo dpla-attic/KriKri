@@ -51,7 +51,7 @@ module Krikri::Harvesters
     def records(opts = {})
       opts = opts.merge(@opts)
       client.list_records(opts).full.lazy.flat_map do |rec|
-        Krikri::OriginalRecord.build(rec.header.identifier, rec.metadata.to_s)
+        Krikri::OriginalRecord.build(rec.header.identifier, build_record(rec))
       end
     end
 
@@ -62,7 +62,7 @@ module Krikri::Harvesters
       opts = opts.merge(@opts)
       Krikri::OriginalRecord
         .build(identifier,
-               client.get_record(opts).doc.to_s)
+               build_record(client.get_record(opts).record))
     end
 
     ##
@@ -77,5 +77,23 @@ module Krikri::Harvesters
       }
     end
 
+    private
+
+    def build_record(rec)
+      doc = Nokogiri::XML::Builder.new do |xml|
+        xml.record('xmlns' => 'http://www.openarchives.org/OAI/2.0/') {
+          xml.header {
+            xml.identifier rec.header.identifier
+            xml.datestamp  rec.header.datestamp
+            rec.header.set_spec.each do |set|
+              xml.set_spec set.text
+            end
+          }
+          xml << rec.metadata.to_s
+          xml << rec.about.to_s unless rec.about.nil?
+        }
+      end
+      doc.to_xml
+    end
   end
 end
