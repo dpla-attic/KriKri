@@ -30,10 +30,17 @@ module Krikri
     def run
       if block_given?
         set_start_time
-        yield
+        yield agent_instance
         set_end_time
       end
     end
 
+    def agent_instance
+      @angent_instance ||= agent.constantize.new(parsed_opts)
+    end
+
+    def parsed_opts
+      JSON.parse(opts, symbolize_names: true)
+    end
   end
 end

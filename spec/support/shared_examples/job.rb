@@ -1,6 +1,6 @@
 
-shared_examples 'a job' do |agent_class|
-  let(:activity) { create(:krikri_activity) }
+shared_examples 'a job' do |activity_type|
+  let(:activity) { create(activity_type) }
 
   it 'runs a harvest' do
     expect { described_class.perform(activity.id) }.not_to raise_error

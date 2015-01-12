@@ -8,9 +8,7 @@ module Krikri
     # Perform the job.
     def self.perform(activity_id)
       activity = Krikri::Activity.find(activity_id)
-      opts = JSON.parse(activity['opts'], symbolize_names: true)
-      agent = activity['agent'].constantize.new(opts)
-      activity.run { run(agent) }
+      activity.run { |agent| run(agent) }
     end
 
     private
