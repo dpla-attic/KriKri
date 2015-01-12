@@ -113,5 +113,7 @@ shared_examples 'a harvester' do
     end
   end
 
-  it_behaves_like 'a software agent'
+  it_behaves_like 'a software agent',
+    { uri: 'http://example.org/endpoint' },
+    Krikri::HarvestJob
 end
