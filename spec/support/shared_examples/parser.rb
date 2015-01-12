@@ -8,6 +8,16 @@ shared_examples_for 'a parser' do
   it 'has a record' do
     expect(parser.record).to eql record
   end
+
+  describe '#parse' do
+    it 'wraps a record in this parser' do
+      expect(described_class.parse(record)).to be_a described_class
+    end
+
+    it 'returns the record if already parsed' do
+      expect(described_class.parse(parser)).to eq parser
+    end
+  end
 end
 
 shared_examples_for 'a parser value' do

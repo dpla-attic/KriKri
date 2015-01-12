@@ -5,5 +5,6 @@ module Krikri
   # with a tool like the `ldp` gem.
   module LDP
     autoload :Resource,     'krikri/ldp/resource'
+    autoload :RdfSource,    'krikri/ldp/rdf_source'
   end
 end

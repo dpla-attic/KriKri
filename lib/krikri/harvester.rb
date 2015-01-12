@@ -51,7 +51,7 @@ module Krikri
     #
     # @param opts [Hash] a hash of options
     def initialize(opts = {})
-      @uri = opts.delete(:uri)
+      @uri = opts.fetch(:uri)
       @name = opts.delete(:name)
       @record_class = opts.delete(:record_class) { Krikri::OriginalRecord }
       @id_minter = opts.delete(:id_minter) { Krikri::Md5Minter }
@@ -100,9 +100,9 @@ module Krikri
     # This should be idempotent so it can be safely retried on errors.
     #
     # @return [Boolean]
-    def run
+    def run(activity_uri = nil)
       log :info, 'harvest is running'
-      records.each(&:save)
+      records.each { |rec| rec.save(activity_uri) }
       log :info, 'harvest is done'
       true
     end

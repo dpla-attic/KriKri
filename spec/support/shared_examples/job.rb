@@ -2,7 +2,7 @@
 shared_examples 'a job' do |activity_type|
   let(:activity) { create(activity_type) }
 
-  it 'runs a harvest' do
+  it 'runs the activity' do
     expect { described_class.perform(activity.id) }.not_to raise_error
   end
 

@@ -1,6 +1,6 @@
 
 shared_examples 'a software agent' do |args, job_class|
-  let(:agent) { subject || described_class.new }
+  subject { described_class.new(args) }
   let(:agent_class) { described_class }
 
   it 'represents its agent name as the correct string, as a class' do
@@ -9,7 +9,7 @@ shared_examples 'a software agent' do |args, job_class|
   end
 
   it 'represents its agent name as the correct string, as an instance' do
-    expect(agent.agent_name).to eq agent_class.to_s
+    expect(subject.agent_name).to eq agent_class.to_s
   end
 
   describe '#enqueue' do

@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe Krikri::OriginalRecord do
+  it_behaves_like 'an LDP Resource'
+
+  include_context 'clear repository'
 
   shared_context 'serializations' do
     it 'has a string format' do
@@ -16,13 +19,14 @@ describe Krikri::OriginalRecord do
   let(:record) { '123' }
   let(:identifier) { 'id_1234' }
 
-  after do
-    RDF::Marmotta.new(Krikri::Settings['marmotta']['base']).clear!
-  end
-
   describe '#new' do
     it 'sets #local_name' do
       expect(described_class.new(identifier).local_name).to eq identifier
+    end
+
+    it 'raises error if there are invalid characters' do
+      expect { described_class.new("#{identifier}/12") }
+        .to raise_error ArgumentError
     end
   end
 
@@ -37,6 +41,19 @@ describe Krikri::OriginalRecord do
       it 'loads resource with correct content_type' do
         expect(described_class.load(identifier).content_type)
           .to eq subject.content_type
+      end
+
+      context 'when passed a fully qualified URI' do
+        let(:uri) { subject.rdf_source.rdf_subject }
+
+        it 'raises error if the wrong base uri is used' do
+          expect { described_class.new('http://example.org/12') }
+            .to raise_error ArgumentError
+        end
+
+        it 'sets #local_name' do
+          expect(described_class.load(uri).local_name).to eq identifier
+        end
       end
     end
   end
@@ -83,7 +100,7 @@ describe Krikri::OriginalRecord do
       include_examples 'is false'
     end
 
-    context'when local name is different' do
+    context 'when local name is different' do
       before { other.local_name = 'new_mummi' }
       include_examples 'is false'
     end
@@ -108,10 +125,6 @@ describe Krikri::OriginalRecord do
   describe '#save' do
     let(:result) { subject.save }
 
-    it 'saves' do
-      expect(result).to eq true
-    end
-
     it 'updates' do
       result
       subject.content = 'abc'
@@ -133,7 +146,21 @@ describe Krikri::OriginalRecord do
       # This makes marmotta-based assumptions, there's no reason an RDFSource
       # should share a URI base with LDP-NR's it describes. It seems like a
       # valid check, anyway.
-      expect(subject.rdf_subject).to start_with "#{subject.rdf_source}."
+      expect(subject.rdf_subject)
+        .to start_with "#{subject.rdf_source.rdf_subject}."
+    end
+
+    context 'with activity uri' do
+      before do
+        subject.save(activity_uri)
+      end
+
+      let(:activity_uri) { RDF::URI('http://example.org/prov/activity/123') }
+
+      it 'sets wasGeneratedBy on #rdf_source' do
+        expect(subject.rdf_source.wasGeneratedBy.map(&:rdf_subject))
+          .to contain_exactly(activity_uri)
+      end
     end
   end
 
@@ -156,7 +183,7 @@ describe Krikri::OriginalRecord do
 
   describe '#rdf_source' do
     it 'is a uri' do
-      expect(subject.rdf_source).to be_a RDF::URI
+      expect(subject.rdf_source).to be_a Krikri::OriginalRecordMetadata
     end
   end
 end

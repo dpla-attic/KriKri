@@ -39,7 +39,8 @@ module Krikri
     #   mapping in the language specified by MappingDSL
     def define(name, opts = {}, &block)
       klass = opts.fetch(:class, DPLA::MAP::Aggregation)
-      map = Krikri::Mapping.new((klass if klass))
+      parser = opts.fetch(:parser, Krikri::XmlParser)
+      map = Krikri::Mapping.new(klass, parser)
       map.instance_eval(&block) if block_given?
       Registry.register!(name, map)
     end
@@ -62,6 +63,36 @@ module Krikri
     ##
     # An application-wide registry of defined mappings
     Registry = Class.new(Krikri::Registry)
-    
+
+    ##
+    # A SoftwareAgent to run mapping processes.
+    #
+    # @see: Krikri::SoftwareAgent, Krikri::Activity
+    class Agent
+      include SoftwareAgent
+
+      attr_reader :name, :generator_uri
+
+      def initialize(opts = {})
+        @name = opts.fetch(:name).to_sym
+        @generator_uri = RDF::URI(opts.fetch(:generator_uri))
+      end
+
+      def run(activity_uri = nil)
+        Krikri::Mapper.map(name, records).each do |rec|
+          rec.mint_id! if rec.node?
+          rec << RDF::Statement(rec, RDF::PROV.wasGeneratedBy, activity_uri) if
+            activity_uri
+          rec.save
+        end
+      end
+
+      def records
+        Krikri::ProvenanceQueryClient.find_by_activity(generator_uri)
+          .execute.lazy.flat_map do |solution|
+          OriginalRecord.load(solution.record.to_s)
+        end
+      end
+    end
   end
 end

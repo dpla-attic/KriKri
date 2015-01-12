@@ -7,18 +7,54 @@ module Krikri
     attr_accessor :content, :local_name, :rdf_subject
     attr_writer :content_type
 
+    ##
+    # Instantiate an OriginalRecord object with a #local_name matching the
+    # argument.
+    #
+    # @note calling OriginalRecord.new will instantiate an empty object. Use
+    #   .load and .build to populate the object on instantiation.
+    #
+    # @param identifier [#to_s] a string to be prepended to the base URI
+    #   (container) to form a fully qualified name for the rdf source.
     def initialize(identifier)
+      raise ArgumentError, "#{identifier} is an invalid local name" if
+        identifier.include?('/')
       @local_name = identifier
     end
 
     class << self
+      ##
+      # Instantiate and populate an existing OriginalRecord Resource.
+      #
+      # @param identifier [#to_s] a string representing the #local_name or
+      #   fully qualified URI for the resource.
+      # @return [OriginalRecord] the instantiated record.
+      # @raise when no matching record is found in the LDP datastore
       def load(identifier)
+        identifier = identifier.to_s.split('/').last if
+          identifier.start_with? base_uri
         record = new(identifier)
-        raise "No #{self} found with id: identifier" unless record.exists?
+        raise "No #{self} found with id: #{identifier}" unless record.exists?
         record.rdf_subject = nr_uri_from_headers(record.http_head)
         record.reload
       end
 
+      ##
+      # Instantiate and populate an OriginalRecord Resource (new or existing)
+      # with the specified content and content type.
+      #
+      # @param identifier [#to_s] a string representing the #local_name for the
+      #   resource.
+      # @param content [String, #read] a string or IO object containing the
+      #   content to persist to the LDP NRSource.
+      # @param content_type [String] a valid MIME type for the data contained
+      #   in #content.
+      # @return [OriginalRecord] the instantiated record.
+      #
+      # @raise when no matching record is found in the LDP datastore
+      # @note Marmotta interprets some content types universally as
+      #   LDP-RDFSources. Take care when passing new content types through to
+      #   Marmotta; you may get unexpected errors from the server.
       def build(identifier, content, content_type = nil)
         raise(ArgumentError,
               '`content` must be a readable IO object or String.'\
@@ -29,6 +65,14 @@ module Krikri
         record.content = content
         record.content_type = content_type
         record
+      end
+
+      def base_uri
+        Krikri::Settings['marmotta']['record_container']
+      end
+
+      def build_uri(local_name)
+        RDF::URI(base_uri) / local_name
       end
 
       ##
@@ -69,22 +113,26 @@ module Krikri
     #   the record
     # @see http://www.w3.org/TR/ldp/#ldpc-post-createbinlinkmetahdr
     def rdf_source
-      RDF::URI(File.join(Krikri::Settings['marmotta']['record_container'],
-                         local_name))
+      @rdf_source ||=
+        OriginalRecordMetadata.new(self.class.build_uri(local_name))
     end
 
     ##
     # Saves over LDP, passing #content and #headers to the request.
     #
+    # @param activity_uri  the activity responsible for generation
     # @raise (see Krikri::LDP::Resource#save)
     # @return [Boolean] true for success; else false
     #
     # @see Krikri::LDP::Resource#save
-    def save
+    def save(activity_uri = nil)
       response = super(@content, headers)
       @rdf_subject ||= response.env.response_headers['location']
       http_head(true)
-      exists?
+      return response unless activity_uri
+      rdf_source.wasGeneratedBy = activity_uri
+      rdf_source.save
+      response
     end
 
     ##
@@ -115,10 +163,10 @@ module Krikri
     #   rdf_source and sets rdf_subject appropriately, but race conditions
     #   are possible.
     def make_request(method, body = nil, headers = {})
-      @rdf_subject ||= rdf_source
+      @rdf_subject ||= rdf_source.rdf_subject
       super
     ensure
-      @rdf_subject = nil if rdf_subject == rdf_source
+      @rdf_subject = nil if rdf_subject == rdf_source.rdf_subject
     end
 
     ##

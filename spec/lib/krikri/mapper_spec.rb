@@ -35,7 +35,8 @@ describe Krikri::Mapper do
 
     it 'passes target class to mapping' do
       klass = Class.new
-      expect(Krikri::Mapping).to receive(:new).with(klass).once
+      expect(Krikri::Mapping).to receive(:new)
+        .with(klass, Krikri::XmlParser).once
       Krikri::Mapper.define(:klass_map, class: klass)
     end
 
@@ -92,5 +93,4 @@ describe Krikri::Mapper do
       end
     end
   end
-
 end
