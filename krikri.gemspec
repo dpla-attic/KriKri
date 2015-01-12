@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> 4.1.6"
   s.add_dependency "rails_config"
-  s.add_dependency "dpla-map", "4.0.0.0.pre.7"
+  s.add_dependency "dpla-map", "4.0.0.0.pre.8"
   s.add_dependency "rdf-marmotta", '>= 0.0.2'
   s.add_dependency "blacklight", ">= 5.3.0"
   s.add_dependency "therubyracer"
