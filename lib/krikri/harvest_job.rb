@@ -14,12 +14,11 @@ module Krikri
   #
   class HarvestJob < Krikri::Job
     @queue = :harvest
-    def self.perform(activity_id)
-      activity = Krikri::Activity.find(activity_id)
-      classname = activity['agent']
-      opts = JSON.parse(activity['opts'], symbolize_names: true)
-      harvester = classname.constantize.new(opts)
-      activity.run { harvester.run }
+
+    private
+
+    def self.run(harvester)
+      harvester.run
     end
   end
 end
