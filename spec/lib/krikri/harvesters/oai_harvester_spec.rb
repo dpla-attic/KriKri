@@ -76,7 +76,16 @@ describe Krikri::Harvesters::OAIHarvester do
    <dc:contributor>Bart Besamusca</dc:contributor>
    <dc:type>model</dc:type>
    <dc:language>eng</dc:language>
-</oai_dc:dc></metadata></record><record><header><identifier>oai:oaipmh.huygens.knaw.nl:arthurianfiction:MAN0000000013</identifier><datestamp>2012-07-13T14:27:31Z</datestamp><setSpec>arthurianfiction:manuscript</setSpec><setSpec>arthurianfiction</setSpec></header><metadata><oai_dc:dc xmlns:cmdi="http://www.clarin.eu/cmd/" xmlns:database="http://www.oclc.org/pears/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd http://www.clarin.eu/cmd/ http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1345561703673/xsd">
+</oai_dc:dc></metadata><about>
+<oaiProvenance:provenance xmlns:oaiProvenance="http://www.openarchives.org/OAI/2.0/provenance" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/provenance http://www.openarchives.org/OAI/2.0/provenance.xsd">
+<oaiProvenance:originDescription harvestDate="2015-01-07" altered="true">
+<oaiProvenance:baseURL>http://cdm16694.contentdm.oclc.org/oai/oai.php</oaiProvenance:baseURL>
+<oaiProvenance:identifier>oai:cdm16694.contentdm.oclc.org:R6A001/1</oaiProvenance:identifier>
+<oaiProvenance:datestamp>2015-01-07</oaiProvenance:datestamp>
+<oaiProvenance:metadataNamespace>http://www.openarchives.org/OAI/2.0/</oaiProvenance:metadataNamespace>
+</oaiProvenance:originDescription>
+</oaiProvenance:provenance>
+</about></record><record><header><identifier>oai:oaipmh.huygens.knaw.nl:arthurianfiction:MAN0000000013</identifier><datestamp>2012-07-13T14:27:31Z</datestamp><setSpec>arthurianfiction:manuscript</setSpec><setSpec>arthurianfiction</setSpec></header><metadata><oai_dc:dc xmlns:cmdi="http://www.clarin.eu/cmd/" xmlns:database="http://www.oclc.org/pears/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd http://www.clarin.eu/cmd/ http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1345561703673/xsd">
    <dc:title>Aberystwyth, National Library of Wales, 5667 E</dc:title>
    <dc:creator>Bart Besamusca</dc:creator>
    <dc:identifier>https://service.arthurianfiction.org/manuscript/MAN0000000013</dc:identifier>
@@ -180,11 +189,12 @@ describe Krikri::Harvesters::OAIHarvester do
 
       describe '#get_record' do
         before do
-          allow(result).to receive(:doc).and_return('')
+          allow(result).to receive(:record).and_return(oai_record)
         end
 
         let(:identifier) { 'comet_moominland' }
         let(:request_type) { :get_record }
+        let(:oai_record) { OAI::Record.new(REXML::Element.new) }
 
         it 'sends request with option' do
           expect(subject.client).to receive(request_type)
@@ -236,4 +246,3 @@ describe Krikri::Harvester::Registry do
     end
   end
 end
-

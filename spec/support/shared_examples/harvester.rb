@@ -51,11 +51,17 @@ shared_examples 'a harvester' do
     end
   end
 
-  it 'can get an individual record' do
-    expect(harvester.get_record(harvester.record_ids.first))
-      .to be_a Krikri::OriginalRecord
-  end
+  describe '#get_record' do
+    it 'gets an individual record' do
+      expect(harvester.get_record(harvester.record_ids.first))
+        .to be_a Krikri::OriginalRecord
+    end
 
+    it 'returns a normalized record' do
+      expect(harvester.get_record(harvester.record_ids.first).content)
+        .to eq harvester.records.first.content
+    end
+  end
   describe '#run' do
     it 'saves the OriginalRecords' do
       # TODO: Is this fragile? Should it change when original records have
