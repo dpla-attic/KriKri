@@ -28,6 +28,10 @@ module Krikri
 
       def register(name, item)
         raise "#{name} is already registered." if registered? name
+        register!(name, item)
+      end
+
+      def register!(name, item)
         instance[name] = item
       end
 

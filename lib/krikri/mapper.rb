@@ -41,7 +41,7 @@ module Krikri
       klass = opts.fetch(:class, DPLA::MAP::Aggregation)
       map = Krikri::Mapping.new((klass if klass))
       map.instance_eval(&block) if block_given?
-      Registry.register(name, map)
+      Registry.register!(name, map)
     end
 
     ##
