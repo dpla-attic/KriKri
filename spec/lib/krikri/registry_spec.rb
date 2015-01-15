@@ -17,6 +17,11 @@ describe Krikri::Registry do
         described_class.register(:mock, Class.new)
       end.to raise_error 'mock is already registered.'
     end
+    it 'does not error when force-registered' do
+      expect do
+        described_class.register!(:mock, Class.new)
+      end.not_to raise_error
+    end
   end
 
   describe '#registered?' do
