@@ -13,9 +13,11 @@ describe Krikri::Harvesters::OAIHarvester do
   context 'with connection' do
     before do
       # TODO: webmock ListIdentifiers, test lazy resumption
-      records = (1..100).map do |id|
+      records = (10..110).map do |id|
         element = REXML::Element.new
-        element.add_element REXML::Element.new('identifier').add_text(id.to_s)
+        element.add_element REXML::Element.new('identifier').add_text(
+          'oai:oaipmh.huygens.knaw.nl:arthurianfiction:MAN' +
+          id.to_s.rjust(10, '0'))
         OAI::Header.new(element)
       end
 
@@ -25,8 +27,9 @@ describe Krikri::Harvesters::OAIHarvester do
       # TODO: better way of maintaining example OAI record results?
       # GetRecord -- Single record OAI Request
       stub_request(:get,
-                   'http://example.org/endpoint?identifier=1&metadataPrefix='\
-                   'oai_dc&verb=GetRecord')
+                   'http://example.org/endpoint?identifier='\
+                   'oai:oaipmh.huygens.knaw.nl:arthurianfiction:MAN0000000010'\
+                   '&metadataPrefix=oai_dc&verb=GetRecord')
         .with(:headers => {
                 'Accept' => '*/*',
                 'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3'
