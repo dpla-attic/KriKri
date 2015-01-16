@@ -9,18 +9,13 @@ module Krikri
 
     ##
     # Add factory girl dependency for development
-    # Factory girl is used to generate sample data
-    # This must execute before run_required_generators
-    def insert_factory_girl_dependency
-      gem 'factory_girl_rails', group: :development, version: '~> 4.4.0'
-    end
-
-    ##
-    # Add jettywrapper dependency for development
+    # FactoryGirl is used to generate sample data
     # jettywrapper is used to spin up Jetty running Solr and Marmotta
     # This must execute before run_required_generators
-    def insert_jettywrapper_dependency
-      gem 'jettywrapper', group: :development, version: '~> 1.8.3'
+    def insert_development_dependencies
+      gem 'factory_girl_rails', group: :development, version: '~> 4.4.0'
+      gem 'jettywrapper', group: :development, version: '~> 2.0'
+      gem 'pry-rails', group: :development
     end
 
     ##
