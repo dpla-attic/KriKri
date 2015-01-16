@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_dependency "resque", "~>1.0"
 
   s.add_development_dependency "sqlite3"
-  s.add_development_dependency "jettywrapper"
+  s.add_development_dependency "jettywrapper", '~> 2.0'
   s.add_development_dependency "rspec-rails"
   s.add_development_dependency 'webmock'
   s.add_development_dependency 'factory_girl_rails', '~>4.4.0'
