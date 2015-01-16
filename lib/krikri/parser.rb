@@ -103,5 +103,75 @@ module Krikri
         raise NotImplementedError, "Can't access property #{name}"
       end
     end
+
+    ##
+    # A specialized Array object for containing Parser::Values. Provides methods
+    # for accessing and filtering values that can be chained.
+    #
+    #     my_value_array.field('dc:creator', 'foaf:name')
+    #       .match_attribute('first_name').values
+    #
+    # Methods defined on this class should return another ValueArray, an Array
+    # of literal values (retrieved from Parser::Value#value), or a single
+    # literal value.
+    class ValueArray < Array
+      ##
+      # @return [Array] literal values from the objects in this array.
+      # @see Parser::Value#value
+      def values
+        map(&:value)
+      end
+
+      ##
+      # Accesses a given field. Use multiple arguments to travel down the node
+      # hierarchy.
+      #
+      # @return [ValueArray] an array containing the nodes available in a
+      #   particular field.
+      def field(*args)
+        result = self
+        args.each do |name|
+          result = result.get_field(name)
+        end
+        result
+      end
+
+      ##
+      # Wraps the result of Array#select in a ValueArray
+      #
+      # @see Array#select
+      def select(*)
+        self.class.new(super)
+      end
+
+      ##
+      # @param name [#to_sym] an attribute name
+      # @param other [Object] an object to for equality with the
+      #   values from the given attribute.
+      #
+      # @return [ValueArray] an array containing nodes for which the specified
+      #   attribute has a value matching the given object.
+      def match_attribute(name, other)
+        select do |v|
+          next unless v.attribute?(name.to_sym)
+          v.send(name).downcase == other.downcase
+        end
+      end
+
+      ##
+      # Wraps the root node of the given record in this class.
+      #
+      # @param record [Krikri::Parser] a parsed record to wrap in a ValueArray
+      # @return [ValueArray]
+      def self.build(record)
+        new([record.root])
+      end
+
+      protected
+
+      def get_field(name)
+        self.class.new(flat_map { |val| val[name] })
+      end
+    end
   end
 end
