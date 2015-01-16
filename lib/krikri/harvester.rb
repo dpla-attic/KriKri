@@ -34,6 +34,29 @@ module Krikri
     extend ActiveSupport::Concern
     include SoftwareAgent
 
+    attr_accessor :uri, :name
+
+    ##
+    # Accepts options for a generic harvester:
+    #   uri: a URI for the harvest endpoint or provider
+    #   name: a name for the harvester or provider, SHOULD be supplied when the
+    #         provider does not use universally unique identifiers (optional).
+    #   record_class: Class of records to generate (optional; defaults to
+    #                 Krikri::OriginalRecord).
+    #   id_minter: Module to create identifiers for generated records (optional;
+    #              defaults to Krikri::Md5Minter)
+    #
+    # Pass harvester specific options to inheriting classes under a key for
+    # that harvester. E.g. { uri: my_uri, oai: { metadata_prefix: :oai_dc } }
+    #
+    # @param opts [Hash] a hash of options
+    def initialize(opts = {})
+      @uri = opts.delete(:uri)
+      @name = opts.delete(:name)
+      @record_class = opts.delete(:record_class) { Krikri::OriginalRecord }
+      @id_minter = opts.delete(:id_minter) { Krikri::Md5Minter }
+    end
+
     ##
     # @abstract Provide a low-memory, lazy enumerable for record ids.
     #
@@ -125,5 +148,14 @@ module Krikri
       raise NotImplementedError
     end
 
+    private
+
+    ##
+    # Given a seed, sends a request for an id to the minter.
+    #
+    # @param seed [#to_s] seed to pass to minter
+    def mint_id(seed)
+      @id_minter.create(*[seed, @name].compact)
+    end
   end
 end
