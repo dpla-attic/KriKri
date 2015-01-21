@@ -26,6 +26,7 @@ module Krikri
     end
 
     ##
+    # Install Devise
     # Devise is a dependency, and is specified in krikri.gemspec,
     # but it requires some setup if it's generated into
     # a development environment.
@@ -45,15 +46,19 @@ module Krikri
     # This will add routes at with the krikri namespace in the name
     # For example:
     #   /krikri/institutions
+    #
+    # TODO: Add a default route: # route 'root :to => "krikri/records#index"'
     def inject_krikri_routes
       route "mount Krikri::Engine => '/krikri'"
     end
 
     ##
-    # Copy files from KriKri
+    # Copy controllers from KriKri
     # :force => true prevents user from having to manually accept
-    # overwrite for files that are generated elsewhere
-    def catalog_controller
+    # overwrite for files that are generated elsewhere.
+    def copy_krikri_controllers
+      copy_file "application_controller.rb",
+        "app/controllers/application_controller.rb", :force => true
       copy_file "catalog_controller.rb",
         "app/controllers/catalog_controller.rb", :force => true
     end
