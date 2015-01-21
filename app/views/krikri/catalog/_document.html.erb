@@ -1,0 +1,6 @@
+<% # This view is shared by both Records and ValidationReports %>
+<% # Its path is defined in SolrDocument %>
+<% # Container for a single doc -%>
+<div class="document <%= render_document_class document %>" itemscope itemtype="<%= document.itemtype %>">
+  <%= render_document_partials document, blacklight_config.view_config(document_index_view_type).partials, :document_counter => document_counter %>
+</div>

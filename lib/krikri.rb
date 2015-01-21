@@ -1,10 +1,12 @@
+##
+# Require 'blacklight' before 'krikri/engine' to ensure that view order is 
+# configured properly.
 require 'rails'
 require 'devise'
-require "krikri/engine"
 require 'blacklight'
+require "krikri/engine"
 
 module Krikri
-  # autoload Krikri::XMLParser
   autoload :XmlParser,      'krikri/parsers/xml_parser'
   # autoload Krikri::OaiDcParser
   autoload :OaiDcParser,    'krikri/parsers/oai_dc_parser'

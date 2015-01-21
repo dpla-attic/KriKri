@@ -51,18 +51,11 @@ module Krikri
 
     ##
     # Copy files from KriKri
-    #
     # :force => true prevents user from having to manually accept
     # overwrite for files that are generated elsewhere
     def catalog_controller
       copy_file "catalog_controller.rb",
         "app/controllers/catalog_controller.rb", :force => true
     end
-
-    def catalog_view_home
-      copy_file "_home.html.erb", "app/views/catalog/_home.html.erb"
-    end
-
   end
-
 end
