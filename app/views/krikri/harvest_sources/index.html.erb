@@ -1,5 +1,10 @@
 <% content_for :title do %>Harvest Sources for <%= @institution.name %><% end %>
 
+<%= render partial: 'shared/ajax_modal' %>
+
+<div id="main-container" class="container">
+  <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
+
 <h1>Harvest Sources for <%= @institution.name %></h1>
 
 <% @harvest_sources.each do |harvest_source| %>
@@ -21,5 +26,6 @@
 
 <%= link_to 'New',
     new_institution_harvest_source_path(institution_id: @institution.id)
-%>
+%> | 
 <%= link_to 'Back', institution_path(@institution) %>
+</div>

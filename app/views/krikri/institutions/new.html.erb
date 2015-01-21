@@ -1,5 +1,9 @@
-<h1>New Institution</h1>
+<%= render partial: 'shared/ajax_modal' %>
 
-<%= render 'form' %>
+<div id="main-container" class="container">
+  <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
+  <h1>New Institution</h1>
+  <%= render 'form' %>
 
 <%= link_to 'Back', institutions_path %>
+</div>
