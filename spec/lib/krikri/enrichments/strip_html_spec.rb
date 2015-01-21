@@ -1,18 +1,21 @@
+# -*- coding: utf-8 -*-
 require 'spec_helper'
 
 describe Krikri::Enrichments::StripHtml do
   it_behaves_like 'a field enrichment'
 
-  let(:start_value) { '<html>Moomin <i><b>Valley</i></b>' }
-  let(:end_value) { 'Moomin Valley' }
+  values = [{ :string => 'removes html tags from fields',
+              :start => '<html>Moomin <i><b>Valley</i></b>',
+              :end => 'Moomin Valley'
+            },
+            { :string => 'leaves unicode chars',
+              :start => '<i>Muminfamiljen</i> ska ge sig ut på skattjakt',
+              :end => 'Muminfamiljen ska ge sig ut på skattjakt'
+            },
+            { :string => 'leaves other values alone',
+              :start => 'Muminfamiljen ska ge sig ut på skattjakt',
+              :end => 'Muminfamiljen ska ge sig ut på skattjakt'
+            }]
 
-  it 'skips non-string values' do
-    date = Date.today
-    expect(subject.enrich_value(date)).to eq date
-  end
-
-  it 'removes html tags from fields' do
-    expect(subject.enrich_value(start_value))
-      .to eq end_value
-  end
+  it_behaves_like 'a string enrichment', values
 end
