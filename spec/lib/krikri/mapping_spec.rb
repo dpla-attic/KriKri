@@ -11,7 +11,7 @@ describe Krikri::Mapping do
 
     it 'builds target class set in initializer' do
       klass = DPLA::MAP::SourceResource
-      new_mapping = Krikri::Mapping.new(klass)
+      new_mapping = described_class.new(klass)
       expect(new_mapping.process_record(record)).to be_a klass
     end
 
@@ -22,6 +22,13 @@ describe Krikri::Mapping do
 
       subject { described_class.new }
       let(:value) { 'Rights Reserved; Moomin Access Only' }
+
+      it 'can inherit properties' do
+        new_mapping = described_class.new(DPLA::MAP::Aggregation,
+                                          Krikri::XmlParser,
+                                          subject)
+        expect(new_mapping.properties).to eq subject.properties
+      end
 
       it 'sets value' do
         expect_any_instance_of(DPLA::MAP::Aggregation)

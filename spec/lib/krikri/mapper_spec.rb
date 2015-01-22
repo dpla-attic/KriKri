@@ -24,6 +24,8 @@ describe Krikri::Mapper do
   end
 
   describe '#define' do
+    let(:klass) { Class.new }
+
     it 'registers a mapping' do
       Krikri::Mapper.define :metadata_map
       expect(Krikri::Mapper::Registry.registered?(:metadata_map)).to be true
@@ -34,10 +36,28 @@ describe Krikri::Mapper do
     end
 
     it 'passes target class to mapping' do
-      klass = Class.new
       expect(Krikri::Mapping).to receive(:new)
-        .with(klass, Krikri::XmlParser).once
+        .with(klass, Krikri::XmlParser, nil).once
       Krikri::Mapper.define(:klass_map, class: klass)
+    end
+
+    it 'passes parser to mapping' do
+      expect(Krikri::Mapping).to receive(:new)
+        .with(DPLA::MAP::Aggregation, klass, nil).once
+      Krikri::Mapper.define(:parser_map, parser: klass)
+    end
+
+    it 'passes parent to mapping' do
+      parent_mapping = instance_double(Krikri::Mapping)
+
+      allow(described_class::Registry).to receive(:registered?).with(:my_parent)
+        .and_return(true)
+      allow(described_class::Registry).to receive(:get).with(:my_parent)
+        .and_return(parent_mapping)
+      expect(Krikri::Mapping).to receive(:new)
+        .with(DPLA::MAP::Aggregation, Krikri::XmlParser, parent_mapping).once
+
+      Krikri::Mapper.define(:parent_map, parent: :my_parent)
     end
 
     it 'hits DSL methods' do

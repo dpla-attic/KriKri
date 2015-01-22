@@ -40,7 +40,8 @@ module Krikri
     def define(name, opts = {}, &block)
       klass = opts.fetch(:class, DPLA::MAP::Aggregation)
       parser = opts.fetch(:parser, Krikri::XmlParser)
-      map = Krikri::Mapping.new(klass, parser)
+      parent = opts.include?(:parent) ? Registry.get(opts[:parent]) : nil
+      map = Krikri::Mapping.new(klass, parser, parent)
       map.instance_eval(&block) if block_given?
       Registry.register!(name, map)
     end

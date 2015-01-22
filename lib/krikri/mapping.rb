@@ -15,9 +15,12 @@ module Krikri
     ##
     # @param klass [Class] The model class to build in the mapping process.
     # @param parser [Class] The parser class with which to process resources.
-    def initialize(klass = DPLA::MAP::Aggregation, parser = Krikri::XmlParser)
+    def initialize(klass = DPLA::MAP::Aggregation,
+                   parser = Krikri::XmlParser,
+                   parent = nil)
       @klass = klass
       @parser = parser
+      @properties = parent.properties if parent
     end
 
     ##
