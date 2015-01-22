@@ -1,4 +1,4 @@
-require "codeclimate-test-reporter"
+require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
 
 ENV['RAILS_ENV'] ||= 'test'
@@ -39,7 +39,7 @@ RSpec.configure do |config|
   config.order = 'random'
 
   def clear_repository
-    RDF::Marmotta.new(Krikri::Settings['marmotta']['base']).clear!
+    Krikri::Repository.clear!
   end
 
   config.before(:suite) do

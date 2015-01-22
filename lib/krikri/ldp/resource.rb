@@ -10,7 +10,7 @@ module Krikri::LDP
     ##
     # @return [Faraday::Connection] a connection to the configured LDP endpoint
     def ldp_connection
-      @ldp_conn ||= Faraday.new(Krikri::Settings['marmotta']['ldp']) do |conn|
+      @ldp_conn ||= Faraday.new(ldp_ns) do |conn|
         conn.use Faraday::Response::RaiseError
         conn.use FaradayMiddleware::FollowRedirects, limit: 3
         conn.adapter Faraday.default_adapter
@@ -124,6 +124,7 @@ module Krikri::LDP
     #   Faraday::ClientError#response contains the full response.
     # @return [Faraday::Response] the server's response
     def make_request(method, body = nil, headers = {})
+      validate_subject
       ldp_connection.send(method) do |request|
         request.url rdf_subject
         request.headers = headers if headers
@@ -133,6 +134,34 @@ module Krikri::LDP
 
     def default_content_type
       'text/turtle'
+    end
+
+    private
+
+    def ldp_ns
+      Krikri::Settings['marmotta']['ldp']
+    end
+
+    def validate_subject
+      validate_not_nil
+      validate_not_node
+      validate_namespace
+      true
+    end
+
+    def validate_not_nil
+      raise "#{self.class} requires a URI rdf_subject, but got nil." if
+        rdf_subject.nil?
+    end
+
+    def validate_not_node
+      raise "#{self.class} requires a URI rdf_subject, but got a node." if
+        rdf_subject.respond_to?(:node?) && rdf_subject.node?
+    end
+
+    def validate_namespace
+      raise "#{self.class} requires an rdf_subject in #{ldp_ns}, but "\
+      "got #{rdf_subject}." unless rdf_subject.to_s.starts_with? ldp_ns
     end
   end
 end

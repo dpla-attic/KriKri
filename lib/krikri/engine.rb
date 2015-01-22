@@ -56,5 +56,32 @@ module Krikri
         .register(:oai, Krikri::Harvesters::OAIHarvester)
     end
 
+    initializer :rdf_repository do
+      Krikri::Repository =
+        RDF::Marmotta.new(Krikri::Settings['marmotta']['base'])
+    end
+
+    initializer :aggregation do
+      DPLA::MAP::Aggregation.class_eval do
+        include Krikri::LDP::RdfSource
+        configure :base_uri => Krikri::Settings['marmotta']['item_container']
+
+        def mint_id!(seed = nil)
+          return set_subject!(seed) if seed
+          return set_subject!(SecureRandom.hex) if
+            originalRecord.empty? || originalRecord.first.node?
+          set_subject!(local_name_from_original_record)
+        end
+
+        private
+
+        def local_name_from_original_record
+          return nil if originalRecord.empty?
+          raise "#{self} has more than one OriginalRecord, cannot source a " \
+          "definitive identifier." unless originalRecord.length == 1
+          originalRecord.first.rdf_subject.path.split('/').last.split('.').first
+        end
+      end
+    end
   end
 end

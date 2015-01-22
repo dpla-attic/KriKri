@@ -17,6 +17,16 @@ module Krikri
     end
 
     ##
+    # Instantiates a parser object to wrap the record. Returns the record
+    # as is if it is already parsed.
+    #
+    # @param record the record to parse
+    # @return [Krikri::Parser] a parsed record object
+    def self.parse(record)
+      record.is_a?(Krikri::Parser) ? record : new(record)
+    end
+
+    ##
     # A generic parser value.
     #
     # Interface to a single value node which can access typed data values (e.g.

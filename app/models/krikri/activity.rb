@@ -8,6 +8,16 @@ module Krikri
   # it is -- harvest, enrichment, etc.
   #
   class Activity < ActiveRecord::Base
+    # @!attribute agent
+    #    @return [String] a string representing the Krikri::SoftwareAgent
+    #                     responsible for the activity.
+    # @!attribute end_time
+    #    @return [DateTime] a datestamp marking the activity's competion
+    # @!attribute opts
+    #    @return [JSON] the options to pass to the #agent class when running
+    #                   the activity
+    # @!attribute start_time
+    #    @return [DateTime] a datestamp marking the activity's start
 
     validate :agent_must_be_a_software_agent
 
@@ -27,13 +37,33 @@ module Krikri
       update_attribute(:end_time, now)
     end
 
+    ##
+    # Runs the block, setting the start and end time of the run. The given block
+    # is passed an instance of the agent, and a URI representing this Activity.
     def run
       if block_given?
         set_start_time
-        yield
+        yield agent_instance, rdf_subject
         set_end_time
       end
     end
 
+    ##
+    # Instantiates and returns an instance of the Agent class with the values in
+    # opts.
+    #
+    # @return [Agent] an instance of the class stored in Agent
+    def agent_instance
+      @agent_instance ||= agent.constantize.new(parsed_opts)
+    end
+
+    def parsed_opts
+      JSON.parse(opts, symbolize_names: true)
+    end
+
+    def rdf_subject
+      RDF::URI(Krikri::Settings['marmotta']['ldp']) /
+        Krikri::Settings['prov']['activity'] / id.to_s
+    end
   end
 end
