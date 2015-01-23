@@ -27,7 +27,6 @@ module Krikri
       }
 
       # solr field configuration for search results/index views
-      config.index.title_field = 'sourceResource_title'
 
       # solr fields that will be treated as facets by the blacklight application
       #   The ordering of the field names is the order of the display
@@ -65,7 +64,7 @@ module Krikri
 
       # solr fields to be displayed in the index (search results) view
       #   The ordering of the field names is the order of the display
-      config.add_index_field 'id', :label => 'ID'
+      config.add_index_field 'sourceResource_title', :label => 'Title'
       config.add_index_field 'sourceResource_description',
                              :label => 'Description'
       config.add_index_field 'sourceResource_date_providedLabel',
@@ -78,11 +77,8 @@ module Krikri
       config.index.thumbnail_field = :preview_id
 
       config.show.route = { controller: 'records' }
-    end
 
-    def show
-      # This will show an original records alongside an enhanced record.
+      config.solr_document_model = Krikri::SearchIndexDocument
     end
-
   end
 end

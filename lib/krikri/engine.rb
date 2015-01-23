@@ -77,6 +77,19 @@ module Krikri
           set_subject!(local_name_from_original_record)
         end
 
+        ##
+        # Get the persisted original record for this Aggregation.
+        # @return [Krikri::OriginalRecord, nil]
+        #
+        # An Exception will be raised if:
+        #   the original record id is invalid.
+        #   the original record has not been persisted to Marmotta.
+        #   there is a connection problem with  Marmotta.
+        def original_record
+          Krikri::OriginalRecord.load(originalRecord.first.rdf_subject
+            .to_s)
+        end
+
         private
 
         def local_name_from_original_record
