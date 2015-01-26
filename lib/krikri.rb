@@ -12,4 +12,5 @@ module Krikri
   autoload :OaiDcParser,    'krikri/parsers/oai_dc_parser'
   autoload :JsonParser,     'krikri/parsers/json_parser'
   autoload :ModsParser,     'krikri/parsers/mods_parser'
+  autoload :QdcParser,      'krikri/parsers/qdc_parser'
 end
