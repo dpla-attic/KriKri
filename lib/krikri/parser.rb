@@ -114,7 +114,16 @@ module Krikri
     # Methods defined on this class should return another ValueArray, an Array
     # of literal values (retrieved from Parser::Value#value), or a single
     # literal value.
-    class ValueArray < Array
+    class ValueArray
+      include Enumerable
+
+      delegate :<<, :[], :[]=, :each, :empty?, :map, :to_a, :to_ary,
+      :to => :@array
+
+      def initialize(array = [])
+        @array = array
+      end
+
       ##
       # @return [Array] literal values from the objects in this array.
       # @see Parser::Value#value
@@ -140,8 +149,16 @@ module Krikri
       # Wraps the result of Array#select in a ValueArray
       #
       # @see Array#select
-      def select(*)
-        self.class.new(super)
+      def select(*args, &block)
+        self.class.new(@array.select(*args, &block))
+      end
+
+      ##
+      # Wraps the result of Array#reject in a ValueArray
+      #
+      # @see Array#reject
+      def reject(*args, &block)
+        self.class.new(@array.reject(*args, &block))
       end
 
       ##

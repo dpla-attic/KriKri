@@ -11,7 +11,7 @@ describe Krikri::Parser::ValueArray do
   end
 
   it 'is an Array' do
-    expect(subject).to be_a Array
+    expect(subject.to_a).to be_a Array
   end
 
   describe '.build' do
@@ -57,6 +57,17 @@ describe Krikri::Parser::ValueArray do
 
     it 'returns an instance of its class' do
       expect(subject.select {}).to be_a described_class
+    end
+  end
+
+  describe '#reject' do
+    it 'creates new array not containing rejected values' do
+      expect(subject.reject { |v| v.value == 'value_1'})
+        .not_to include(values[1])
+    end
+
+    it 'returns an instance of its class' do
+      expect(subject.reject {}).to be_a described_class
     end
   end
 
