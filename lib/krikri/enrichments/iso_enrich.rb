@@ -12,11 +12,15 @@ module Krikri::Enrichments
   #   'eng'     => 'http://lexvo.org/id/iso639-3/eng'
   #   'english' => 'http://lexvo.org/id/iso639-3/eng'
   #
+  # If no matches are found, returns a bnode with the input value as
+  # providedLabel.
+  #
   # If passed an ActiveTriples::Resource, the enrichment will:
   #
   #   - Perform the above text matching on any present `provededLabel`s,
-  #     returning empty if no matches are found.  If multiple values are
-  #     provided and multiple matches found, they will be deduplicated.
+  #     returning the original node if no results are found.  If multiple
+  #     values are provided and multiple matches found, they will be
+  #     deduplicated.
   #   - Leave DPLA::MAP::Controlled::Language objects that are not bnodes
   #     unaltered.
   #   - Remove any values which are not either bnodes or members of
