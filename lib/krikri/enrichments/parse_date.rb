@@ -1,9 +1,21 @@
 module Krikri::Enrichments
   ##
-  # Normalizes date strings to
+  # Normalizes date strings to EDTF or Date objects.
   #
-  #   StripPunctuation.new.enrich_value("\tmo!ominpa)(pa  \n .$%^ moominmama  ")
-  #   # => "\tmoominpapa  \n  moominmama  "
+  # Attempts to convert a string value to a Date object:
+  #
+  #   - Parses EDTF values, returns an appropriate EDTF object if
+  #     a match is found; then...
+  #   - Parses values in %m*%d*%Y format and returns a Date object if
+  #     appropriate.
+  #   - Parses values that match any of Date#parse's supported formats.
+  #
+  # If the value is not a `String` or is parsed as invalid by all
+  # parsers, the original value is returned unaltered.
+  #
+  # @see Date#parse
+  # @see https://github.com/inukshuk/edtf-ruby/blob/master/README.md Ruby EDTF
+  # @see http://www.loc.gov/standards/datetime/pre-submission.html EDTF Draft
   class ParseDate
     include Krikri::FieldEnrichment
 
@@ -11,7 +23,7 @@ module Krikri::Enrichments
       return value unless value.is_a? String
       date = Date.edtf(value)
       begin
-        date ||= (parse_m_d_y(value) || Date.parse(value))
+        date || (parse_m_d_y(value) || Date.parse(value))
       rescue ArgumentError
         value
       end
