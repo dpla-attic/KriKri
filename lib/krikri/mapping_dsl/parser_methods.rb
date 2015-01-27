@@ -35,6 +35,8 @@ module Krikri::MappingDSL
     #   OriginalRecord associated with the parsed record passed as its argument.
     def record_uri
       lambda do |parsed|
+        raise "Tried to access subject URI for #{parsed.record}, " \
+        "but it is not saved." unless parsed.record.exists?
         parsed.record.rdf_subject
       end
     end

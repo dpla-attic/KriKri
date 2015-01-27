@@ -41,10 +41,18 @@ describe Krikri::MappingDSL::ParserMethods do
   end
 
   describe '#record_uri' do
-    it 'calls local_name on the record' do
+    it 'gets uri for record ' do
+      allow(record).to receive_message_chain(:record, :exists?)
+        .and_return(true)
       expect(record).to receive_message_chain(:record, :rdf_subject)
         .and_return('http://example.org/moomin')
       expect(subject.record_uri.call(record)).to eq 'http://example.org/moomin'
+    end
+
+    it 'raises an error when record does not exist' do
+      allow(record).to receive_message_chain(:record, :exists?)
+        .and_return(false)
+      expect { subject.record_uri.call(record) }.to raise_error
     end
   end
 end

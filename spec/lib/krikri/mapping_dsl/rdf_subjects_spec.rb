@@ -105,7 +105,7 @@ describe Krikri::MappingDSL::RdfSubjects do
 
         it 'raises an error' do
           expect { subject.to_proc.call(mapped, '') }
-            .to raise_error 'URI must be set to a single value'
+            .to raise_error "URI must be set to a single value; got #{value}"
         end
       end
     end
