@@ -34,6 +34,8 @@ describe Krikri::Parser::ValueArray do
         nested_field = instance_double(Krikri::Parser::Value)
         allow(val).to receive(:[]).with(:field_name)
           .and_return(nested_field)
+        allow(val).to receive(:[]).with(:nonexistent_field)
+          .and_return(described_class.new([]))
         allow(nested_field).to receive(:[]).with(:nested_name)
           .and_return(:final_value)
       end
@@ -44,8 +46,35 @@ describe Krikri::Parser::ValueArray do
         .to contain_exactly(:final_value, :final_value, :final_value)
     end
 
+    it 'returns nil for a nonexistent field' do
+      expect(subject.field(:nonexistent_field)).to be_empty
+    end
+
     it 'returns an instance of its class' do
       expect(subject.field(:field_name)).to be_a described_class
+    end
+  end
+
+  describe '#first_value' do
+    it 'returns a single item ValueArray without an arguments' do
+      expect(subject.first_value).to contain_exactly values[0]
+    end
+
+    it 'returns only requested items when called with an argument' do
+      expect(subject.first_value(2)).to contain_exactly(values[0], values[1])
+      expect(subject.first_value(2).count).to eq(2)
+    end
+
+    it 'returns an instance of its class' do
+      expect(subject.first_value).to be_a described_class
+    end
+
+    context 'with empty field' do
+      let(:values) { [] }
+
+      it 'returns an empty ValueArray' do
+        expect(subject.first_value).to be_empty
+      end
     end
   end
 

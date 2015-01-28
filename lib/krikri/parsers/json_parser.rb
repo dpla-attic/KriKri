@@ -48,8 +48,9 @@ module Krikri
         if @node[name].is_a?(Array)
           vals = @node[name].map { |node| self.class.new(node) }
         else
-          vals = self.class.new(@node[name])
+          vals = Array(self.class.new(@node[name]))
         end
+        vals.reject! { |n| n.node.nil? }
         Krikri::Parser::ValueArray.new(vals)
       end
 

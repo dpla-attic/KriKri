@@ -75,7 +75,11 @@ module Krikri
       # @param name [#to_sym] an attribute name to query
       # @return [Boolean] true if `name` is an attribute of the current node
       def attribute?(name)
-        attributes.include?(name)
+        begin
+          attributes.include?(name)
+        rescue NotImplementedError
+          false
+        end
       end
 
       def method_missing(name, *args, &block)
@@ -143,6 +147,17 @@ module Krikri
           result = result.get_field(name)
         end
         result
+      end
+
+      ##
+      # Retrieves the first element of a ValueArray. Uses an optional argument
+      # to specify how many items to return. By design, it behaves similarly
+      # to Array#first, but it intentionally doesn't override it.
+      #
+      # @return [ValueArray] a Krikri::Parser::ValueArray for first n elements
+      def first_value(*args)
+        return self.class.new(@array.first(*args)) unless args.empty?
+        self.class.new([@array.first].compact)
       end
 
       ##
