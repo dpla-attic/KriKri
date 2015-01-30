@@ -5,10 +5,10 @@ describe Krikri::Mapper do
     before do
       Krikri::Mapper.define(:integration) do
         sourceResource :class => DPLA::MAP::SourceResource do
-          title record { |rec| rec['dc:title'].map(&:value) }
+          title record.field('dc:title')
 
           creator :class => DPLA::MAP::Agent do
-            providedLabel record { |rec| rec['dc:creator'].map(&:value) }
+            providedLabel record.field('dc:creator')
           end
         end
       end

@@ -46,10 +46,12 @@ module Krikri
 
       def get_child_nodes(name)
         if @node[name].is_a?(Array)
-          @node[name].map { |node| self.class.new(node) }
+          vals = @node[name].map { |node| self.class.new(node) }
         else
-          Array.new([self.class.new(@node[name])])
+          vals = Array(self.class.new(@node[name]))
         end
+        vals.reject! { |n| n.node.nil? }
+        Krikri::Parser::ValueArray.new(vals)
       end
 
       def attribute(name)

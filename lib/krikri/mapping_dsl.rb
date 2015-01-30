@@ -30,7 +30,7 @@ module Krikri
 
     def add_child(name, opts = {}, &block)
       delete_property(name)
-      properties << ChildDeclaration.new(name, opts.fetch(:class), &block)
+      properties << ChildDeclaration.new(name, opts.delete(:class), opts, &block)
     end
 
     def add_property(name, value = nil, &block)

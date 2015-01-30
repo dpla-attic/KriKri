@@ -32,8 +32,16 @@ shared_examples_for 'a parser value' do
   end
 
   describe '#[]' do
+    it 'gives a ValueArray' do
+      expect(value[child]).to be_a Krikri::Parser::ValueArray
+    end
+
     it 'retrieves a child node' do
       expect(value[child]).to include(an_instance_of(described_class))
+    end
+
+    it 'gives an empty ValueArray for non-nodes' do
+      expect(value['fake']).to be_empty
     end
   end
 

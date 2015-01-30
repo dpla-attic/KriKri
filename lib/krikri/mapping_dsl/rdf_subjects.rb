@@ -13,7 +13,8 @@ module Krikri::MappingDSL
         value = @value
         lambda do |target, record|
           value = value.call(record) if value.respond_to? :call
-          raise 'URI must be set to a single value' if Array(value).count != 1
+          raise "URI must be set to a single value; got #{value}" if
+            Array(value).count != 1
           value = value.first if value.is_a? Enumerable
           return target.send(setter, value) unless block
           target.send(setter, instance_exec(value, &block))

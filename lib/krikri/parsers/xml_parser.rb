@@ -62,8 +62,8 @@ module Krikri
       private
 
       def get_child_nodes(name)
-        @node.xpath("#{@node.path}/#{name}", @namespaces)
-          .map { |node| self.class.new(node, @namespaces) }
+        Krikri::Parser::ValueArray.new(@node.xpath("#{@node.path}/#{name}", @namespaces)
+          .map { |node| self.class.new(node, @namespaces) })
       end
 
       def attribute(name)
@@ -71,7 +71,7 @@ module Krikri
       end
 
       def select_values
-        @node.children.select(&:text?)
+        Krikri::Parser::ValueArray.new(@node.children.select(&:text?))
       end
     end
   end
