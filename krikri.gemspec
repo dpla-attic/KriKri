@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
                    'Mark Matienzo']
   s.email       = ["tech@dp.la"]
   s.homepage    = "http://github.com/dpla/KriKri"
-  s.summary     = "KriKri ingests objects."
+  s.summary     = "A Rails engine for metadata aggregation, enhancement, and quality control."
   s.description = "Metadata aggregation and enrichment for cultural heritage institutions."
   s.license     = "MIT"
 
