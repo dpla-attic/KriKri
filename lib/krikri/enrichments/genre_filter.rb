@@ -3,7 +3,6 @@ module Krikri::Enrichments
   # Enrichment to remove non-genre fields from
   #
   #   StripHtml.new.enrich_value('Book') => 'Book'
-  #   StripHtml.new.enrich_value('book') => 'book'
   #   StripHtml.new.enrich_value('not a book') => nil
   #
   # Allowed genre terms are:
