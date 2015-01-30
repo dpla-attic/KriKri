@@ -5,6 +5,7 @@ require 'pry'
 describe Krikri::Harvesters::CouchdbHarvester do
 
   let(:args) { { uri: 'http://example.org:5984/couchdb' } }
+  let(:svr) { double(Analysand::StreamingViewResponse) }
 
   # Set up some responses to reuse
   let(:view_response) do
@@ -25,30 +26,23 @@ EOS
 EOS
   end
 
+  let(:parsed_response) { JSON.parse(view_response) }
+
   before do
-    # #count
+    allow(svr).to receive(:docs)
+      .and_return(parsed_response['rows'].map { |r| r['doc'] })
+    allow(svr).to receive(:keys)
+      .and_return(parsed_response['rows'].map { |r| r['key'] })
+    allow(svr).to receive(:total_rows)
+      .and_return(parsed_response['total_rows'])
     allow(subject.client).to receive(:view)
-      .with(instance_of(String), instance_of(Hash))
-      .and_return(JSON.parse(view_response))
-
-    # #record_ids
-    records = allow(subject.client).to receive(:view)
-      .with(instance_of(String), :include_docs => boolean)
-
-    JSON.parse(view_response)['rows'].each do |row|
-      records.and_yield(row)
-    end
-
-    # #get_record
-    allow(subject.client).to receive_message_chain(:get)
-      .with('10046--http://ark.cdlib.org/ark:/13030/kt009nc254')
-      .and_return(JSON.parse(document_response))
+      .with(instance_of(String), instance_of(Hash)).and_return(svr)
   end
 
   subject { described_class.new(args) }
 
   it 'has a client' do
-    expect(subject.client).to be_a CouchRest::Database
+    expect(subject.client).to be_a Analysand::Database
   end
 
   context 'with connection' do
@@ -67,16 +61,14 @@ EOS
           result = subject.send(method)
           result.first if [:records, :record_ids].include? method
           expect(subject.client).to have_received(request_type)
-            .with(args[:couchdb][:view],
-                  hash_including({ :include_docs => boolean }))
+            .with(args[:couchdb][:view], hash_including(view_args))
         end
 
         it 'adds options passed into request' do
           result = subject.send(method, request_opts)
           result.first if [:records, :record_ids].include? method
           expect(subject.client).to have_received(request_type)
-            .with(request_opts[:view],
-                  hash_including({ :include_docs => boolean }))
+            .with(request_opts[:view], hash_including(view_args))
         end
       end
 
@@ -84,33 +76,28 @@ EOS
         include_examples 'send options'
         let(:request_type) { :view }
         let(:method) { :count }
+        let(:view_args) { { :limit => 0, :include_docs=>false, :stream=>true } }
       end
 
       describe '#records' do
         include_examples 'send options'
         let(:request_type) { :view }
         let(:method) { :records }
+        let(:view_args) { { :include_docs=>true, :stream=>true } }
       end
 
       describe '#record_ids' do
         include_examples 'send options'
         let(:request_type) { :view }
         let(:method) { :record_ids }
+        let(:view_args) { { :include_docs=>false, :stream=>true } }
       end
 
       describe '#get_record' do
-        let(:identifier) do
-          '10046--http://ark.cdlib.org/ark:/13030/kt009nc254'
-        end
-
-        let(:request_type) { :get }
-
-        it 'sends request' do
-          expect(subject.client).to receive(request_type)
-            .with(identifier)
-            .and_return(result)
-          subject.get_record(identifier)
-        end
+        include_examples 'send options'
+        let(:request_type) { :view }
+        let(:method) { :count }
+        let(:view_args) { { :include_docs=>false, :stream=>true } }
       end
     end
 
