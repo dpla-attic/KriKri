@@ -1,0 +1,18 @@
+<table id="document_list_table">
+  <% keys = index_fields.keys %>
+
+  <tr>
+    <% keys.each do |key| %>
+      <th><%= index_field_label nil, key %></th>
+    <% end %>
+  </tr>
+
+  <% documents.each do |document| %>
+    <tr>
+      <% keys.each do |key| %>
+        <td><%= render_document_field_data document, key %></td>
+      <% end %>
+    </tr>
+  <% end %>
+
+</table>

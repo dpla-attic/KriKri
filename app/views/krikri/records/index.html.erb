@@ -1,0 +1,29 @@
+<% content_for :title do %>Records<% end %>
+
+<div id="search-navbar" class="navbar navbar-default navbar-static-top" role="navigation">
+  <div class="container">
+    <%= render_search_bar  %>
+  </div>
+</div>
+
+<%= render partial: 'shared/ajax_modal' %>
+
+<div id="main-container" class="container">
+  <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
+
+  <div class="row">
+    <div id="sidebar" class="col-md-3 col-sm-4">
+      <%= button_to "View Reports", report_lists_path, :class => "btn btn-primary", 
+        :method => :get %>
+      <%= render 'search_sidebar' %>
+    </div>
+
+    <div id="content" class="col-md-9 col-sm-8">
+      <% unless has_search_parameters? %>
+        <%= render 'home' %>
+      <% else %>
+        <%= render 'search_results' %>
+      <% end %>
+    </div>
+  </div>
+</div>

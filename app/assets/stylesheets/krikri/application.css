@@ -13,3 +13,7 @@
  *= require_tree .
  *= require_self
  */
+
+ #document_list_table td {
+  padding-right: 3em;
+ }

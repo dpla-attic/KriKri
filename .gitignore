@@ -1,4 +1,5 @@
 .bundle/
+.vagrant/
 log/*.log
 pkg/
 spec/dummy/db/*.sqlite3
@@ -8,4 +9,12 @@ spec/dummy/tmp/
 spec/dummy/.sass-cache
 Gemfile.lock
 
+spec/internal
+jetty
+tmp
+tomcat
+marmotta
+
+./spec/internal
+dump.rdb
 

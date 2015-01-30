@@ -1,14 +1,32 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Krikri</title>
-  <%= stylesheet_link_tag    "krikri/application", media: "all" %>
-  <%= javascript_include_tag "krikri/application" %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<%= yield %>
+    <!-- Mobile viewport optimization h5bp.com/ad -->
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-</body>
+    <title><%= yield :title %> | Krikri</title>
+ 
+    <%= favicon_link_tag 'favicon.ico' %>
+    <%= stylesheet_link_tag "application", media: "all" %>
+    <%= stylesheet_link_tag    "krikri/application", media: "all" %>
+    <%= javascript_include_tag "application" %>
+    <%= javascript_include_tag "krikri/application" %>  
+    <%= csrf_meta_tags %>
+    <%= content_for(:head) %>
+  </head>
+
+  <body class="<%= render_body_class %>">
+    
+    <%# Include the krikri namespace in partial paths so that controllers
+        outside the krikri namespace can access them %>  
+    <%= render :partial => 'krikri/shared/navigation' %>
+    
+    <%= yield %>
+
+    <%= render :partial => 'krikri/shared/footer' %>
+  </body>
 </html>

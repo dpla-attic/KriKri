@@ -1,0 +1,14 @@
+<h2>Validation Reports</h2>
+<% if @validation_report_list %>
+  <ul>
+    <% @validation_report_list.each do |report| %>
+      <% if report[:url] %>
+        <li><%= link_to report[:label], report[:url] %></li>
+      <% else %>
+        <li><%= report[:label] %></li>
+      <% end %>
+    <% end %>
+  </ul>
+<% else %>
+  <div>There was an error generating the validation reports.</div>
+<% end %>

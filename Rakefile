@@ -14,14 +14,25 @@ RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-APP_RAKEFILE = File.expand_path("../spec/dummy/Rakefile", __FILE__)
-load 'rails/tasks/engine.rake'
-
 Bundler::GemHelper.install_tasks
 
 require 'rspec/core'
 require 'rspec/core/rake_task'
 
+require 'engine_cart/rake_task'
+require 'jettywrapper'
+
+import 'lib/tasks/jetty.rake'
+
+desc "Run all specs in spec directory (excluding plugin specs) in an engine_cart-generated app"
+task :ci => ['jetty:clean', 'engine_cart:generate'] do
+  Rake::Task['jetty:config'].invoke
+
+  Jettywrapper.wrap(quiet: true, jetty_port: 8983, :startup_wait => 30) do
+    Rake::Task["spec"].invoke
+  end
+end
+
 desc "Run all specs in spec directory (excluding plugin specs)"
-RSpec::Core::RakeTask.new(:spec => 'app:db:test:prepare')
-task :default => :spec
+RSpec::Core::RakeTask.new(:spec)
+task :default => :ci
