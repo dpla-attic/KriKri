@@ -13,4 +13,5 @@ describe Krikri::Enrichments::StripWhitespace do
             }]
 
   it_behaves_like 'a string enrichment', values
+  include_examples 'skips non-strings'
 end
