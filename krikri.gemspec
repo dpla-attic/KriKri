@@ -7,10 +7,13 @@ require "krikri/version"
 Gem::Specification.new do |s|
   s.name        = "krikri"
   s.version     = Krikri::VERSION
-  s.authors     = ["Tom Johnson"]
+  s.authors     = ['Audrey Altman',
+                   'Mark Breedlove',
+                   'Tom Johnson',
+                   'Mark Matienzo']
   s.email       = ["tech@dp.la"]
   s.homepage    = "http://github.com/dpla/KriKri"
-  s.summary     = "KriKri ingests objects."
+  s.summary     = "A Rails engine for metadata aggregation, enhancement, and quality control."
   s.description = "Metadata aggregation and enrichment for cultural heritage institutions."
   s.license     = "MIT"
 
