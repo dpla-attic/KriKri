@@ -13,6 +13,14 @@ module Krikri
     include ParserMethods
     include RdfSubjects
 
+    DCMITYPE_LABELS = RDF::DCMITYPE.select(&:class?).map { |t| t.label.downcase }
+
+    # TODO: Discuss with Content Team. `dpla_map` currently constrains
+    # genre (edm:hasType) to AAT terms; these are not all AAT terms.
+    GENRE_LABELS = ['book', 'film/video', 'manuscript', 'maps', 'music',
+                    'musical score', 'newspapers', 'nonmusic',
+                    'photograph/pictorial works', 'serial']
+
     def properties
       @properties ||= []
     end
