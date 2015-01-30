@@ -6,12 +6,13 @@ gemspec
 gem 'engine_cart'
 
 gem 'rubocop', require: false
-
+gem 'yajl-ruby', require: 'yajl'
 gem 'database_cleaner', '~> 1.3.0', require: false
 
 group :development do
   gem 'guard'
   gem 'guard-rspec', require: false
+  gem 'pry-rescue'
 end
 
 group :test do

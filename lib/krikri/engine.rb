@@ -54,6 +54,9 @@ module Krikri
     initializer :register_harvesters do
       Krikri::Harvester::Registry
         .register(:oai, Krikri::Harvesters::OAIHarvester)
+      Krikri::Harvester::Registry
+        .register(:couchdb, Krikri::Harvesters::CouchdbHarvester)
+
     end
 
     initializer :rdf_repository do

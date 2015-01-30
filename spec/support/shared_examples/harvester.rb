@@ -35,7 +35,7 @@ shared_examples 'a harvester' do
 
     it 'mints md5 identifiers with #records' do
       expect(Krikri::Md5Minter).to receive(:create)
-        .with('oai:oaipmh.huygens.knaw.nl:arthurianfiction:MAN0000000010',
+        .with(harvester.record_ids.first,
               harvester.name)
         .and_return(gen_id)
 
