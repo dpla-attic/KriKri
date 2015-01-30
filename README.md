@@ -7,7 +7,7 @@ A Rails engine for metadata aggregation, enhancement, and quality control.
 [Digital Public Library of America](http://dp.la/) uses Kri-Kri as part of
 [Heiðrún](https://github.com/dpla/heidrun), its metadata ingestion system. 
 
-More information](https://digitalpubliclibraryofamerica.atlassian.net/wiki/display/TECH/Heidrun) about Heidrun and Kri-kri can be found on [DPLA's Technology Team site](https://digitalpubliclibraryofamerica.atlassian.net/wiki/display/TECH).
+[More information](https://digitalpubliclibraryofamerica.atlassian.net/wiki/display/TECH/Heidrun) about Heidrun and Kri-kri can be found on [DPLA's Technology Team site](https://digitalpubliclibraryofamerica.atlassian.net/wiki/display/TECH).
 
 Installation
 -------------
