@@ -17,4 +17,5 @@ describe Krikri::Enrichments::GenreFilter do
             }]
 
   it_behaves_like 'a string enrichment', values
+  include_examples 'deletes non-strings'
 end

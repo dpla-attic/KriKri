@@ -12,4 +12,5 @@ describe Krikri::Enrichments::StripPunctuation do
               :end => "\tmoominpapa moominmama"
             }]
   it_behaves_like 'a string enrichment', values
+  include_examples 'skips non-strings'
 end
