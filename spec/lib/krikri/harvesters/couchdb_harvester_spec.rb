@@ -26,6 +26,8 @@ EOS
 EOS
   end
 
+  let(:identifier) { '10046--http://ark.cdlib.org/ark:/13030/kt009nc254' }
+
   let(:parsed_response) { JSON.parse(view_response) }
 
   before do
@@ -46,6 +48,15 @@ EOS
   end
 
   context 'with connection' do
+
+    before do
+      stub_request(:get, "http://example.org:5984/couchdb/#{CGI.escape(identifier)}")
+        .with(:headers => {
+          'Accept'=>'*/*',
+          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3'})
+        .to_return(:status => 200, :body => document_response, :headers => {})
+    end
+
     describe 'options' do
       let(:result) { double }
 
@@ -92,12 +103,22 @@ EOS
         let(:method) { :record_ids }
         let(:view_args) { { :include_docs=>false, :stream=>true } }
       end
+    end
 
-      describe '#get_record' do
-        include_examples 'send options'
-        let(:request_type) { :view }
-        let(:method) { :count }
-        let(:view_args) { { :include_docs=>false, :stream=>true } }
+    describe "#get_record" do
+      let(:resp) { double(Analysand::Response) }
+
+      before do
+        allow(resp).to receive(:body)
+          .and_return(JSON.parse(document_response))
+        allow(subject.client).to receive(:get!)
+          .with(instance_of(String)).and_return(resp)
+      end
+
+      it 'requests the record by identifier' do
+        resp = subject.get_record(identifier)
+        expect(subject.client).to have_received(:get!)
+          .with(CGI.escape(identifier))
       end
     end
 
