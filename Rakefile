@@ -28,7 +28,10 @@ desc "Run all specs in spec directory (excluding plugin specs) in an engine_cart
 task :ci => ['jetty:clean', 'engine_cart:generate'] do
   Rake::Task['jetty:config'].invoke
 
-  Jettywrapper.wrap(quiet: true, jetty_port: 8983, :startup_wait => 30) do
+  Jettywrapper.wrap(quiet: true,
+                    jetty_port: 8983,
+                    startup_wait: 30,
+                    java_opts: ["-Dmarmotta.home=#{MARMOTTA_HOME}"]) do
     Rake::Task["spec"].invoke
   end
 end

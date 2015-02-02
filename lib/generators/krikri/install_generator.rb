@@ -26,6 +26,12 @@ module Krikri
     end
 
     ##
+    # Add jetty configuration
+    def configure_jetty
+      copy_file '../../../../config/jetty.yml', 'config/jetty.yml'
+    end
+
+    ##
     # Install Devise
     # Devise is a dependency, and is specified in krikri.gemspec,
     # but it requires some setup if it's generated into
