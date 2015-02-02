@@ -30,7 +30,9 @@ Gem::Specification.new do |s|
   s.add_dependency "jsonpath"
   s.add_dependency "devise", "~>3.4.1"
   s.add_dependency "resque", "~>1.0"
-  s.add_dependency "dpla-analysand", "3.1.0.pre.dpla.1"
+  # The line below can be switched to specify analysand 4.0.0.pre when it
+  # gets released
+  s.add_dependency "dpla-analysand", "4.0.0.pre.dpla.1"
   s.add_dependency "yajl-ruby"
 
   s.add_development_dependency "sqlite3"
