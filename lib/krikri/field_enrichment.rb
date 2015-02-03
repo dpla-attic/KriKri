@@ -39,6 +39,7 @@ module Krikri
 
     def enrich_field(record, field_chain)
       field = field_chain.first
+      return record unless record.respond_to? field
       values = record.send(field)
       if field_chain.length == 1
         new_values = values.map { |v| enrich_value(v) }.flatten.compact

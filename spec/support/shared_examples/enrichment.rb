@@ -159,10 +159,18 @@ shared_examples 'a field enrichment' do
 
       context 'when node is missing property' do
         before do
-          enriched.sourceResource.first.creator << ActiveTriples::Resource.new
+          record.sourceResource.first.creator << node
         end
 
-        it 'leaves node unaltered'
+        let(:node) do
+          creator = ActiveTriples::Resource.new
+          creator.set_value(RDF::DC.title, 'moomin')
+          creator
+        end
+
+        it 'leaves node unaltered' do
+          expect(record.sourceResource.first.creator).to include node
+        end
       end
     end
   end
