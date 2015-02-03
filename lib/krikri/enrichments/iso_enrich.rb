@@ -44,11 +44,6 @@ module Krikri::Enrichments
       langs.compact.uniq(&:rdf_subject)
     end
 
-    def enrich_lang(value)
-      value.fetch
-      value
-    end
-
     def enrich_literal(label)
       return nil unless label.to_s
       match = match_iso(label.to_s) || match_label(label.to_s)
