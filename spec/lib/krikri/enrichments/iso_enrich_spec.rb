@@ -26,14 +26,25 @@ describe Krikri::Enrichments::IsoEnrich do
         .to have_attributes(:rdf_subject => finnish)
     end
 
-    it 'sets providedLabel' do
+    it 'gives empty providedLabel' do
       expect(subject.enrich_value('finnish'))
-        .to have_attributes(:providedLabel => ['finnish'])
+        .to have_attributes(:providedLabel => [])
     end
 
-    it 'gives nil for invalid values' do
-      expect(subject.enrich_value('INVALID'))
-        .to be nil
+    context 'and no match' do
+      it 'gives a language' do
+        expect(subject.enrich_value('INVALID'))
+          .to be_a DPLA::MAP::Controlled::Language
+      end
+
+      it 'gives a bnode' do
+        expect(subject.enrich_value('INVALID')).to be_node
+      end
+
+      it 'sets providedLabel to input value' do
+        expect(subject.enrich_value('INVALID'))
+          .to have_attributes(:providedLabel => ['INVALID'])
+      end
     end
   end
 
@@ -57,19 +68,27 @@ describe Krikri::Enrichments::IsoEnrich do
         .to contain_exactly(have_attributes(:rdf_subject => english))
     end
 
-    it 'sets providedLabel' do
+    it 'removes providedLabel' do
       expect(subject.enrich_value(lang))
-        .to contain_exactly(have_attributes(:providedLabel => ['eng']))
+        .to contain_exactly(have_attributes(:providedLabel => []))
     end
 
     context 'with no matching values' do
       before do
         lang.clear
-        lang << RDF::Statement(lang, RDF::DPLA.providedLabel, 'moomin language')
+        lang << RDF::Statement(lang, RDF::DPLA.providedLabel, label)
       end
 
-      it 'returns no values' do
-        expect(subject.enrich_value(lang)).to be_empty
+      let(:label) { 'moomin language' }
+
+      it 'returns a node' do
+        expect(subject.enrich_value(lang).first)
+          .to be_a DPLA::MAP::Controlled::Language
+      end
+
+      it 'gives same providedLabel' do
+        expect(subject.enrich_value(lang).first)
+          .to have_attributes(:providedLabel => [label])
       end
     end
 
@@ -96,7 +115,8 @@ describe Krikri::Enrichments::IsoEnrich do
         it 'keeps both matches' do
           expect(subject.enrich_value(lang))
             .to contain_exactly(have_attributes(:rdf_subject => english),
-                                have_attributes(:rdf_subject => finnish))
+                                have_attributes(:rdf_subject => finnish),
+                                have_attributes(:providedLabel => ['NOT REAL']))
         end
       end
     end

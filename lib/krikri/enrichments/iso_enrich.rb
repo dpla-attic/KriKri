@@ -17,7 +17,7 @@ module Krikri::Enrichments
   #
   # If passed an ActiveTriples::Resource, the enrichment will:
   #
-  #   - Perform the above text matching on any present `provededLabel`s,
+  #   - Perform the above text matching on any present `providedLabel`s,
   #     returning the original node if no results are found.  If multiple
   #     values are provided and multiple matches found, they will be
   #     deduplicated.
@@ -26,7 +26,6 @@ module Krikri::Enrichments
   #   - Remove any values which are not either bnodes or members of
   #     DPLA::MAP::Controlled::Language.
   #
-  # This enrichment sets `providedLabel` on any generated resource.
   class IsoEnrich
     include Krikri::FieldEnrichment
 
@@ -40,7 +39,7 @@ module Krikri::Enrichments
 
     def enrich_node(value)
       labels = value.get_values(RDF::DPLA.providedLabel)
-      return nil if labels.empty?
+      return value if labels.empty?
       langs = labels.map { |label| enrich_literal(label) }
       langs.compact.uniq(&:rdf_subject)
     end
@@ -52,10 +51,11 @@ module Krikri::Enrichments
 
     def enrich_literal(label)
       return nil unless label.to_s
-      match = match_iso(label.to_s)
-      match ||= match_label(label.to_s)
-      match.providedLabel = label unless match.nil?
-      match
+      match = match_iso(label.to_s) || match_label(label.to_s)
+      return match unless match.nil?
+      node = DPLA::MAP::Controlled::Language.new()
+      node.providedLabel = label
+      node
     end
 
     def match_iso(label)
