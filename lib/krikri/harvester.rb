@@ -102,7 +102,14 @@ module Krikri
     # @return [Boolean]
     def run(activity_uri = nil)
       log :info, 'harvest is running'
-      records.each { |rec| rec.save(activity_uri) }
+      records.each do |rec|
+        begin
+          rec.save(activity_uri)
+        rescue => e
+          log :error, "Error harvesting record:\n#{rec.content}\n\twith message:\n#{e.message}"
+          next
+        end
+      end
       log :info, 'harvest is done'
       true
     end
