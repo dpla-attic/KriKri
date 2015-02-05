@@ -40,6 +40,20 @@ describe Krikri::Mapper do
       Krikri::Mapper.define(:klass_map, class: klass)
     end
 
+    it 'passes parser to mapping' do
+      parser = Class.new
+      expect(Krikri::Mapping).to receive(:new)
+        .with(DPLA::MAP::Aggregation, parser).once
+      Krikri::Mapper.define(:klass_map, parser: parser)
+    end
+
+    it 'passes parser_args to mapping' do
+      args = [1,2,3]
+      expect(Krikri::Mapping).to receive(:new)
+        .with(DPLA::MAP::Aggregation, Krikri::XmlParser, *args).once
+      Krikri::Mapper.define(:klass_map, parser_args: args)
+    end
+
     it 'hits DSL methods' do
       expect_any_instance_of(Krikri::Mapping).to receive(:dsl_method_1)
         .with(:arg1, :arg2)
