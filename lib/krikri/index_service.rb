@@ -41,10 +41,32 @@ module Krikri
     end
 
     ##
-    # Converts JSON document into a Hash that complies with Solr
-    # schema
+    # Converts JSON document into a Hash that complies with Solr schema
+    # @param [JSON]
+    # @return [Hash]
     def self.solr_doc(doc)
-      flat_hash(JSON.parse(doc))
+      remove_invalid_keys(flat_hash(JSON.parse(doc)))
+    end
+
+    ##
+    # Remove keys (ie. fields) that are not in the Solr schema.
+    # @param [Hash]
+    # @return [Hash]
+    def self.remove_invalid_keys(solr_doc)
+      valid_keys = schema_keys
+      solr_doc.delete_if { |key, _| !key.in? valid_keys }
+    end
+
+    ##
+    # Get field names from Solr schema in host application.
+    # Will raise exception if file not found.
+    # @return [Array]
+    def self.schema_keys
+      schema_file = File.join(Rails.root, 'solr_conf', 'schema.xml')
+      file = File.open(schema_file)
+      doc = Nokogiri::XML(file)
+      file.close
+      doc.xpath('//fields/field').map { |f| f.attr('name') }
     end
 
     ##
@@ -84,6 +106,7 @@ module Krikri
         .gsub('http://www.w3.org/2003/01/geo/wgs84_pos#', '')
     end
 
-    private_class_method(:solr_doc, :flat_hash, :format_key)
+    private_class_method(:solr_doc, :remove_invalid_keys, :flat_hash,
+                         :format_key)
   end
 end

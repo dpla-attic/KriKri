@@ -42,5 +42,60 @@ module Krikri
       false
     end
 
+    # Render enriched record for view
+    # @param [Krikri::SearchIndexDocument]
+    # @return [String]
+    def render_enriched_record(document)
+      agg = document.aggregation
+      return error_msg('Aggregation not found.') unless agg.present?
+      JSON.pretty_generate(agg.to_jsonld)
+    end
+
+    # Render original record for view
+    # @param [Krikri::SearchIndexDocument]
+    # @return [String]
+    def render_original_record(document)
+      agg = document.aggregation
+      return error_msg('Aggregation not found.') unless agg.present?
+
+      begin
+        original_record = agg.original_record
+      rescue StandardError => e
+        logger.error e.message
+        return error_msg(e.message)
+      end
+
+      return error_msg('Original record not found.') unless 
+        original_record.present?
+      prettify_string(original_record.to_s, original_record.content_type)
+    end
+
+    private
+
+    def prettify_string(string, mime_type)
+      string = prettify_json_string(string) if mime_type.include? 'json'
+      string = prettify_xml_string(string) if mime_type.include? 'xml'
+      string
+    end
+
+    def prettify_json_string(string)
+      begin
+        return JSON.pretty_generate(JSON.parse(string))
+      rescue JSON::ParserError
+        return string
+      end
+    end
+
+    def prettify_xml_string(string)
+      if Nokogiri.XML(string).errors.empty?
+        doc = Nokogiri.XML(string) { |c| c.noblanks }
+        return doc.to_xml(indent: 2)
+      end
+      string
+    end
+
+    def error_msg(message = '')
+      "There was a problem getting the record.\n\n#{message}"
+    end
   end
 end

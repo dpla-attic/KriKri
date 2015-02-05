@@ -95,22 +95,25 @@ models, and views.  For more information, see [Blacklight's website](https://git
 Sample Data
 -----------
 
-To index a sample aggregation into solr, from `/krikri/spec/internal`:
-    rake krikri:index_sample_aggregation
+To save a sample record to Solr and Marmotta, from `/krikri/spec/internal`:
 
-To index an _invalid_ sample aggregation into solr:
-    rake krikri:index_invalid_aggregation
+    rake krikri:samples:save_record
 
-To delete the sample aggregation:
-    rake krikri:delete_sample_aggregation
+To save an _invalid_ sample record to Solr and Marmotta:
 
-To create a sample institution and harvest source, from `/krikri/spec/internal`:
+    rake krikri:samples:save_invalid_record
 
-    rake krikri:create_sample_institution
+To delete all sample records:
+
+    rake krikri:samples:delete_record
+
+To save a sample institution and harvest source, from `/krikri/spec/internal`:
+
+    rake krikri:samples:save_institution
 
 To delete the sample institution and harvest source:
 
-    rake krikri:delete_sample_institution
+    rake krikri:samples:delete_institution
 
 
 Using Vagrant for development (experimental)

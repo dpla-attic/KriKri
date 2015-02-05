@@ -27,15 +27,28 @@ module Krikri
       # Instantiate and populate an existing OriginalRecord Resource.
       #
       # @param identifier [#to_s] a string representing the #local_name or
-      #   fully qualified URI for the resource.
+      #   fully qualified URI for the resource.  Identifier may have a mime type
+      #   extension, ie. '123.xml'.
       # @return [OriginalRecord] the instantiated record.
       # @raise when no matching record is found in the LDP datastore
       def load(identifier)
         identifier = identifier.to_s.split('/').last if
           identifier.start_with? base_uri
-        record = new(identifier)
+
+        if identifier.include?('.')
+          record = new(identifier.split('.').first)
+        else
+          record = new(identifier)
+        end
+
         raise "No #{self} found with id: #{identifier}" unless record.exists?
-        record.rdf_subject = nr_uri_from_headers(record.http_head)
+
+        if identifier.include?('.')
+          record.rdf_subject = "#{base_uri}/#{identifier}"
+        else
+          record.rdf_subject = nr_uri_from_headers(record.http_head)
+        end
+
         record.reload
       end
 

@@ -1,1 +1,19 @@
-This view will show an enriched record alongside its original record.
+<% content_for :title do %>QA Record: <%= @document.id.html_safe %><% end %>
+
+<div id="main-container" class="container">
+  <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
+
+  <h2>QA Record: <%= @document.id.html_safe %></h2>
+
+  <div class="row">
+    <div class="col-md-6 col-sm-6">
+      <h3>Enriched Record</h3>
+      <pre class="pre-scrollable"><%= render_enriched_record(@document) %></pre>
+    </div>
+
+    <div class="col-md-6 col-sm-6">
+      <h3>Original Record</h3>
+      <pre class="pre-scrollable"><%= render_original_record(@document) %></pre>
+    </div>
+  </div>
+</div>
