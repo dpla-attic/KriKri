@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rdf-marmotta", '>= 0.0.6'
   s.add_dependency "blacklight", "~>5.8.0"
   s.add_dependency "therubyracer"
+  s.add_dependency "edtf"
   s.add_dependency "oai"
   s.add_dependency "jsonpath"
   s.add_dependency "devise", "~>3.4.1"
