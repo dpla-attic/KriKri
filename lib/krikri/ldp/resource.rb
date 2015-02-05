@@ -11,6 +11,13 @@ module Krikri::LDP
     # @return [Faraday::Connection] a connection to the configured LDP endpoint
     def ldp_connection
       @ldp_conn ||= Faraday.new(ldp_ns) do |conn|
+        conn.request :retry, max: 4, interval: 0.025,
+                     interval_randomness: 0.5, backoff_factor: 2,
+                     exceptions: [Faraday::ConnectionFailed,
+                                  'Errno::ETIMEDOUT',
+                                  'Timeout::Error',
+                                  'Error::TimeoutError',
+                                  Faraday::TimeoutError]
         conn.use Faraday::Response::RaiseError
         conn.use FaradayMiddleware::FollowRedirects, limit: 3
         conn.adapter Faraday.default_adapter
