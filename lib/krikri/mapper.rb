@@ -34,13 +34,14 @@ module Krikri
     #
     # @param name [Symbol] a unique name for the mapper in the registry.
     # @param opts [Hash] options to pass to the mapping instance, options are:
-    #   :class
+    #   :class, :parser, and :parser_args
     # @yield A block passed through to the mapping instance containing the
     #   mapping in the language specified by MappingDSL
     def define(name, opts = {}, &block)
       klass = opts.fetch(:class, DPLA::MAP::Aggregation)
       parser = opts.fetch(:parser, Krikri::XmlParser)
-      map = Krikri::Mapping.new(klass, parser)
+      parser_args = opts.fetch(:parser_args, nil)
+      map = Krikri::Mapping.new(klass, parser, *parser_args)
       map.instance_eval(&block) if block_given?
       Registry.register!(name, map)
     end
