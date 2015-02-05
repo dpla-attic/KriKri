@@ -5,4 +5,5 @@ describe Krikri::OaiDcParser do
   let(:record) { build(:oai_dc_record) }
 
   it_behaves_like 'a parser'
+  it_behaves_like 'a parser with oai headers'
 end
