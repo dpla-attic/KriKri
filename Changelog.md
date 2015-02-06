@@ -1,4 +1,4 @@
-0.1.1 (6 February 2015)
+0.1.2 (6 February 2015)
 ---
 
 * Add LDP request, Harvester, Mapper, and Activity error logging/handling,

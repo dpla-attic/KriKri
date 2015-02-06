@@ -24,7 +24,7 @@ describe Krikri::Activity, type: :model do
     end
   end
 
-  describe 'start_time' do
+  describe '#start_time' do
     before do
       subject.set_start_time
     end
@@ -34,9 +34,36 @@ describe Krikri::Activity, type: :model do
     end
   end
 
-  describe 'end_time' do
+  describe '#end_time' do
     it 'raises an error if not started' do
       expect { subject.set_end_time }.to raise_error
+    end
+  end
+
+  describe '#ended?' do
+    context 'before completion' do
+      it 'returns false' do
+        expect(subject).not_to be_ended
+      end
+    end
+
+    context 'while running' do
+      before { subject.set_start_time }
+
+      it 'returns false' do
+        expect(subject).not_to be_ended
+      end
+    end
+
+    context 'after completion' do
+      before do
+        subject.set_start_time
+        subject.set_end_time
+      end
+
+      it 'returns true' do
+        expect(subject).to be_ended
+      end
     end
   end
 
@@ -51,6 +78,42 @@ describe Krikri::Activity, type: :model do
       subject.run { Timecop.travel(duration) }
       Timecop.return    # come back to the present for future tests
       expect(subject).to have_duration_of(duration)
+    end
+
+    context 'after first run' do
+      before do
+        subject.run { }
+      end
+
+      it 'sets end_time to nil before running' do
+        subject.run { expect(subject.end_time).to be_nil }
+      end
+    end
+
+    context 'with error' do
+      let(:error) { StandardError.new('my error') }
+
+      it 'logs errors' do
+        message = "Error performing Activity: #{subject.id}\nmy error"
+        expect(Rails.logger).to receive(:error).with(start_with(message))
+        begin
+          subject.run { raise error }
+        rescue
+        end
+      end
+
+      it 'rethrows error' do
+        expect { subject.run { raise error } }
+          .to raise_error StandardError
+      end
+
+      it 'sets end time' do
+        begin
+          subject.run { raise error }
+        rescue
+        end
+        expect(subject.end_time).to be_within(1.second).of(Time.now)
+      end
     end
   end
 

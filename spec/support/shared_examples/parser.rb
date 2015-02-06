@@ -10,8 +10,15 @@ shared_examples_for 'a parser' do
   end
 
   describe '#parse' do
+    let(:args) { [1, 2, 3] }
     it 'wraps a record in this parser' do
       expect(described_class.parse(record)).to be_a described_class
+    end
+
+    it 'uses parser args' do
+      expect(described_class)
+        .to receive(:new).with(record, *args).and_return(:parsed)
+      expect(described_class.parse(record, *args)).to eq :parsed
     end
 
     it 'returns the record if already parsed' do
