@@ -20,23 +20,44 @@ describe Krikri::Mapper::Agent do
       allow(record_double).to receive(:node?).and_return(true)
       allow(record_double).to receive(:mint_id!)
       allow(record_double).to receive(:save)
-      expect(Krikri::Mapper).to receive(:map).with(mapping_name, subject.records)
-        .and_return(records)
     end
 
-    it 'calls mapper' do
-      subject.run
-    end
-
-    it 'sets generator' do
-      records.each do |rec|
-        statement = double
-        allow(RDF).to receive(:Statement)
-          .with(rec, RDF::PROV.wasGeneratedBy, activity_uri)
-          .and_return(statement)
-        expect(rec).to receive(:<<).with(statement)
+    context 'with errors thrown' do
+      before do
+        allow(record_double).to receive(:node?).and_raise(StandardError.new)
+        allow(record_double).to receive(:rdf_subject).and_return('123')
+        allow(Krikri::Mapper).to receive(:map).and_return(records)
       end
-      subject.run(activity_uri)
+
+      it 'logs errors' do
+        expect(Rails.logger).to receive(:error)
+                                 .with(start_with('Error saving record: 123'))
+                                 .exactly(3).times
+        subject.run(activity_uri)
+      end
+    end
+
+    context 'with mapped records returned' do
+      before do
+        expect(Krikri::Mapper).to receive(:map)
+                                   .with(mapping_name, subject.records)
+                                   .and_return(records)
+      end
+
+      it 'calls mapper' do
+        subject.run
+      end
+
+      it 'sets generator' do
+        records.each do |rec|
+          statement = double
+          allow(RDF).to receive(:Statement)
+                         .with(rec, RDF::PROV.wasGeneratedBy, activity_uri)
+                         .and_return(statement)
+          expect(rec).to receive(:<<).with(statement)
+        end
+        subject.run(activity_uri)
+      end
     end
   end
 

@@ -58,7 +58,14 @@ module Krikri
     # @see Mapping
     def map(name, records)
       records = Array(records) unless records.is_a? Enumerable
-      records.map { |rec| Registry.get(name).process_record(rec) }
+      records.map do |rec|
+        begin
+          Registry.get(name).process_record(rec)
+        rescue => e
+          Rails.logger.error("Error processing mapping for #{rec.rdf_subject}" \
+                             "\n#{e.message}\n#{e.backtrace}")
+        end
+      end
     end
 
     ##
@@ -81,10 +88,15 @@ module Krikri
 
       def run(activity_uri = nil)
         Krikri::Mapper.map(name, records).each do |rec|
-          rec.mint_id! if rec.node?
-          rec << RDF::Statement(rec, RDF::PROV.wasGeneratedBy, activity_uri) if
-            activity_uri
-          rec.save
+          begin
+            rec.mint_id! if rec.node?
+            rec << RDF::Statement(rec, RDF::PROV.wasGeneratedBy, activity_uri) if
+              activity_uri
+            rec.save
+          rescue => e
+            Rails.logger.error("Error saving record: #{rec.rdf_subject}\n" \
+                               "#{e.message}\n#{e.backtrace}")
+          end
         end
       end
 
