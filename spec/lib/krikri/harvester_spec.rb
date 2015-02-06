@@ -17,4 +17,25 @@ describe Krikri::Harvester do
     end
   end
 
+  describe '#run' do
+    let(:records) { [double, double] }
+
+    before do
+      allow(subject).to receive(:records).and_return(records)
+    end
+
+    context 'when save fails' do
+      it 'logs error' do
+        records.each do |rec|
+          allow(rec).to receive(:save)
+                         .and_raise(StandardError.new('my message'))
+          allow(rec).to receive(:content).and_return 'content'
+        end
+        message =
+          "Error harvesting record:\ncontent\n\twith message:\nmy message"
+        expect(Rails.logger).to receive(:error).with(message).twice
+        subject.run
+      end
+    end
+  end
 end

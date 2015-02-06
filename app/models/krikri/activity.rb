@@ -42,10 +42,28 @@ module Krikri
     # is passed an instance of the agent, and a URI representing this Activity.
     def run
       if block_given?
+        update_attribute(:end_time, nil) if ended?
         set_start_time
-        yield agent_instance, rdf_subject
-        set_end_time
+        begin
+          yield agent_instance, rdf_subject
+        rescue => e
+          Rails.logger.error("Error performing Activity: #{id}\n" \
+                             "#{e.message}\n#{e.backtrace}")
+          raise e
+        ensure
+          set_end_time
+        end
       end
+    end
+
+    ##
+    # Indicates whether the activity has ended. Does not distinguish between
+    # successful and failed completion states.
+    #
+    # @return [Boolean] `true` if the activity has been marked as ended,
+    #   else `false`
+    def ended?
+      !self.end_time.nil?
     end
 
     ##
