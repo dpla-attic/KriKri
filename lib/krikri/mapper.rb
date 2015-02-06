@@ -58,12 +58,13 @@ module Krikri
     # @see Mapping
     def map(name, records)
       records = Array(records) unless records.is_a? Enumerable
-      records.map do |rec|
+      result = records.map do |rec|
         begin
           Registry.get(name).process_record(rec)
         rescue => e
           Rails.logger.error("Error processing mapping for #{rec.rdf_subject}" \
                              "\n#{e.message}\n#{e.backtrace}")
+          nil
         end
       end
     end
