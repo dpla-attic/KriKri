@@ -1,12 +1,14 @@
 require 'factory_girl_rails'
 include FactoryGirl::Syntax::Methods
 require 'dpla/map/factories'
-require '../../app/models/krikri/original_record.rb'
-require '../../spec/factories/krikri_original_record.rb'
 require 'open-uri'
 require 'resque/tasks'
 
 require 'krikri/index_service'
+
+krikri_dir = Gem::Specification.find_by_name('krikri').gem_dir
+require "#{krikri_dir}/app/models/krikri/original_record"
+require "#{krikri_dir}/spec/factories/krikri_original_record"
 
 namespace :krikri do
   namespace :samples do
