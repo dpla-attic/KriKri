@@ -90,20 +90,40 @@ describe Krikri::Mapper do
     end
 
     context 'with multiple records' do
-      before do
-        records.each do |rec|
-          expect(mapping).to receive(:process_record).with(rec)
-            .and_return(:mapped_record).ordered
-        end
-      end
-
       let(:records) do
         [record.clone, record.clone, record.clone]
       end
 
-      it 'returns a list of items returned by mapping' do
-        expect(Krikri::Mapper.map(:my_map_2, records))
-          .to contain_exactly(:mapped_record, :mapped_record, :mapped_record)
+      context 'with no errors' do
+        before do
+          records.each do |rec|
+            expect(mapping).to receive(:process_record).with(rec)
+                                .and_return(:mapped_record).ordered
+          end
+        end
+
+        it 'returns a list of items returned by mapping' do
+          expect(Krikri::Mapper.map(:my_map_2, records))
+            .to contain_exactly(:mapped_record, :mapped_record, :mapped_record)
+        end
+      end
+
+      context 'with errors thrown' do
+        before do
+          allow(record).to receive(:rdf_subject).and_return('123')
+
+          records.each do |rec|
+            allow(mapping).to receive(:process_record).with(rec)
+                               .and_raise(StandardError.new)
+          end
+        end
+
+        it 'logs errors and continues' do
+          expect(Rails.logger)
+            .to receive(:error).with(start_with('Error processing mapping for'))
+                 .exactly(3).times
+          Krikri::Mapper.map(:my_map_2, records)
+        end
       end
     end
   end
