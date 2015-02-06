@@ -10,14 +10,19 @@ module Krikri
   class Mapping
     include MappingDSL
 
-    attr_reader :klass, :parser
+    attr_reader :klass, :parser, :parser_args
 
     ##
     # @param klass [Class] The model class to build in the mapping process.
     # @param parser [Class] The parser class with which to process resources.
-    def initialize(klass = DPLA::MAP::Aggregation, parser = Krikri::XmlParser)
+    # @param parser_args [Array] The arguments to pass to the parser when
+    #   processing records.
+    def initialize(klass = DPLA::MAP::Aggregation,
+                   parser = Krikri::XmlParser,
+                   *parser_args)
       @klass = klass
       @parser = parser
+      @parser_args = parser_args
     end
 
     ##
@@ -27,7 +32,7 @@ module Krikri
     def process_record(record)
       mapped_record = klass.new
       properties.each do |prop|
-        prop.to_proc.call(mapped_record, parser.parse(record))
+        prop.to_proc.call(mapped_record, parser.parse(record, *@parser_args))
       end
       mapped_record
     end

@@ -40,6 +40,20 @@ describe Krikri::Mapper do
       Krikri::Mapper.define(:klass_map, class: klass)
     end
 
+    it 'passes parser to mapping' do
+      parser = Class.new
+      expect(Krikri::Mapping).to receive(:new)
+        .with(DPLA::MAP::Aggregation, parser).once
+      Krikri::Mapper.define(:klass_map, parser: parser)
+    end
+
+    it 'passes parser_args to mapping' do
+      args = [1,2,3]
+      expect(Krikri::Mapping).to receive(:new)
+        .with(DPLA::MAP::Aggregation, Krikri::XmlParser, *args).once
+      Krikri::Mapper.define(:klass_map, parser_args: args)
+    end
+
     it 'hits DSL methods' do
       expect_any_instance_of(Krikri::Mapping).to receive(:dsl_method_1)
         .with(:arg1, :arg2)
@@ -76,20 +90,40 @@ describe Krikri::Mapper do
     end
 
     context 'with multiple records' do
-      before do
-        records.each do |rec|
-          expect(mapping).to receive(:process_record).with(rec)
-            .and_return(:mapped_record).ordered
-        end
-      end
-
       let(:records) do
         [record.clone, record.clone, record.clone]
       end
 
-      it 'returns a list of items returned by mapping' do
-        expect(Krikri::Mapper.map(:my_map_2, records))
-          .to contain_exactly(:mapped_record, :mapped_record, :mapped_record)
+      context 'with no errors' do
+        before do
+          records.each do |rec|
+            expect(mapping).to receive(:process_record).with(rec)
+                                .and_return(:mapped_record).ordered
+          end
+        end
+
+        it 'returns a list of items returned by mapping' do
+          expect(Krikri::Mapper.map(:my_map_2, records))
+            .to contain_exactly(:mapped_record, :mapped_record, :mapped_record)
+        end
+      end
+
+      context 'with errors thrown' do
+        before do
+          allow(record).to receive(:rdf_subject).and_return('123')
+
+          records.each do |rec|
+            allow(mapping).to receive(:process_record).with(rec)
+                               .and_raise(StandardError.new)
+          end
+        end
+
+        it 'logs errors and continues' do
+          expect(Rails.logger)
+            .to receive(:error).with(start_with('Error processing mapping for'))
+                 .exactly(3).times
+          Krikri::Mapper.map(:my_map_2, records)
+        end
       end
     end
   end

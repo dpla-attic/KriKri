@@ -20,10 +20,12 @@ module Krikri
     # Instantiates a parser object to wrap the record. Returns the record
     # as is if it is already parsed.
     #
-    # @param record the record to parse
+    # @param record [Krikri::OriginalRecord, Krikri::Parser] the record to parse
+    # @param args [Array, nil] the arguments to pass to the parser instance,
+    #   if any
     # @return [Krikri::Parser] a parsed record object
-    def self.parse(record)
-      record.is_a?(Krikri::Parser) ? record : new(record)
+    def self.parse(record, *args)
+      record.is_a?(Krikri::Parser) ? record : new(record, *args)
     end
 
     ##

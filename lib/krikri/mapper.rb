@@ -34,13 +34,14 @@ module Krikri
     #
     # @param name [Symbol] a unique name for the mapper in the registry.
     # @param opts [Hash] options to pass to the mapping instance, options are:
-    #   :class
+    #   :class, :parser, and :parser_args
     # @yield A block passed through to the mapping instance containing the
     #   mapping in the language specified by MappingDSL
     def define(name, opts = {}, &block)
       klass = opts.fetch(:class, DPLA::MAP::Aggregation)
       parser = opts.fetch(:parser, Krikri::XmlParser)
-      map = Krikri::Mapping.new(klass, parser)
+      parser_args = opts.fetch(:parser_args, nil)
+      map = Krikri::Mapping.new(klass, parser, *parser_args)
       map.instance_eval(&block) if block_given?
       Registry.register!(name, map)
     end
@@ -57,7 +58,14 @@ module Krikri
     # @see Mapping
     def map(name, records)
       records = Array(records) unless records.is_a? Enumerable
-      records.map { |rec| Registry.get(name).process_record(rec) }
+      records.map do |rec|
+        begin
+          Registry.get(name).process_record(rec)
+        rescue => e
+          Rails.logger.error("Error processing mapping for #{rec.rdf_subject}" \
+                             "\n#{e.message}\n#{e.backtrace}")
+        end
+      end
     end
 
     ##
@@ -80,10 +88,15 @@ module Krikri
 
       def run(activity_uri = nil)
         Krikri::Mapper.map(name, records).each do |rec|
-          rec.mint_id! if rec.node?
-          rec << RDF::Statement(rec, RDF::PROV.wasGeneratedBy, activity_uri) if
-            activity_uri
-          rec.save
+          begin
+            rec.mint_id! if rec.node?
+            rec << RDF::Statement(rec, RDF::PROV.wasGeneratedBy, activity_uri) if
+              activity_uri
+            rec.save
+          rescue => e
+            Rails.logger.error("Error saving record: #{rec.rdf_subject}\n" \
+                               "#{e.message}\n#{e.backtrace}")
+          end
         end
       end
 

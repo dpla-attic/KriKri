@@ -100,12 +100,28 @@ describe Krikri::MappingDSL::RdfSubjects do
         let(:array_value) { [value] }
       end
 
+      context 'with no values' do
+        let(:value) { [] }
+        let(:node) { RDF::Node.new }
+
+        before { allow(mapped).to receive(:rdf_subject).and_return(node) }
+
+        it 'gives the bnode subject' do
+          expect(subject.to_proc.call(mapped, '')).to eq node
+        end
+
+        it 'leaves the rdf_subject untouched' do
+          expect(mapped).not_to receive(:set_subject!)
+          subject.to_proc.call(mapped, '')
+        end
+      end
+
       context 'with too many values' do
         let(:value) { ['http://example.org/1', 'http://example.org/2'] }
 
         it 'raises an error' do
           expect { subject.to_proc.call(mapped, '') }
-            .to raise_error "URI must be set to a single value; got #{value}"
+            .to raise_error
         end
       end
     end
