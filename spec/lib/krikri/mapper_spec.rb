@@ -124,6 +124,10 @@ describe Krikri::Mapper do
                  .exactly(3).times
           Krikri::Mapper.map(:my_map_2, records)
         end
+
+        it 'logs errors and continues' do
+          expect(Krikri::Mapper.map(:my_map_2, records)).to eq [nil, nil, nil]
+        end
       end
     end
   end
