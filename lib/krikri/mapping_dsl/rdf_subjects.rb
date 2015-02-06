@@ -13,7 +13,9 @@ module Krikri::MappingDSL
         value = @value
         lambda do |target, record|
           value = value.call(record) if value.respond_to? :call
-          raise "URI must be set to a single value; got #{value}" if
+          return target.rdf_subject if Array(value).empty?
+          raise "Error mapping #{record}, #{target}\t" \
+                "URI must be set to a single value; got #{value}" if
             Array(value).count != 1
           value = value.first if value.is_a? Enumerable
           return target.send(setter, value) unless block
