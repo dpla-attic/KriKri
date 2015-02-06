@@ -68,19 +68,12 @@ module Krikri::Harvesters
     ##
     # Retrieves a specific document from CouchDB.
     #
-    # Currently, this implementation does not use Analysand::Database#get
-    # because of an issue where document IDs sent to that method are not
-    # properly escaped.
+    # Uses Analysand::Database#get!, which raises an exception if the
+    # document cannot be found.
     #
-    # @see Analysand::Viewing
-    # @see Analysand::StreamingViewResponse
-    # @see Analysand::Database#get
-    def get_record(identifier, opts = {})
-      view = opts[:view] || @opts[:view]
-      doc = client.view(view,
-                        key: identifier,
-                        include_docs: true,
-                        stream: true).docs.first.to_json
+    # @see Analysand::Database#get!
+    def get_record(identifier)
+      doc = client.get!(CGI.escape(identifier)).body.to_json
       @record_class.build(mint_id(identifier), doc, 'application/json')
     end
 

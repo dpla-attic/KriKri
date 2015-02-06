@@ -504,7 +504,7 @@ v         currently supported on types that are sorted internally as strings
    <!-- set multiValued to true in order to copyfield -->
    <field name="text" type="text" indexed="true" stored="false" multiValued="true" />
 
-   <field name="type" type="string" indexed="false" stored="false" />
+   <field name="type" type="string" indexed="false" stored="false" multiValued="true" />
 
    <field name="dataProvider_id" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="dataProvider_type" type="string" indexed="false" stored="false" />

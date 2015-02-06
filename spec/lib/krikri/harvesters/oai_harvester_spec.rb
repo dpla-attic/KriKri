@@ -128,6 +128,13 @@ describe Krikri::Harvesters::OAIHarvester do
                    :headers => {})
     end
 
+    it 'retries timed out requests' do
+      expect_any_instance_of(Faraday::Adapter::NetHttp)
+        .to receive(:perform_request).at_least(4).times
+             .and_raise(Net::ReadTimeout.new)
+      expect { subject.records.first }.to raise_error
+    end
+
     describe 'resumption' do
       let(:resumed_uri) do
         'http://example.org/endpoint?resumptionToken='\

@@ -21,14 +21,22 @@ describe Krikri::LDP::Resource do
       # add required interface to DummyResourcey
       class DummyResource
         def rdf_subject
-          RDF::URI(File.join(Krikri::Settings['marmotta']['ldp'],
-                             '/moomin-papa'))
+          RDF::URI(Krikri::Settings['marmotta']['ldp']) / 'moomin-papa'
         end
       end
     end
 
     after do
       RDF::Marmotta.new(Krikri::Settings['marmotta']['base']).clear!
+    end
+
+    context 'with bad header' do
+      it do
+        error = Net::HTTPBadResponse.new("alue\" : \"1\"")
+        expect_any_instance_of(Faraday::Adapter::NetHttp)
+          .to receive(:perform_request).at_least(4).times.and_raise(error)
+        expect { subject.get }.to raise_error
+      end
     end
 
     context 'without marmotta connection' do

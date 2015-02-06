@@ -36,6 +36,8 @@ module Krikri
                              helper_method: 'make_this_a_link'
 
       config.show.route = { controller: 'records' }
+
+      config.solr_document_model = Krikri::SearchIndexDocument
     end
 
     private

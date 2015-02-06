@@ -65,4 +65,27 @@ describe DPLA::MAP::Aggregation do
       end
     end
   end
+
+  describe '#original_record' do
+
+    context 'with original record' do
+      let(:original_record) { Krikri::OriginalRecord.build('123', 'abc') }
+
+      before do
+        original_record.save
+        subject.originalRecord = ActiveTriples::Resource
+          .new(original_record.rdf_subject.to_s)
+      end
+
+      it 'returns OriginalRecord object' do
+        expect(subject.original_record).to eq(original_record)
+      end
+    end
+
+    context 'without original record' do
+      it 'raises an error' do
+        expect { subject.original_record }.to raise_error
+      end
+    end
+  end
 end

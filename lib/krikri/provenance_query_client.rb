@@ -2,7 +2,7 @@ module Krikri
   ##
   # Implements SPARQL queries for finding RDF Resources by their PROV-O history.
   module ProvenanceQueryClient
-    SPARQL_CLIENT = SPARQL::Client.new(Krikri::Repository)
+    SPARQL_CLIENT = Repository.query_client
 
     module_function
 

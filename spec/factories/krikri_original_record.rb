@@ -1,3 +1,5 @@
+require 'active_support/core_ext/string/strip'
+
 FactoryGirl.define do
 
   factory :krikri_original_record, class: Krikri::OriginalRecord do

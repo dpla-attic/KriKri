@@ -55,6 +55,19 @@ describe Krikri::OriginalRecord do
           expect(described_class.load(uri).local_name).to eq identifier
         end
       end
+
+      context 'when passed an identifier with a mime type extension' do
+        let(:id_ext) { "#{identifier}.xml"}
+
+        it 'sets #local_name without extension' do
+          expect(described_class.load(id_ext).local_name).to eq(identifier)
+        end
+
+        it 'sets rdf_subject with extension' do
+          expect(described_class.load(id_ext).rdf_subject.to_s)
+            .to end_with(id_ext)
+        end
+      end
     end
   end
 

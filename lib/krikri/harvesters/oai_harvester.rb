@@ -14,7 +14,14 @@ module Krikri::Harvesters
     def initialize(opts = {})
       super
       @opts = opts.fetch(:oai, {})
-      @client = OAI::Client.new(uri)
+
+      http_conn = Faraday.new do |conn|
+        conn.request :retry, :max => 3
+        conn.response :follow_redirects, :limit => 5
+        conn.adapter :net_http
+      end
+
+      @client = OAI::Client.new(uri, :http => http_conn)
     end
 
     ##
