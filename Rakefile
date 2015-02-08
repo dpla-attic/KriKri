@@ -25,7 +25,7 @@ require 'jettywrapper'
 import 'lib/tasks/jetty.rake'
 
 desc "Run all specs in spec directory (excluding plugin specs) in an engine_cart-generated app"
-task :ci => ['jetty:clean', 'engine_cart:generate'] do
+task :ci => ['jetty:clean', 'engine_cart:clean', 'engine_cart:generate'] do
   Rake::Task['jetty:config'].invoke
 
   Jettywrapper.wrap(quiet: true,
