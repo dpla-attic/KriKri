@@ -52,10 +52,16 @@ module Krikri
     # This will add routes at with the krikri namespace in the name
     # For example:
     #   /krikri/institutions
-    #
-    # TODO: Add a default route: # route 'root :to => "krikri/records#index"'
     def inject_krikri_routes
       route "mount Krikri::Engine => '/krikri'"
+      gsub_file 'config/routes.rb', /^\s*blacklight_for.*/ do |match|
+        "#" + match + " # provided by KriKri::Engine"
+      end
+
+      gsub_file 'config/routes.rb', /^\s*root.*/ do |match|
+        "#" + match + " # replaced by spotlight_root"
+      end
+      route 'root to: "krikri/records#index"'
     end
 
     ##
