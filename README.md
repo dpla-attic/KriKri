@@ -12,6 +12,15 @@ A Rails engine for metadata aggregation, enhancement, and quality control.
 Installation
 -------------
 
+Using the Rails template:
+
+```console
+$ rails new krikri_app -m https://raw.githubusercontent.com/dpla/KriKri/master/template.rb
+```
+
+If the Rails template doesn't work for you or you want to integrate krikri into an existing application, 
+you can perform run these steps manually:
+
 1. Add the `krikri` gem to your Gemfile.
 
 2. Run `bundle exec rails g krikri:install`
