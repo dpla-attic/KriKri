@@ -4,7 +4,10 @@ require 'jettywrapper'
 namespace :jetty do
   Jettywrapper.url = 'https://github.com/dpla/marmotta-jetty/archive/3.3.0-solr-4.9.0.zip'
 
-  MARMOTTA_HOME = ENV['MARMOTTA_HOME'] || File.expand_path(File.join(Jettywrapper.app_root, 'jetty', 'marmotta'))
+  DEFAULT_MARMOTTA = File.expand_path(File.join(Jettywrapper.app_root,
+                                                'jetty',
+                                                'marmotta'))
+  MARMOTTA_HOME = ENV['MARMOTTA_HOME'] || DEFAULT_MARMOTTA
 
   desc 'Configure solr schema'
   task :config do
@@ -13,9 +16,10 @@ namespace :jetty do
        'jetty/solr/development-core/conf/solrconfig.xml')
   end
 
-  desc 'Remove the jetty and marmotta directories and recreate them'
-  task :clean do
-    FileUtils.rm_rf(MARMOTTA_HOME)
-    Jettywrapper.clean
+  desc 'Empty the Marmotta home directory used by Jettywrapper'
+  task :clean_marmotta_home do
+    FileUtils.rm_rf(MARMOTTA_HOME) unless MARMOTTA_HOME == DEFAULT_MARMOTTA
   end
+
+  task :clean => [:clean_marmotta_home]
 end
