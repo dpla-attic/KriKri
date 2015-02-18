@@ -133,11 +133,36 @@ module Krikri
     class ValueArray
       include Enumerable
 
-      delegate :<<, :[], :[]=, :each, :empty?, :map, :to_a, :to_ary,
+      delegate :[], :each, :empty?, :map, :to_a, :to_ary,
       :to => :@array
 
       def initialize(array = [])
         @array = array
+      end
+
+      ##
+      # @see Array#[]=
+      # @raise [InvalidParserValueError] when the value is not a Parser::Value
+      def []=(index, value)
+        raise InvalidParserValueError unless value.is_a? Value
+        @array[index] = value
+        self
+      end
+
+      ##
+      # @see Array#<<
+      # @raise [InvalidParserValueError] when the value is not a Parser::Value
+      def <<(value)
+        raise InvalidParserValueError unless value.is_a? Value
+        @array << value
+        value
+      end
+
+      ##
+      # @see Array#concat
+      # @return [ValueArray]
+      def concat(*args, &block)
+        self.class.new(@array.concat(*args, &block))
       end
 
       ##
@@ -162,6 +187,18 @@ module Krikri
       end
 
       ##
+      # Accesses the union of multiple specified fields.
+      #
+      # @return [ValueArray] an array containing the nodes available in the
+      # given fields.
+      def fields(*args)
+        results = args.map do |f|
+          field(*Array(f))
+        end
+        self.class.new(results.flatten)
+      end
+
+      ##
       # Retrieves the first element of a ValueArray. Uses an optional argument
       # to specify how many items to return. By design, it behaves similarly
       # to Array#first, but it intentionally doesn't override it.
@@ -173,9 +210,17 @@ module Krikri
       end
 
       ##
+      # @see Array#concat
+      # @return [ValueArray]
+      def flatten(*args, &block)
+        self.class.new(@array.flatten(*args, &block))
+      end
+
+      ##
       # Wraps the result of Array#select in a ValueArray
       #
       # @see Array#select
+      # @return [ValueArray]
       def select(*args, &block)
         self.class.new(@array.select(*args, &block))
       end
@@ -184,6 +229,7 @@ module Krikri
       # Wraps the result of Array#reject in a ValueArray
       #
       # @see Array#reject
+      # @return [ValueArray]
       def reject(*args, &block)
         self.class.new(@array.reject(*args, &block))
       end
@@ -216,6 +262,10 @@ module Krikri
       def get_field(name)
         self.class.new(flat_map { |val| val[name] })
       end
+
+      public
+
+      class InvalidParserValueError < TypeError; end
     end
   end
 end
