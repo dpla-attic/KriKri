@@ -13,7 +13,7 @@ module Krikri
     # This is the name of the most-derived class upon which this is invoked.
     # @see Krikri::Activity
     def agent_name
-      self.class.to_s
+      self.class.agent_name
     end
 
     ##
@@ -45,18 +45,27 @@ module Krikri
       end
 
       ##
-      # @see SoftwareAgent#agent_name
+      # @return a string representation of this SoftwareAgent class
       def agent_name
         to_s
       end
 
       ##
+      # @return the name of the default queue for jobs invoking this
+      #   SoftwareAgent
+      def queue_name
+        agent_name.downcase
+      end
+
+      ##
       # Enqueue a job.
       #
-      # Example:
+      # @example
+      #   MyAgent.enqueue(:name => my_job)
       #
+      # @example
       #   Krikri::Harvesters::OAIHarvester.enqueue(
-      #     Krikri::HarvestJob,
+      #     :harvest,
       #     opts = {
       #       uri: 'http://vcoai.lib.harvard.edu/vcoai/vc',
       #       oai: { set: 'dag', metadata_prefix: 'mods' }
@@ -71,22 +80,31 @@ module Krikri
       # This depends on Redis and Marmotta being available and properly
       # configured (if necessary) in the Rails app.
       #
+      # @param queue_name [#to_s] the Resque queue name
+      # @param opts [Hash] a hash of options that will be used to initialize
+      #   the agent (an instance of this class).
+      #
+      # @return [Boolean]
+      #
       # @see https://github.com/resque/resque/tree/1-x-stable
-      # @see Krikri::HarvestJob
+      # @see Krikri::Job
       # @see Krikri::SoftwareAgent#agent_name
       # @see Krikri::Harvester::expected_opts
-      # @return [Boolean]
-      def enqueue(job_class, opts = {})
-        fail "#{job_class} has no #perform method" unless
-          job_class.respond_to?(:perform)
-        fail 'opts is not a hash' unless opts.is_a?(Hash)
+      def enqueue(*args)
+        queue = args.shift unless args.first.is_a? Hash
+        queue ||= queue_name
+        opts = args.shift || {}
+        fail ArgumentError, "unexpected arguments #{args}" unless args.empty?
+        fail ArgumentError, 'opts is not a hash' unless opts.is_a?(Hash)
+
         activity = Krikri::Activity.create do |a|
           a.agent = agent_name
           a.opts = JSON.generate(opts)
         end
+
         log :info, "created activity #{activity.id}"
-        Resque.enqueue(job_class, activity.id)
-        log :info, "enqueued #{job_class}"
+        Resque.enqueue_to(queue, Krikri::Job, activity.id)
+        log :info, "enqueued to #{queue}"
         true
       end
 

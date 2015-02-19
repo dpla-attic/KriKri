@@ -36,6 +36,16 @@ module Krikri
 
     attr_accessor :uri, :name
 
+    included do
+      class << self
+        ##
+        # @see SoftwareAgent#queue_name
+        def queue_name
+          :harvest
+        end
+      end
+    end
+
     ##
     # Accepts options for a generic harvester:
     #   uri: a URI for the harvest endpoint or provider
