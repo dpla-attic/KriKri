@@ -15,19 +15,14 @@ shared_examples 'a software agent' do |args, job_class|
   describe '#enqueue' do
     let(:queue_name) { job_class.instance_variable_get('@queue') }
 
-    before do
-      Resque.remove_queue(queue_name)
-      Krikri::Activity.delete_all
-    end
-
     it 'enqueues a job' do
-      agent_class.enqueue(job_class, args)
-      expect(Resque.size(queue_name)).to eq(1)
+      expect { agent_class.enqueue(job_class, args) }
+        .to change { Resque.size(queue_name) }.by(1)
     end
 
     it 'creates a new activity when it enqueues a job' do
-      agent_class.enqueue(job_class, args)
-      expect(Krikri::Activity.count).to eq(1)
+      expect { agent_class.enqueue(job_class, args) }
+        .to change { Krikri::Activity.count }.by(1)
     end
   end
 end
