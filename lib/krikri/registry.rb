@@ -39,6 +39,14 @@ module Krikri
         instance.items.keys.include? name
       end
 
+      def reset!
+        instance.items.clear
+      end
+
+      def unregister!(name)
+        instance.items.except!(name)
+      end
+
       def keys
         instance.items.keys
       end

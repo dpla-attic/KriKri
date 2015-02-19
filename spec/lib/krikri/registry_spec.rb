@@ -3,8 +3,10 @@ require 'spec_helper'
 
 describe Krikri::Registry do
 
-  before(:all) do
+  before(:each) do
+    described_class.reset!
     described_class.register(:mock, Class.new)
+    described_class.register(:another_mock, Class.new)
   end
 
   describe '#register' do
@@ -49,4 +51,17 @@ describe Krikri::Registry do
     end
   end
 
+  describe '#reset!' do
+    it 'has no registered items' do
+      described_class.reset!
+      expect(described_class.keys).to be_empty
+    end
+  end
+
+  describe '#unregister!' do
+    it 'deletes a registry entry' do
+      described_class.unregister!(:mock)
+      expect(described_class.keys).not_to include :mock
+    end
+  end
 end
