@@ -5,6 +5,9 @@
 
   <h2>QA Record: <%= @document.id.html_safe %></h2>
 
+  <%= button_to 'Random record', random_record_url,
+    :class => "btn btn-primary", :method => :get %>
+
   <div class="row">
     <div class="col-md-6 col-sm-6">
       <h3>Enriched Record</h3>
