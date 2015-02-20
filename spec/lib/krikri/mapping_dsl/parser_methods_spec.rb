@@ -15,7 +15,6 @@ describe Krikri::MappingDSL::ParserMethods do
   subject { DummyParserImpl.new }
 
   let(:record) { instance_double('Krikri::XmlParser') }
-  let(:real) { Krikri::XmlParser.new(build(:oai_dc_record)) }
 
   describe '#record' do
     it 'returns a callable object' do
@@ -53,6 +52,24 @@ describe Krikri::MappingDSL::ParserMethods do
       allow(record).to receive_message_chain(:record, :exists?)
         .and_return(false)
       expect { subject.record_uri.call(record) }.to raise_error
+    end
+  end
+
+  describe 'header' do
+    let(:record) { double }
+
+    it 'gets the header from the record passed' do
+      allow(record).to receive(:respond_to?).with(:header)
+                        .and_return(true)
+      allow(record).to receive(:header).and_return(:header_array)
+      expect(subject.header.call(record)).to eq (:header_array)
+    end
+
+    it 'gets the header from the record passed' do
+      allow(record).to receive(:respond_to?).with(:header)
+                        .and_return(false)
+      expect { subject.header.call(record) }
+        .to raise_error "#{record} does not have a `header`"
     end
   end
 end
