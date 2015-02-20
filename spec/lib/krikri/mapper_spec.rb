@@ -120,7 +120,7 @@ describe Krikri::Mapper do
 
         it 'logs errors and continues' do
           expect(Rails.logger)
-            .to receive(:error).with(start_with('Error processing mapping for'))
+            .to receive(:error).with(start_with('Error processing mapping'))
                  .exactly(3).times
           Krikri::Mapper.map(:my_map_2, records)
         end

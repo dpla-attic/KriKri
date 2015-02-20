@@ -62,12 +62,26 @@ module Krikri
         begin
           Registry.get(name).process_record(rec)
         rescue => e
-          Rails.logger.error("Error processing mapping for #{rec.rdf_subject}" \
-                             "\n#{e.message}\n#{e.backtrace}")
+          desc = mapping_exception_desc(rec)
+          bt = e.backtrace.join("\n")
+          Rails.logger.error("Error processing mapping.\n" \
+                             "#{desc}\n#{e.message}\n#{bt}")
           nil
         end
       end
     end
+
+    ##
+    # Return a string that describes the object encountered by the exception
+    # handler in #map
+    def mapping_exception_desc(rec)
+      if defined? rec.content
+        "content:\n#{rec.content || '[no content]'}"
+      else
+        "object:\n#{rec.inspect}"
+      end
+    end
+    private_class_method :mapping_exception_desc
 
     ##
     # An application-wide registry of defined mappings
