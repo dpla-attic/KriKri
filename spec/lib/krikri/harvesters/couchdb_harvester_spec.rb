@@ -136,7 +136,7 @@ EOS
       it 'saves harvest options correctly when creating an activity' do
         # Ascertain that options particular to this harvester type are
         # serialized and deserialized properly.
-        described_class.enqueue(Krikri::HarvestJob, args)
+        described_class.enqueue(args)
         activity = Krikri::Activity.first
         opts = JSON.parse(activity.opts, symbolize_names: true)
         expect(opts).to eq(args)

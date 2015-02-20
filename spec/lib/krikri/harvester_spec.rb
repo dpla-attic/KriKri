@@ -4,7 +4,7 @@ describe Krikri::Harvester do
 
   # Our subject is an instance of a dummy class that mixes in
   # Krikri::Harvester.
-  let(:klass) { Class.new }
+  let(:klass) { class DummyHarvester; end; DummyHarvester }
   subject { klass.include(Krikri::Harvester).new(:uri => 'urn:fake_uri') }
 
   context 'with record_ids implemented' do
@@ -14,6 +14,13 @@ describe Krikri::Harvester do
 
     it 'knows its record count' do
       expect(subject.count).to eq 5
+    end
+  end
+
+  describe '.enqueue' do
+    it 'defaults to HarvestJob' do
+      subject.class.enqueue({})
+      expect(Krikri::Activity.all.map(&:agent)).to include klass.to_s
     end
   end
 

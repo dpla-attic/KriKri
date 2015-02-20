@@ -96,6 +96,10 @@ module Krikri
 
       attr_reader :name, :generator_uri
 
+      def self.queue_name
+        :mapping
+      end
+
       def initialize(opts = {})
         @name = opts.fetch(:name).to_sym
         @generator_uri = RDF::URI(opts.fetch(:generator_uri))
