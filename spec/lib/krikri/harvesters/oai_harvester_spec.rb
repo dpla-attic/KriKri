@@ -152,6 +152,52 @@ describe Krikri::Harvesters::OAIHarvester do
       end
     end
 
+    describe '#sets' do
+      before do
+        response_body = <<EOM
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/
+                             http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2015-02-21T17:07:46Z</responseDate>
+  <request verb="ListSets">http://fedora.digitalcommonwealth.org/oaiprovider/</request>
+<ListSets>
+<set>
+  <setSpec>commonwealth-oai:1r66j283x</setSpec>
+  <setName>History of the Academy</setName>
+</set>
+<set>
+  <setSpec>commonwealth-oai:1r66j2871</setSpec>
+  <setName>List of Vessels Belonging to the District of Gloucester</setName>
+</set>
+<set>
+  <setSpec>commonwealth-oai:wp988k074</setSpec>
+  <setName>NOBLE Collection</setName>
+</set>
+</ListSets>
+</OAI-PMH>
+EOM
+        stub_request(:get, "http://example.org/endpoint?verb=ListSets").
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3'}).
+          to_return(:status => 200,
+                    :body => response_body,
+                    :headers => {})
+      end
+
+      it 'returns sets' do
+        expect(subject.sets).to contain_exactly(an_instance_of(OAI::Set),
+                                                an_instance_of(OAI::Set),
+                                                an_instance_of(OAI::Set))
+      end
+
+      it 'passes block to sets' do
+        expect(subject.sets(&:spec)).to contain_exactly(an_instance_of(String),
+                                                       an_instance_of(String),
+                                                       an_instance_of(String))
+      end
+    end
+
     describe 'options' do
       let(:result) { double }
       let(:args) do

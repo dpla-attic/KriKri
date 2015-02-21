@@ -60,13 +60,34 @@ module Krikri::Harvesters
       end
     end
 
-    # TODO: normalize records; there will be differences in XML
-    # for different requests
+    ##
+    # Gets a single record with the given identifier from the OAI endpoint
+    #
+    # @param identifier [#to_s] the identifier of the record to get
+    # @param opts [Hash] options to pass to the OAI client
     def get_record(identifier, opts = {})
       opts[:identifier] = identifier
       opts = opts.merge(@opts)
       @record_class.build(mint_id(identifier),
                           record_xml(client.get_record(opts).record))
+    end
+
+    ##
+    # Lists the sets available from the OAI endpoint. Accepts a block to
+    # pass to `#map` on the resulting array.
+    #
+    # @example:
+    #
+    #   sets(&:spec)
+    #
+    # @param opts [Hash] options to pass to the OAI client
+    # @return [Array<OAI::Set>] an array of sets.
+    #
+    # @see OAI::Set
+    def sets(opts = {}, &block)
+      arry = client.list_sets.full.to_a
+      return arry unless block_given?
+      arry.map(&block)
     end
 
     ##
@@ -76,7 +97,9 @@ module Krikri::Harvesters
         key: :oai,
         opts: {
           set: {type: :string, required: false, multiple_ok: true},
-          metadata_prefix: {type: :string, required: true}
+          metadata_prefix: {type: :string, required: false},
+          from: {type: :string, required: false},
+          until: {type: :string, required: false}
         }
       }
     end
