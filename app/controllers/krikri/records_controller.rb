@@ -7,11 +7,14 @@ module Krikri
   # ApplicationController.  It does not interit from Krikri's
   # ApplicationController.
   class RecordsController < CatalogController
-    before_action :authenticate_user!
+    before_action :authenticate_user!, :set_current_provider
+
+    self.solr_search_params_logic += [:records_by_provider]
+
     ##
-    # RecordsReportsController has access to views in the following
+    # RecordsController has access to views in the following
     # directories:
-    #   krikri/validation_reports
+    #   krikri/records
     #   catalog (defined in Blacklight)
     # It inherits view templates from the host application's
     # ApplicationController.  It uses krikri's application layout:
@@ -81,6 +84,12 @@ module Krikri
       config.solr_document_model = Krikri::SearchIndexDocument
     end
 
+    private
+
+    def set_current_provider
+      @current_provider = params[:provider]
+    end
+
     ##
     # Construct a valid item URI from a local name, and use it to fetch a single
     # document from the search index.
@@ -93,6 +102,18 @@ module Krikri
       id_uri = Krikri::Settings.marmotta.item_container << '/' << id
       solr_response = solr_repository.find(id_uri, extra_controller_params)
       [solr_response, solr_response.documents.first]
+    end
+
+    ##
+    # Limit the records returned by a Solr request to those belonging to the
+    # current provider.
+    # @param [Hash] solr_parameters a hash of parameters to be sent to Solr.
+    # @param [Hash] user_parameters a hash of user-supplied parameters.
+    def records_by_provider(solr_params, user_params)
+      if @current_provider.present?
+        solr_params[:fq] ||= []
+        solr_params[:fq] << "provider_id:\"#{@current_provider}\""
+      end
     end
   end
 end

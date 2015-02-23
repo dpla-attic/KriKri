@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe Krikri::RecordsHelper, :type => :helper do
-  include Krikri::SearchResultsHelperBehavior
-
   let(:document) { double }
   let(:agg) { build(:aggregation) }
   let(:original) { double }

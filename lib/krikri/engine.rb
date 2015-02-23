@@ -136,5 +136,12 @@ module Krikri
         end
       end
     end
+
+    ##
+    # Allow the methods in Krikri::ApplicatoinHelper to be accessible by the
+    # host application.
+    initializer 'krikri.helpers' do |app|
+      ActionView::Base.send :include, Krikri::ApplicationHelper
+    end
   end
 end
