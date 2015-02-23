@@ -71,10 +71,9 @@ module Krikri
         configure :base_uri => Krikri::Settings['marmotta']['item_container']
 
         def mint_id!(seed = nil)
-          return set_subject!(seed) if seed
-          return set_subject!(SecureRandom.hex) if
-            originalRecord.empty? || originalRecord.first.node?
-          set_subject!(local_name_from_original_record)
+          set_subject!(mint_id_fragment(seed))
+          sourceResource.first.set_subject!(rdf_subject / '#sourceResource') \
+            unless sourceResource.empty?
         end
 
         ##
@@ -97,6 +96,13 @@ module Krikri
           raise "#{self} has more than one OriginalRecord, cannot source a " \
           "definitive identifier." unless originalRecord.length == 1
           originalRecord.first.rdf_subject.path.split('/').last.split('.').first
+        end
+
+        def mint_id_fragment(seed = nil)
+          return seed if seed
+          return SecureRandom.hex if
+            originalRecord.empty? || originalRecord.first.node?
+          local_name_from_original_record
         end
       end
     end

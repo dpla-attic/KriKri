@@ -6,6 +6,16 @@ describe DPLA::MAP::Aggregation do
   include_context 'clear repository'
 
   describe '#mint_uri!' do
+    shared_examples 'sets fragment URI for sourceResource' do
+      let(:agg_with_sr) { build(:aggregation) }
+
+      it 'sets fragment URI for sourceResource' do
+        agg_with_sr.mint_id!
+        expect(agg_with_sr.sourceResource.first.rdf_subject)
+          .to eq RDF::URI(agg_with_sr.rdf_subject) / '#sourceResource'
+      end
+    end
+
     shared_examples 'sets to seed' do
       it 'sets URI' do
         subject.mint_id!('uri_seed')
@@ -26,10 +36,12 @@ describe DPLA::MAP::Aggregation do
     context 'without originalRecord' do
       include_examples 'sets to seed'
       include_examples 'random hash'
+      include_examples 'sets fragment URI for sourceResource'
     end
 
     context 'with originalRecord' do
       include_examples 'sets to seed'
+      include_examples 'sets fragment URI for sourceResource'
 
       before do
         subject.originalRecord = or_uri
