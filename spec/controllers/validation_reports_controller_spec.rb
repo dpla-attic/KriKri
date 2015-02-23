@@ -7,10 +7,22 @@ describe Krikri::ValidationReportsController, :type => :controller do
   describe 'GET #index' do
     login_user
 
-    it 'redirects to /krikri/report_lists#index in absence of valid params' do
-      get :index
-      expect(response).to redirect_to('/krikri/report_lists')
+    context 'without session provider' do
+      it 'redirects to /krikri/admin#index' do
+        get :index
+        expect(response).to redirect_to('/krikri/admin')
+      end
+    end
+
+    context 'with session provider' do
+      before(:each) do
+        session[:provider] = 'Sample Provider'
+      end
+
+      it 'redirects to /krikri/report_lists#index in absence of valid params' do
+        get :index
+        expect(response).to redirect_to('/krikri/report_lists')
+      end
     end
   end
-
 end

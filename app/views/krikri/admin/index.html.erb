@@ -1,0 +1,18 @@
+<% content_for :title do %>Admin<% end %>
+
+<div id='main-container' class='container'>
+  <%= render :partial=>'krikri/shared/flash_message' %>
+
+  <h2>Admin</h2>
+  <h3>Provider Dashboards</h3>
+
+  <ul>
+  <% @providers.each do |provider| %>
+    <li>
+      <%= link_to provider.value, { controller: 'dashboards', action: 'show',
+        id: provider.value } %>
+    </li>
+  <% end %>
+  </ul>
+
+</div>

@@ -7,8 +7,10 @@ module Krikri
   # ApplicationController.  It does not interit from Krikri's
   # ApplicationController.
   class ValidationReportsController < CatalogController
-    before_action :authenticate_user!
-    before_filter :valid_params, :only => :index
+    include Krikri::QaProviderFilter
+    before_action :authenticate_user!, :authenticate_session_provider
+    before_action :valid_params, :only => :index
+    self.solr_search_params_logic += [:records_by_provider]
 
     ##
     # ValidationReportsController has access to views in the following
@@ -45,6 +47,5 @@ module Krikri
     def valid_params
       redirect_to :report_lists if !params['report_name'] || !params['q']
     end
-
   end
 end
