@@ -42,6 +42,20 @@ module Krikri::MappingDSL
     end
 
     ##
+    # Gives access to a delayed call for the `#header` of a parsed record.
+    #
+    # @return [Proc] a proc that, when called, returns the #rdf_subject of the
+    #   OriginalRecord associated with the parsed record passed as its argument.
+    # @todo consider a more generalized approach
+    def header
+      lambda do |parsed|
+        raise "#{parsed} does not have a `header`" unless
+          parsed.respond_to? :header
+        parsed.header
+      end
+    end
+
+    ##
     # This class acts as a proxy for a parsed record's nodes, wrapped in the
     # class passed as the second argument. All methods available on the wrapper
     # class are accepted via #method_missing, added to the #call_chain, and

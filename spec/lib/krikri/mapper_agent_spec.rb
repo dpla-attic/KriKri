@@ -1,6 +1,6 @@
 describe Krikri::Mapper::Agent do
   opts = { name: :agent_map, generator_uri: 'http://example.org/agent/gen/1' }
-  it_behaves_like 'a software agent', opts, Krikri::MappingJob
+  it_behaves_like 'a software agent', opts
 
   subject { described_class.new(opts) }
 
@@ -8,6 +8,10 @@ describe Krikri::Mapper::Agent do
   let(:activity_uri) { 'http://example.org/agent/act/1' }
   let(:mapping_name) { :agent_map }
   let(:opts) { { name: mapping_name, generator_uri: generator_uri } }
+
+  describe '::queue_name' do
+    it { expect(described_class.queue_name.to_s).to eq 'mapping' }
+  end
 
   describe '#run' do
     let(:record_double) { instance_double(DPLA::MAP::Aggregation) }

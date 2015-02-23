@@ -1,10 +1,12 @@
 
 shared_examples 'a harvester' do
   opts = { uri: 'http://example.org/endpoint' }
-  it_behaves_like 'a software agent', opts, Krikri::HarvestJob
+  it_behaves_like 'a software agent', opts
 
   let(:harvester) { subject }
   let(:name) { :test_harvester }
+
+  it { expect(described_class.queue_name.to_s).to eq 'harvest' }
 
   it 'is a harvester' do
     expect(harvester).to be_a Krikri::Harvester
@@ -120,7 +122,5 @@ shared_examples 'a harvester' do
     end
   end
 
-  it_behaves_like 'a software agent',
-    { uri: 'http://example.org/endpoint' },
-    Krikri::HarvestJob
+  it_behaves_like 'a software agent', uri: 'http://example.org/endpoint'
 end

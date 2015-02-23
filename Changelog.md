@@ -1,3 +1,14 @@
+0.2.0 (23 February 2015)
+---
+
+* Simplify `#enqueue` interface and dependencies
+* Add random record view for QA interface
+* Add `#header` node as mixin for OAI Parsers
+* Make Krikri::Mapper#map's exception handling more robust
+* Test refactor for SoftwareAgent [minor]
+* Add ability select multiple fields from ValueArray
+* Streamline and improve Rake tasks
+
 0.1.3 (6 February 2015)
 ---
 

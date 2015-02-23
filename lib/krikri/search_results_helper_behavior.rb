@@ -65,7 +65,7 @@ module Krikri
         return error_msg(e.message)
       end
 
-      return error_msg('Original record not found.') unless 
+      return error_msg('Original record not found.') unless
         original_record.present?
       prettify_string(original_record.to_s, original_record.content_type)
     end
@@ -96,6 +96,10 @@ module Krikri
 
     def error_msg(message = '')
       "There was a problem getting the record.\n\n#{message}"
+    end
+
+    def random_record_url
+      url_for_document(Krikri::RandomRecordGenerator.new.record)
     end
   end
 end

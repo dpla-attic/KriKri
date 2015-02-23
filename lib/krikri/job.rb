@@ -21,13 +21,14 @@ module Krikri
     end
 
     ##
-    # @abstract run the job's task. Implement the actual task
-    #   against the agent passed in.
-    # @param agent  the agent to run the task
+    # Run the job's task. Receieves a `Krikri::SoftwareAgent` or other object
+    # responding to `#run`.
+    #
+    # @param agent [#run] the agent to run the task
     # @param activity_uri  the URI of the activity responsible for
     #   generating the resources. Set this to (e.g.) prov:wasGeneratedBy
-    def self.run(_, _)
-      raise NotImplementedError
+    def self.run(agent, activity_uri = nil)
+      agent.run(activity_uri)
     end
   end
 end
