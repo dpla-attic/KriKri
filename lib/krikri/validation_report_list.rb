@@ -1,61 +1,64 @@
 module Krikri
   # Constructs a list of Validation Reports
   class ValidationReportList
-    attr_reader :report_list
+    include Krikri::QaProviderFilter
 
     REQUIRED_FIELDS = ['dataProvider_name', 'isShownAt_id', 'preview_id',
                        'sourceResource_rights', 'sourceResource_title',
                        'sourceResource_type_id']
 
     def initialize
-      @blacklight_config = Blacklight::Configuration.new
-      @report_list = list_for_display(missing_field_totals)
+      @index_querier = Krikri::IndexQuerier.new
+      @default_query_params = { :rows => 0,
+                                'facet.field' => REQUIRED_FIELDS,
+                                'facet.mincount' => 10000000,
+                                'facet.missing' => true }
+    end
+
+    # @return Hash
+    def report_list
+      list_for_display(report_list_facets(@default_query_params))
     end
 
     ##
-    # Returns the number of items missing each required field
-    # @return Array
-    def missing_field_totals
-      solr_params = {
-        :rows => 0,
-        'facet.field' => REQUIRED_FIELDS,
-        'facet.mincount' => 10000000,
-        'facet.missing' => true
-      }
-      Blacklight::SolrRepository.new(@blacklight_config).search(solr_params)
+    # @param String
+    # @return Hash
+    def report_list_by_provider(provider)
+      query_params = @default_query_params.merge(:fq => provider_fq(provider))
+      list_for_display(report_list_facets(query_params))
     end
 
-    # Transform Hash of key-value pairs into Array of Hashes.
-    #   example: { "field_name"=>[nil,2] } is tranformed into
+    private
+
+    ##
+    # @param Hash
+    # @return Array of Blacklight::SolrResponse::Facets::FacetField's
+    def report_list_facets(query_params)
+      @index_querier.search(query_params).facets
+    end
+
+    ##
+    # @param Array of Blacklight::SolrResponse::Facets::FacetField's
+    # @return Array of Hashes. Hash will be in the format:
     #   [{ :label => "field_name (2)", :link_url => "validation_reports?[...]"}]
-    def list_for_display(solr_response)
-
-      if solr_response && solr_response['facet_counts'] &&
-         fields = solr_response['facet_counts']['facet_fields']
-
-        return fields.each_with_object([]) do |(key, value), array|
-          array << report_link(key, value[1])
-        end
+    def list_for_display(reports)
+      reports.map do |report|
+        report_link(report.name, report.items.first.hits)
       end
-
-      nil
     end
 
+    ##
     # Construct a link and display label for a validation report
     # The param 'report_name' in the constructed link is not used by Solr
     #  - it is for display purposes only
-    # @param: String, int
+    # @param: String, Integer
     # @return: Hash
     def report_link(name, count)
       link = { :label => "#{name} (#{count})" }
-
-      if count > 0
-        link[:url] = "validation_reports?q=-#{name}:[*%20TO%20*]" \
-                     "&report_name=#{name}"
-      end
-
+      return link unless count > 0
+      link[:url] = "validation_reports?q=-#{name}:[*%20TO%20*]" \
+                    "&report_name=#{name}"
       link
     end
-
   end
 end

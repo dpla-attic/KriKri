@@ -99,7 +99,9 @@ module Krikri
     end
 
     def random_record_url
-      url_for_document(Krikri::RandomRecordGenerator.new.record)
+      rrg = Krikri::RandomRecordGenerator.new
+      return url_for_document(rrg.record) unless session[:provider].present?
+      url_for_document(rrg.record_by_provider(session[:provider]))
     end
   end
 end

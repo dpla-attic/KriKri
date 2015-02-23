@@ -7,7 +7,10 @@ module Krikri
   # ApplicationController.  It does not interit from Krikri's
   # ApplicationController.
   class RecordsController < CatalogController
-    before_action :authenticate_user!
+    include Krikri::QaProviderFilter
+    before_action :authenticate_user!, :authenticate_session_provider
+    self.solr_search_params_logic += [:records_by_provider]
+
     ##
     # RecordsReportsController has access to views in the following
     # directories:
