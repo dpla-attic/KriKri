@@ -1,3 +1,6 @@
+0.2.1 (24 Feburary 2015)
+* Set fragment URI for first sourceResource on ore:Aggregations
+
 0.2.0 (23 February 2015)
 ---
 
