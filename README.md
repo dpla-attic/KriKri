@@ -12,6 +12,15 @@ A Rails engine for metadata aggregation, enhancement, and quality control.
 Installation
 -------------
 
+Using the Rails template:
+
+```console
+$ rails new krikri_app -m https://raw.githubusercontent.com/dpla/KriKri/master/template.rb
+```
+
+If the Rails template doesn't work for you or you want to integrate krikri into an existing application, 
+you can perform run these steps manually:
+
 1. Add the `krikri` gem to your Gemfile.
 
 2. Run `bundle exec rails g krikri:install`
@@ -75,16 +84,9 @@ Customization
 -------------
 
 Krikri uses Blacklight.  Blacklight's installation process includes the 
-creation of some routes that Krikri does not use.  Blacklight also roots to one
-of these un-used routes.  We suggested removing both the un-used routes and the
-root route by deleting the following line from `config/routes.rb`:
-
-    blacklight_for :catalog
-    root :to => "catalog#index"
-
-You can then choose a different route to root to, for example:
-
-  root :to => "krikri_records#index"
+creation of some routes that Krikri does not use.  By default, the KriKri install generator will comment out
+the unused Blacklight routes. If tyou want to use Blacklight in addition to KriKri,
+you may uncomment and customize your routes.
 
 Note that whether or not you delete the un-used Blacklight routes, Blacklight's
 controllers, models, and views still exists within your application.  Be careful

@@ -39,3 +39,33 @@ end
 desc "Run all specs in spec directory (excluding plugin specs)"
 RSpec::Core::RakeTask.new(:spec)
 task :default => :ci
+
+task :server do
+  if File.exists? 'spec/internal'
+      within_test_app do
+        system "bundle update"
+      end
+    else
+      Rake::Task['engine_cart:generate'].invoke
+    end
+
+    unless File.exists? 'jetty'
+      Rake::Task['jetty:clean'].invoke
+    end
+
+    Rake::Task['jetty:config'].invoke
+
+    jetty_params = Jettywrapper.load_config
+
+    Jettywrapper.wrap(jetty_params) do
+      within_test_app do
+
+        # Add fixture records
+        system "bundle exec rake krikri:samples:save_record"
+        system "bundle exec rake krikri:samples:save_invalid_record"
+        system "bundle exec rake krikri:samples:save_institution"
+
+        system "bundle exec rails s"
+      end
+    end
+end
