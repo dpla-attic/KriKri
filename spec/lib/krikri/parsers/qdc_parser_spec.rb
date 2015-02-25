@@ -5,4 +5,5 @@ describe Krikri::QdcParser do
   subject { Krikri::QdcParser.new(record) }
 
   it_behaves_like 'a parser'
+  it_behaves_like 'a parser with oai headers'
 end

@@ -4,6 +4,8 @@ module Krikri
   # metadata path.
   # @see Krikri::XmlParser
   class ModsParser < XmlParser
+    include Krikri::OaiParserHeaders
+
     def initialize(record, root_path = '//mods:mods', ns = {})
       ns = { mods: 'http://www.loc.gov/mods/v3' }.merge(ns)
       super(record, root_path, ns)
