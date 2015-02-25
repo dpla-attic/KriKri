@@ -7,6 +7,8 @@ module Krikri
   #
   # @see Krikri::XmlParser
   class QdcParser < XmlParser
+    include Krikri::OaiParserHeaders
+
     def initialize(record, root_path = '//oai_qdc:qualifieddc', ns = {})
       ns = {
         qdc: 'http://epubs.cclrc.ac.uk/xmlns/qdc/',
