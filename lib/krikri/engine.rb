@@ -15,6 +15,12 @@ module Krikri
   class Engine < ::Rails::Engine
     isolate_namespace Krikri
 
+    def configure_blacklight!
+      krikri_solr = Krikri::Settings.solr
+      Blacklight.solr_config = Blacklight.solr_config.merge(krikri_solr) unless
+        krikri_solr.nil?
+    end
+
     # Autoload various classes and modules in lib
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
 
@@ -63,6 +69,10 @@ module Krikri
     initializer :rdf_repository do
       Krikri::Repository =
         RDF::Marmotta.new(Krikri::Settings['marmotta']['base'])
+    end
+
+    initializer :blacklight_settings do
+      configure_blacklight!
     end
 
     initializer :aggregation do
