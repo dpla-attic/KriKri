@@ -11,6 +11,14 @@ require "#{krikri_dir}/app/models/krikri/original_record"
 require "#{krikri_dir}/spec/factories/krikri_original_record"
 
 namespace :krikri do
+
+  def index_aggregation(agg)
+    graph = agg.to_jsonld['@graph'].first
+    indexer = Krikri::IndexService.new
+    indexer.add graph.to_json
+    indexer.commit
+  end
+
   namespace :samples do
 
     # Note: The content of the sample original record does not actually
@@ -32,10 +40,7 @@ namespace :krikri do
       # Save to Marmotta
       agg.save unless agg.exists?
 
-      # Save to Solr
-      graph = agg.to_jsonld['@graph'].first
-      Krikri::IndexService.add graph.to_json
-      Krikri::IndexService.commit
+      index_aggregation(agg)
     end
 
     desc 'Save an invalid sample record to Marmotta and Solr'
@@ -54,10 +59,7 @@ namespace :krikri do
       # Save to Marmotta
       agg.save unless agg.exists?
 
-      # Save to Solr
-      graph = agg.to_jsonld['@graph'].first
-      Krikri::IndexService.add graph.to_json
-      Krikri::IndexService.commit
+      index_aggregation(agg)
     end
 
     desc 'Delete all sample records from Marmotta and Solr'
@@ -79,8 +81,9 @@ namespace :krikri do
       original_record.delete! if original_record.exists?
 
       # Delete all sample records from Solr
-      Krikri::IndexService.delete_by_query 'id:*krikri_sample*'
-      Krikri::IndexService.commit
+      indexer = Krikri::IndexService.new
+      indexer.delete_by_query 'id:*krikri_sample*'
+      indexer.commit
     end
 
     desc 'Save sample institution and harvest source'

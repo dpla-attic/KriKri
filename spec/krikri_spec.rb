@@ -27,5 +27,20 @@ describe Krikri::Engine do
 
       expect(Krikri::Settings.api_test).to eq 'app!'
     end
+
+    describe '#configure_blacklight!' do
+      it 'merges solr settings with blacklight settings' do
+        uri = 'http://moomin.org/'
+        allow(Krikri::Settings).to receive(:solr).and_return(url: uri)
+        described_class.configure_blacklight!
+        expect(Blacklight.solr_config[:url]).to eq uri
+      end
+
+      it 'does not destroy blacklight config options not provided by Krikri' do
+        allow(Krikri::Settings).to receive(:solr).and_return(nil)
+        described_class.configure_blacklight!
+        expect(Blacklight.solr_config[:url]).not_to be_nil
+      end
+    end
   end
 end
