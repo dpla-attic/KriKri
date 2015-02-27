@@ -48,11 +48,10 @@ module Krikri::MappingDSL
     #   OriginalRecord associated with the parsed record passed as its argument.
     # @todo consider a more generalized approach
     def header
-      lambda do |parsed|
-        raise "#{parsed} does not have a `header`" unless
-          parsed.respond_to? :header
-        parsed.header
-      end
+      RecordProxy.new(
+        [{ name: :header }],
+        Krikri::Parser::ValueArray,
+        true)
     end
 
     ##
@@ -65,7 +64,7 @@ module Krikri::MappingDSL
     #
     # @see Krikri::Parser::ValueArray
     class RecordProxy
-      attr_reader :value_class, :call_chain
+      attr_reader :value_class, :call_chain, :non_root
 
       ##
       # Create a new RecordProxy object.
@@ -76,15 +75,20 @@ module Krikri::MappingDSL
       # @param klass [Class] a Class that acts as the target for delayed method
       #   calls. Must respond to #build(record) and #values. Defaults to
       #   Krikri::Parser::ValueArray
+      # @param non_root [Boolean] a flag indicating whether to build the root
+      #   node of the record before beginning the call chain. The default case
+      #   call `value_class.build`; `false` allows you to skip this step and
+      #   begin the call chain directly on object passed to `#call`.
       #
       # @return [RecordProxy]
-      def initialize(call_chain = [], klass = Krikri::Parser::ValueArray)
+      def initialize(call_chain = [], klass = Krikri::Parser::ValueArray, non_root = false)
         @call_chain = call_chain
         @value_class = klass
+        @non_root = non_root
       end
 
       def dup
-        RecordProxy.new(call_chain.dup, value_class)
+        RecordProxy.new(call_chain.dup, value_class, non_root)
       end
 
       ##
@@ -96,7 +100,7 @@ module Krikri::MappingDSL
       #   value_class#build.
       # @return the values resulting from the full run of the call chain
       def call(record)
-        result = value_class.build(record)
+        result = non_root ? record : value_class.build(record)
         call_chain.each do |message|
           result = result.send(message[:name], *message[:args], &message[:block])
         end

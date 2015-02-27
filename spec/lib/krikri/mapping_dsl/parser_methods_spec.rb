@@ -56,20 +56,13 @@ describe Krikri::MappingDSL::ParserMethods do
   end
 
   describe 'header' do
-    let(:record) { double }
+    let(:record) { double('record') }
+    let(:header) { double('header') }
 
     it 'gets the header from the record passed' do
-      allow(record).to receive(:respond_to?).with(:header)
-                        .and_return(true)
-      allow(record).to receive(:header).and_return(:header_array)
-      expect(subject.header.call(record)).to eq (:header_array)
-    end
-
-    it 'gets the header from the record passed' do
-      allow(record).to receive(:respond_to?).with(:header)
-                        .and_return(false)
-      expect { subject.header.call(record) }
-        .to raise_error "#{record} does not have a `header`"
+      allow(record).to receive(:header).and_return(header)
+      allow(header).to receive(:values).and_return(:values)
+      expect(subject.header.call(record)).to eq (:values)
     end
   end
 end
@@ -96,6 +89,14 @@ describe Krikri::MappingDSL::ParserMethods::RecordProxy do
     it 'shares a value class' do
       expect(duped.value_class).to eq subject.value_class
     end
+
+    context 'with non_root record' do
+      subject { described_class.new([], klass, true) }
+
+      it 'shares non_root status' do
+        expect(duped.non_root).to eq subject.non_root
+      end
+    end
   end
 
   describe '#call' do
@@ -105,8 +106,8 @@ describe Krikri::MappingDSL::ParserMethods::RecordProxy do
     end
 
     subject { described_class.new(call_chain, klass) }
-    let(:record) { double }
-    let(:value) { double }
+    let(:record) { double('record') }
+    let(:value) { double('value') }
 
     let(:call_chain) do
       [{ :name => :my_method,
@@ -117,6 +118,29 @@ describe Krikri::MappingDSL::ParserMethods::RecordProxy do
          :args => [:too_ticky],
          :block => nil
        }]
+    end
+
+    context 'non root' do
+      before do
+        allow(record).to receive(:values).and_return([:my_value])
+      end
+
+      subject { described_class.new(call_chain, klass, true) }
+
+      it 'calls chain' do
+        call_chain.each do |spec|
+          expect(record).to receive(spec[:name]).ordered
+                             .with(*spec[:args], &spec[:block]).and_return(record)
+        end
+        subject.call(record)
+      end
+
+      it 'casts result to values' do
+        call_chain.each do |spec|
+          allow(record).to receive(spec[:name]).and_return(record)
+        end
+        expect(subject.call(record)).to eq [:my_value]
+      end
     end
 
     it 'calls chain' do
