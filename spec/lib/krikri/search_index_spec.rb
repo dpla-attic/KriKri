@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Krikri::IndexService do
+describe Krikri::QASearchIndex do
   let(:solr) { RSolr.connect }
 
   describe '#initialize' do

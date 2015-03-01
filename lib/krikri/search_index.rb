@@ -7,14 +7,14 @@ module Krikri
   #
   # @example
   #
-  #   indexer = Krikri::IndexService.new
+  #   indexer = Krikri::QASearchIndex.new
   #   agg = Krikri::Aggregation.new
   #   json_doc = agg.to_jsonld['@graph'].first.to_json
   #
   #   indexer.add(json_doc)
   #   indexer.commit
   #
-  class IndexService
+  class QASearchIndex
     attr_reader :solr
 
     ##
