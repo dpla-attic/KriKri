@@ -1,11 +1,45 @@
+require 'spec_helper'
+
 describe Krikri::Mapper::Agent do
-  opts = { name: :agent_map, generator_uri: 'http://example.org/agent/gen/1' }
-  it_behaves_like 'a software agent', opts
+  before(:all) do
+    DatabaseCleaner.clean_with(:truncation)
+    create(:krikri_mapping_activity)
+    create(:krikri_harvest_activity)
+  end
+
+  harvest_gen_uri_str = 'http://example.org/ldp/activity/2'
+  mapping_gen_uri_str = 'http://example.org/ldp/activity/3'
+
+  # This must be defined with `let' as a macro.  See below.
+  let(:opts) { {name: :agent_map, generator_uri: harvest_gen_uri_str} }
+
+  # This can not be a macro, because it has to be passed as an argument to
+  # `it_behaves_like', which is interpreted at compile time.  It should be the
+  # same as the hash returned by :opts above.
+  #
+  # As a further note, rspec executes any examples that might come
+  # below in random order.  Since `subject' is a macro that is executed
+  # every time `subject' is referenced below, `described_class.new' gets
+  # invoked each time.  If there is a method (as there is) that deletes hash
+  # keys from `opts' (supposing it's a hash like `behaves_opts' instead of a
+  # macro), then `subject' will not instantiate an object with the same options
+  # when it's invoked repeatedly.
+  # 
+  behaves_opts = {name: :agent_map, generator_uri: harvest_gen_uri_str}
+  it_behaves_like 'a software agent', behaves_opts
 
   subject { described_class.new(opts) }
 
-  let(:generator_uri) { 'http://example.org/agent/gen/1' }
-  let(:activity_uri) { 'http://example.org/agent/act/1' }
+  # See spec/factories/krikri_activities.rb
+  # generator_uri is the URI of the harvest activity
+  # generator_uri matches what Krikri::Activity will construct as the
+  # uri, given its value of #rdf_subject, in #aggregations_as_json
+  # See 'provenance queries' shared context.  
+  let(:generator_uri) { harvest_gen_uri_str }
+
+  # activity_uri is the URI of the mapping activity
+  let(:activity_uri) { mapping_gen_uri_str }
+
   let(:mapping_name) { :agent_map }
   let(:opts) { { name: mapping_name, generator_uri: generator_uri } }
 
@@ -14,24 +48,25 @@ describe Krikri::Mapper::Agent do
   end
 
   describe '#run' do
-    let(:record_double) { instance_double(DPLA::MAP::Aggregation) }
-    let(:records) do
-      [record_double, record_double.clone, record_double.clone]
+    let(:agg_record_double) { instance_double(DPLA::MAP::Aggregation) }
+    let(:generated_records) do
+      [agg_record_double, agg_record_double.clone, agg_record_double.clone]
     end
 
     before do
-      allow(subject).to receive(:records).and_return([:record1, :record2])
-      allow(record_double).to receive(:node?).and_return(true)
-      allow(record_double).to receive(:mint_id!)
-      allow(record_double).to receive(:save)
-      allow(record_double).to receive(:save_with_provenance)
+      allow(subject.generator_activity).to receive(:entities)
+        .and_return([:record1, :record2])  #  why not generated_records above?
+      allow(agg_record_double).to receive(:node?).and_return(true)
+      allow(agg_record_double).to receive(:mint_id!)
+      allow(agg_record_double).to receive(:save)
+      allow(agg_record_double).to receive(:save_with_provenance)
     end
 
     context 'with errors thrown' do
       before do
-        allow(record_double).to receive(:node?).and_raise(StandardError.new)
-        allow(record_double).to receive(:rdf_subject).and_return('123')
-        allow(Krikri::Mapper).to receive(:map).and_return(records)
+        allow(agg_record_double).to receive(:node?).and_raise(StandardError.new)
+        allow(agg_record_double).to receive(:rdf_subject).and_return('123')
+        allow(Krikri::Mapper).to receive(:map).and_return(generated_records)
       end
 
       it 'logs errors' do
@@ -45,8 +80,8 @@ describe Krikri::Mapper::Agent do
     context 'with mapped records returned' do
       before do
         expect(Krikri::Mapper).to receive(:map)
-                                   .with(mapping_name, subject.records)
-                                   .and_return(records)
+                                   .with(mapping_name, subject.generator_activity.entities)
+                                   .and_return(generated_records)
       end
 
       it 'calls mapper' do
@@ -54,14 +89,14 @@ describe Krikri::Mapper::Agent do
       end
 
       it 'saves each record' do
-        records.each do |record|
+        generated_records.each do |record|
           expect(record).to receive(:save)
         end
         subject.run
       end
 
       it 'saves with provenance' do
-        records.each do |rec|
+        generated_records.each do |rec|
           expect(rec).to receive(:save_with_provenance).with(activity_uri)
         end
         subject.run(activity_uri)
@@ -69,25 +104,4 @@ describe Krikri::Mapper::Agent do
     end
   end
 
-  # TODO: these tests are tied closely to implementation.
-  #       This is a code smell. Consider refactor of ProvenanceQueryClient
-  #       and #records.
-  describe '#records' do
-    include_context 'provenance queries'
-
-    let(:record_double) { instance_double(Krikri::OriginalRecord) }
-
-    it 'returns a lazy enum' do
-      expect(subject.records).to be_a Enumerator::Lazy
-    end
-
-    it 'gets records for generated by harvest_activity' do
-      expect(Krikri::ProvenanceQueryClient).to receive(:find_by_activity)
-        .with(generator_uri).and_return(query)
-      expect(Krikri::OriginalRecord).to receive(:load).with(uri.to_s)
-        .and_return(record_double)
-
-      expect(subject.records).to contain_exactly(record_double)
-    end
-  end
 end

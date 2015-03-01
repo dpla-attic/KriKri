@@ -47,6 +47,14 @@ module Krikri
     end
 
     ##
+    # @see Krikri::Activity#entities
+    # @see Krikri::EntityBehavior
+    # @see Krikri::SoftwareAgent#entity_behavior
+    def entity_behavior
+      @entity_behavior ||= Krikri::OriginalRecordEntityBehavior
+    end
+
+    ##
     # Accepts options for a generic harvester:
     #   uri: a URI for the harvest endpoint or provider
     #   name: a name for the harvester or provider, SHOULD be supplied when the

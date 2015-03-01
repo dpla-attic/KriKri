@@ -10,3 +10,4 @@ services:
 addons:
   code_climate:
     repo_token: 9b8c58a49bdfba5582d6a766fbe198e3720158e5e65c2ae00b1667e5e1bb8769
+env: CI=yes
