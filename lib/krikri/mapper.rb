@@ -90,6 +90,18 @@ module Krikri
     ##
     # A SoftwareAgent to run mapping processes.
     #
+    # @example
+    #
+    #   To map the records harvested by the harvest activity with ID 1:
+    #
+    #   Krikri::Mapper::Agent.enqueue(
+    #     :mapping,
+    #     opts = {
+    #       name: 'scdl_qdc',
+    #       generator_uri: 'http://ldp.local.dp.la/ldp/activity/1'
+    #     }
+    #   )
+    #
     # @see: Krikri::SoftwareAgent, Krikri::Activity
     class Agent
       include SoftwareAgent
