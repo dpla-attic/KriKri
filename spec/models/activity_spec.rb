@@ -139,4 +139,17 @@ describe Krikri::Activity, type: :model do
       end
     end
   end
+
+  describe '#aggregations_as_json' do
+    include_context 'provenance queries'
+    include_context 'generated entities query'
+
+    it 'enumerates JSON strings' do
+      expect do
+        JSON.parse(subject.aggregations_as_json.first)
+      end.to_not raise_error
+    end
+
+  end
+
 end

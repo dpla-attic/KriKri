@@ -83,5 +83,23 @@ module Krikri
       RDF::URI(Krikri::Settings['marmotta']['ldp']) /
         Krikri::Settings['prov']['activity'] / id.to_s
     end
+
+    ##
+    # Return an Enumerator of RDF aggregations that were affected by this
+    # Activity.  Each aggregation is represented as a JSON string.
+    #
+    # @return [Enumerator] JSON string for each aggregation (item / "record")
+    def aggregations_as_json
+      # query should return a list of records containing URIs ...
+      query = Krikri::ProvenanceQueryClient.find_by_activity(
+        RDF::URI(rdf_subject)
+      )
+      query.each_solution.map do |s|
+        agg = DPLA::MAP::Aggregation.new(s.record.to_s)
+        agg.get                             # slow?
+        agg.to_jsonld['@graph'][0].to_json  # correct?
+      end
+    end
+
   end
 end

@@ -3,6 +3,84 @@ require 'rsolr'
 
 module Krikri
   ##
+  # Search index base class that gets extended by QA and Production index
+  # classes
+  class SearchIndex
+    def initialize(_)
+      @bulk_update_size = 10
+    end
+
+    ##
+    # Add a single JSON document to the search index.
+    # Implemented in a child class.
+    # @param _ [String] JSON document
+    def add(_)
+      fail NotImplementedError
+    end
+
+    ##
+    # Add a number of JSON documents to the search index at once.
+    # Implemented in a child class.
+    # @param _ [Array] Strings of JSON documents
+    def bulk_add(_)
+      fail NotImplementedError
+    end
+
+    ##
+    # Update or save all records in the index that were affected by the given
+    # Activity.
+    # @param activity [Krikri::Activity]
+    def update_from_activity(activity)
+      fail "#{activity} is not an Activity" \
+        unless activity.class == Krikri::Activity
+      begin
+        bulk_update_from_activity(activity)
+      rescue NotImplementedError
+        incremental_update_from_activity(activity)
+      end
+    end
+
+    protected
+
+    ##
+    # @param activity [Krikri::Activity]
+    def bulk_update_from_activity(activity)
+      agg_batches = bulk_update_batches(activity.aggregations_as_json)
+      agg_batches.each do |batch|
+        bulk_add(batch)
+      end
+    end
+
+    ##
+    # @param aggregations [Enumerator]
+    # @return [Enumerator] Each array of JSON strings
+    def bulk_update_batches(aggregations)
+      Enumerator.new do |e|
+        i = 1
+        batch = []
+        aggregations.each do |agg|
+          batch << agg
+          if i % @bulk_update_size == 0
+            e.yield batch
+            i += 1
+            batch = []
+          end
+        end
+        e.yield batch if batch.count > 0  # last one
+      end
+    end
+
+    ##
+    # @param activity [Krikri::Activity]
+    def incremental_update_from_activity(activity)
+      activity.aggregations_as_json.each do |agg|
+        add(agg)
+      end
+    end
+  end
+
+
+  ##
   # Generates flattened Solr documents and manages indexing of DPLA MAP models.
   #
   # @example
@@ -14,7 +92,7 @@ module Krikri
   #   indexer.add(json_doc)
   #   indexer.commit
   #
-  class QASearchIndex
+  class QASearchIndex < Krikri::SearchIndex
     attr_reader :solr
 
     ##
@@ -22,6 +100,7 @@ module Krikri
     # @see RSolr.connect
     def initialize(opts = Krikri::Settings.solr.to_h)
       @solr = RSolr.connect(opts)
+      super(opts)
     end
 
     # TODO: Assure that the following metacharacters are escaped:
@@ -123,6 +202,33 @@ module Krikri
     def remove_invalid_keys(solr_doc)
       valid_keys = schema_keys
       solr_doc.delete_if { |key, _| !key.in? valid_keys }
+    end
+  end
+
+
+  ##
+  # Production ElasticSearch search index class
+  class ProdSearchIndex < Krikri::SearchIndex
+    ##
+    # @todo Define ElasticSearch connection
+    def initialize(opts)
+      super(opts)
+    end
+
+    ##
+    # Add a single JSON document to the production ElasticSearch search index.
+    # @param doc [String] JSON document
+    # @todo Fill in
+    def add(doc)
+      true
+    end
+
+    ##
+    # Add a number of JSON documents to the search index at once.
+    # @param docs [Array] Strings of JSON documents
+    # @todo Fill in
+    def bulk_add(docs)
+      true
     end
   end
 end

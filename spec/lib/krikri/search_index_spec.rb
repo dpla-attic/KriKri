@@ -52,7 +52,13 @@ describe Krikri::QASearchIndex do
     end
 
     context 'with models' do
-      let(:aggregation) { build(:aggregation) }
+      include_context 'provenance queries'
+      include_context 'generated entities query'
+      let(:activity) do
+        a = build(:krikri_activity)
+        a.id = 1
+        a
+      end
 
       before do
         aggregation.set_subject!('http://api.dp.la/item/123')
@@ -70,6 +76,12 @@ describe Krikri::QASearchIndex do
         response = solr.get('select', :params => { :q => '' })['response']
         expect(response['numFound']).to eq 1
       end
+
+      it 'updates records affected by an activity' do
+        expect do
+          subject.update_from_activity(activity)
+        end.to_not raise_error
+      end
     end
 
     describe '#schema_keys' do
@@ -78,6 +90,16 @@ describe Krikri::QASearchIndex do
         expect(result).to be_a(Array)
         expect(result).not_to be_empty
       end
+    end
+  end
+end
+
+
+describe Krikri::ProdSearchIndex do
+  context 'with arguments to #initialize' do
+    describe '#initialize' do
+      let(:opts) { {} }
+      subject { described_class.new(opts) }
     end
   end
 end
