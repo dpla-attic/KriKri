@@ -13,6 +13,7 @@ module Krikri
     ##
     # Add a single JSON document to the search index.
     # Implemented in a child class.
+    #
     # @param _ [String] JSON document
     def add(_)
       fail NotImplementedError
@@ -21,6 +22,7 @@ module Krikri
     ##
     # Add a number of JSON documents to the search index at once.
     # Implemented in a child class.
+    #
     # @param _ [Array] Strings of JSON documents
     def bulk_add(_)
       fail NotImplementedError
@@ -29,6 +31,7 @@ module Krikri
     ##
     # Update or save all records in the index that were affected by the given
     # Activity.
+    #
     # @param activity [Krikri::Activity]
     def update_from_activity(activity)
       fail "#{activity} is not an Activity" \
@@ -43,6 +46,9 @@ module Krikri
     protected
 
     ##
+    # Given an activity, use the bulk-update method to load its generated
+    # entities into the search index.
+    #
     # @param activity [Krikri::Activity]
     def bulk_update_from_activity(activity)
       agg_batches = bulk_update_batches(activity.aggregations_as_json)
@@ -52,6 +58,9 @@ module Krikri
     end
 
     ##
+    # Enumerate arrays of JSON strings, one array per batch that is supposed
+    # to be loaded into the search index.
+    #
     # @param aggregations [Enumerator]
     # @return [Enumerator] Each array of JSON strings
     def bulk_update_batches(aggregations)
@@ -71,6 +80,9 @@ module Krikri
     end
 
     ##
+    # Given an activity, load its generated entities into the search index one
+    # at a time.
+    #
     # @param activity [Krikri::Activity]
     def incremental_update_from_activity(activity)
       activity.aggregations_as_json.each do |agg|
