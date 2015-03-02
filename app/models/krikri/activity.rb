@@ -90,14 +90,23 @@ module Krikri
     #
     # @return [Enumerator] JSON string for each aggregation (item / "record")
     def aggregations_as_json
-      # query should return a list of records containing URIs ...
-      query = Krikri::ProvenanceQueryClient.find_by_activity(
-        RDF::URI(rdf_subject)
-      )
-      query.each_solution.map do |s|
-        agg = DPLA::MAP::Aggregation.new(s.record.to_s)
+      generated_entity_uris.lazy.map do |uri|
+        agg = DPLA::MAP::Aggregation.new(uri)
         agg.get                             # slow?
         agg.to_jsonld['@graph'][0].to_json  # correct?
+      end
+    end
+
+    ##
+    # Return an Enumerator of URI strings of entities (e.g. aggregations or
+    # original records) that pertain to this activity
+    #
+    # @return [Enumerator] URI strings
+    def generated_entity_uris
+      activity_uri = RDF::URI(rdf_subject)  # This activity's LDP URI
+      query = Krikri::ProvenanceQueryClient.find_by_activity(activity_uri)
+      query.each_solution.lazy.map do |s|
+        s.record.to_s
       end
     end
 
