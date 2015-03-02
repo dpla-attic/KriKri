@@ -82,8 +82,25 @@ module Krikri
 
         def mint_id!(seed = nil)
           set_subject!(mint_id_fragment(seed))
-          sourceResource.first.set_subject!(rdf_subject / '#sourceResource') \
-            unless sourceResource.empty?
+          update_source_resource_subject
+        end
+
+        ##
+        # Forceably update the subject for the dpla:SourceResource to use a
+        # fragment URI. This is necessary because of an issue in
+        # ActiveTriples.
+        #
+        # @see https://github.com/ActiveTriples/ActiveTriples/issues/107
+        def update_source_resource_subject
+          unless sourceResource.empty?
+            sr = get_values(RDF::EDM::aggregatedCHO).first
+            orig = sourceResource_ids.first
+            # Q: should we have a check like `orig.node?` here?
+            sr.set_subject!(rdf_subject / '#sourceResource')
+            sr.persist!
+            update([self, RDF::EDM::aggregatedCHO, sr])
+            delete([orig, nil, nil])
+          end
         end
 
         ##
