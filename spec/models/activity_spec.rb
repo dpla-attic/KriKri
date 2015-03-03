@@ -140,14 +140,14 @@ describe Krikri::Activity, type: :model do
     end
   end
 
-  describe '#aggregations_as_json' do
+
+  describe '#generated_entity_uris' do
     include_context 'provenance queries'
     include_context 'generated entities query'
 
-    it 'enumerates JSON strings' do
-      expect do
-        JSON.parse(subject.aggregations_as_json.first)
-      end.to_not raise_error
+    it 'enumerates generated entity URIs' do
+      # 'result uri' is what the mocked query solution's record should contain.
+      expect(subject.generated_entity_uris.first).to match 'result uri'
     end
 
   end
