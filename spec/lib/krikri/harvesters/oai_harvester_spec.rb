@@ -378,6 +378,25 @@ EOM
       end
     end
 
+    describe '#record_xml' do
+      let(:oai_record) { OAI::Record.new('') }
+
+      it 'produces valid xml' do
+        expect do
+          Nokogiri::XML(subject.send(:record_xml, oai_record)) do |config|
+            config.options = Nokogiri::XML::ParseOptions::STRICT
+          end
+        end.not_to raise_error
+      end
+
+      it 'sets header status' do
+        allow(oai_record.header).to receive(:status).and_return('deleted')
+        node = Nokogiri::XML(subject.send(:record_xml, oai_record))
+               .at_css('header')
+        expect(node['status']).to eq 'deleted'
+      end
+    end
+
     describe 'concat_enum' do
 
       it 'concatenates enums' do
