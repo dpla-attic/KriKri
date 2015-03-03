@@ -33,6 +33,28 @@ FactoryGirl.define do
 EOS
   end
 
+  factory :oai_deleted_record, parent: :krikri_original_record do
+    content <<-EOS.strip_heredoc
+<?xml version="1.0" encoding="UTF-8" ?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/
+         http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2015-03-02T15:56:51Z</responseDate>
+  <request verb="ListRecords" metadataPrefix="oai_dc">https://digital.library.in.gov/OAI/Server</request>
+    <ListRecords>
+      <record>
+        <header status="deleted">
+          <identifier>oai:digital.library.in.gov:ACPL_coll14-1</identifier>
+          <datestamp>1969-12-31T19:00:00Z</datestamp>
+        </header>
+      </record>
+    </ListRecords>
+  </request>
+</OAI-PMH>
+EOS
+  end
+
   factory :cdm_qdc_record, parent: :krikri_original_record do
     content <<-EOS.strip_heredoc
 <?xml version="1.0" encoding="UTF-8"?><OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2015-01-26T19:32:57Z</responseDate><request verb="ListRecords" resumptionToken="p15799coll82:40000:oclc-cdm-allsets:0000-00-00:9999-99-99:oai_qdc" metadataPrefix="oai_qdc">http://digitallibrary.usc.edu/oai/oai.php</request><ListRecords><record><header><identifier>oai:digitallibrary.usc.edu:p15799coll117/0</identifier><datestamp>2012-11-07</datestamp><setSpec>p15799coll117</setSpec></header>

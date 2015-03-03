@@ -22,14 +22,14 @@ module Krikri
   #      recommended to override this method in your subclass with
   #      an efficient implementation.
   #    - #run. Wraps persistence of each record returned by #records.
-  #      Runs a full harvest, inserting Original Records into the database,
-  #      given the options passed to #initialize.
+  #      Runs a full harvest, processing the created `record_class`
+  #      instances through `harvest_behavior`, given the options passed
+  #      to #initialize.
   #
   # When including, add a call to Krikri::Harvester::Registry.register() to
   # put it in the registry so that it can be looked up.
-  # See lib/krikri/engine.rb.
-  # @see Krikri::Engine
   #
+  # @see Krikri::Engine
   module Harvester
     extend ActiveSupport::Concern
     include SoftwareAgent
@@ -55,6 +55,7 @@ module Krikri
     #                 Krikri::OriginalRecord).
     #   id_minter: Module to create identifiers for generated records (optional;
     #              defaults to Krikri::Md5Minter)
+    #   harvest_behavior: A behavior object implementing `#process_record`
     #
     # Pass harvester specific options to inheriting classes under a key for
     # that harvester. E.g. { uri: my_uri, oai: { metadata_prefix: :oai_dc } }
@@ -64,8 +65,15 @@ module Krikri
       @uri = opts.fetch(:uri)
       @name = opts.delete(:name)
       @record_class = opts.delete(:record_class) { Krikri::OriginalRecord }
+                      .to_s.constantize
       @id_minter = opts.delete(:id_minter) { Krikri::Md5Minter }
+                   .to_s.constantize
+      @harvest_behavior = opts.delete(:harvest_behavior) do
+        Krikri::Harvesters::BasicSaveBehavior
+      end.to_s.constantize
     end
+
+    delegate :process_record, :to => :@harvest_behavior
 
     ##
     # @abstract Provide a low-memory, lazy enumerable for record ids.
@@ -107,16 +115,20 @@ module Krikri
 
     ##
     # Run the harvest.
-    # This should be idempotent so it can be safely retried on errors.
+    #
+    # Individual records are processed through `#process_record` which is
+    # delegated to the harvester's `@harvest_behavior` by default.
     #
     # @return [Boolean]
+    # @see Krirki::Harvesters:HarvestBehavior
     def run(activity_uri = nil)
       log :info, 'harvest is running'
       records.each do |rec|
         begin
-          rec.save(activity_uri)
+          process_record(rec, activity_uri)
         rescue => e
-          log :error, "Error harvesting record:\n#{rec.content}\n\twith message:\n#{e.message}"
+          log :error, "Error harvesting record:\n#{rec.content}\n\t" \
+                      "with message:\n#{e.message}"
           next
         end
       end
