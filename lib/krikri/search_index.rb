@@ -65,7 +65,7 @@ module Krikri
     # @param aggregations [Enumerator]
     # @return [Enumerator] Each array of JSON strings
     def bulk_update_batches(aggregations)
-      Enumerator.new do |e|
+      en = Enumerator.new do |e|
         i = 1
         batch = []
         aggregations.each do |agg|
@@ -78,6 +78,7 @@ module Krikri
         end
         e.yield batch if batch.count > 0  # last one
       end
+      en.lazy
     end
 
     ##
