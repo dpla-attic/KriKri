@@ -51,7 +51,8 @@ module Krikri
     #
     # @param activity [Krikri::Activity]
     def bulk_update_from_activity(activity)
-      agg_batches = bulk_update_batches(activity.aggregations_as_json)
+      all_aggs = generated_entities_as_json_aggregations(activity)
+      agg_batches = bulk_update_batches(all_aggs)
       agg_batches.each do |batch|
         bulk_add(batch)
       end
@@ -85,8 +86,22 @@ module Krikri
     #
     # @param activity [Krikri::Activity]
     def incremental_update_from_activity(activity)
-      activity.aggregations_as_json.each do |agg|
+      generated_entities_as_json_aggregations(activity).each do |agg|
         add(agg)
+      end
+    end
+
+    ##
+    # Given an activity, enumerate over generated entities, represented as JSON
+    # strings.
+    #
+    # @param activity [Krikri::Activity]
+    # @return [Enumerator]
+    def generated_entities_as_json_aggregations(activity)
+      activity.generated_entity_uris.lazy.map do |uri|
+        agg = DPLA::MAP::Aggregation.new(uri)
+        agg.get
+        agg.to_jsonld['@graph'][0].to_json
       end
     end
   end

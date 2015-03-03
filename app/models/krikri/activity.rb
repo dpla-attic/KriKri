@@ -85,19 +85,6 @@ module Krikri
     end
 
     ##
-    # Return an Enumerator of RDF aggregations that were affected by this
-    # Activity.  Each aggregation is represented as a JSON string.
-    #
-    # @return [Enumerator] JSON string for each aggregation (item / "record")
-    def aggregations_as_json
-      generated_entity_uris.lazy.map do |uri|
-        agg = DPLA::MAP::Aggregation.new(uri)
-        agg.get                             # slow?
-        agg.to_jsonld['@graph'][0].to_json  # correct?
-      end
-    end
-
-    ##
     # Return an Enumerator of URI strings of entities (e.g. aggregations or
     # original records) that pertain to this activity
     #
