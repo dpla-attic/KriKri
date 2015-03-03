@@ -35,6 +35,7 @@ module Krikri::Harvesters
     # @see OAI::Client
     # @see #expected_opts
     def initialize(opts = {})
+      opts[:harvest_behavior] ||= OAISkipDeletedBehavior
       super
       @opts = opts.fetch(:oai, {})
 
