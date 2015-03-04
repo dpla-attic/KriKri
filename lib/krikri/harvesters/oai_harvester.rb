@@ -172,6 +172,12 @@ module Krikri::Harvesters
       concat_enum(*set_enums).lazy
     end
 
+    ##
+    # Transforms an OAI::Record to xml suitable for saving with the
+    # OriginalRecord
+    #
+    # @param rec [OAI::Record]
+    # @return [String] an xml string
     def record_xml(rec)
       doc = Nokogiri::XML::Builder.new do |xml|
         xml.record('xmlns' => 'http://www.openarchives.org/OAI/2.0/') {
@@ -182,10 +188,12 @@ module Krikri::Harvesters
               xml.set_spec set.text
             end
           }
-          xml << rec.metadata.to_s
+          xml << rec.metadata.to_s unless rec.metadata.nil?
           xml << rec.about.to_s unless rec.about.nil?
         }
       end
+      doc.doc.at_css('header')['status'] = rec.header.status if
+        rec.header.status
       doc.to_xml
     end
   end
