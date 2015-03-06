@@ -5,7 +5,7 @@ Kri-Kri
 
 A Rails engine for metadata aggregation, enhancement, and quality control.
 [Digital Public Library of America](http://dp.la/) uses Kri-Kri as part of
-[Heiðrún](https://github.com/dpla/heidrun), its metadata ingestion system. 
+[Heiðrún](https://github.com/dpla/heidrun), its metadata ingestion system.
 
 [More information](https://digitalpubliclibraryofamerica.atlassian.net/wiki/display/TECH/Heidrun) about Heidrun and Kri-kri can be found on [DPLA's Technology Team site](https://digitalpubliclibraryofamerica.atlassian.net/wiki/display/TECH).
 
@@ -23,7 +23,7 @@ Installation
 
 4. Run `bundle exec rake db:migrate`
 
-5. You may run `bundle exec rails routes` to inspect the new routes that
+5. You may run `bundle exec rake routes` to inspect the new routes that
    will have been added, and `bundle exec rails s` to check that the new
    resources are served.
 
@@ -74,7 +74,7 @@ To update/restart jetty, from the root KriKri directory:
 Customization
 -------------
 
-Krikri uses Blacklight.  Blacklight's installation process includes the 
+Krikri uses Blacklight.  Blacklight's installation process includes the
 creation of some routes that Krikri does not use.  Blacklight also roots to one
 of these un-used routes.  We suggested removing both the un-used routes and the
 root route by deleting the following line from `config/routes.rb`:
