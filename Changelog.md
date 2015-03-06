@@ -1,4 +1,8 @@
-0.3.0 (6 March 2015)
+0.3.1 (6 March 2015)
+---
+* Feature-less release fixes a problem with the v0.3.0 gem
+
+0.3.0 (6 March 2015) (revoked)
 ---
 * Build Set support into `OAIHarvester`
   * Add `#sets` to manage calls to OAI's ListSet verb
