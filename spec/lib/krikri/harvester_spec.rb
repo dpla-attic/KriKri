@@ -24,6 +24,25 @@ describe Krikri::Harvester do
     end
   end
 
+  describe '.expected_opts' do
+    it do
+      expect { described_class.expected_opts }
+        .to raise_error NotImplementedError
+    end
+  end
+
+  describe '#record_ids' do
+    it { expect { subject.record_ids }.to raise_error NotImplementedError }
+  end
+
+  describe '#records' do
+    it { expect { subject.records }.to raise_error NotImplementedError }
+  end
+
+  describe '#get_record' do
+    it { expect { subject.get_record(1) }.to raise_error NotImplementedError }
+  end
+
   describe '#run' do
     let(:records) { [double('record'), double('record2')] }
 
