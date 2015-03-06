@@ -2,7 +2,7 @@ require 'fileutils'
 require 'jettywrapper'
 
 namespace :jetty do
-  Jettywrapper.url = 'https://github.com/dpla/marmotta-jetty/archive/3.3.0-solr-4.9.0.zip'
+  Jettywrapper.url = 'https://github.com/dpla/marmotta-jetty/archive/3.3.0-solr-4.10.3.zip'
 
   DEFAULT_MARMOTTA = File.expand_path(File.join(Jettywrapper.app_root,
                                                 'jetty',
