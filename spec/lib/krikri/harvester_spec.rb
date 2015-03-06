@@ -24,14 +24,50 @@ describe Krikri::Harvester do
     end
   end
 
+  describe '.expected_opts' do
+    it do
+      expect { described_class.expected_opts }
+        .to raise_error NotImplementedError
+    end
+  end
+
+  describe '#record_ids' do
+    it { expect { subject.record_ids }.to raise_error NotImplementedError }
+  end
+
+  describe '#records' do
+    it { expect { subject.records }.to raise_error NotImplementedError }
+  end
+
+  describe '#get_record' do
+    it { expect { subject.get_record(1) }.to raise_error NotImplementedError }
+  end
+
   describe '#run' do
-    let(:records) { [double, double] }
+    let(:records) { [double('record'), double('record2')] }
 
     before do
       allow(subject).to receive(:records).and_return(records)
     end
 
-    context 'when save fails' do
+    context 'with non-default behavior' do
+      subject { klass.include(Krikri::Harvester).new(opts) }
+      let(:opts) do
+        { :uri => 'urn:fake_uri',
+          :harvest_behavior => 'Krikri::Harvesters::OAISkipDeletedBehavior' }
+      end
+
+      it 'sends record to behavior for processing' do
+        activity_uri = double('activity uri')
+        records.each do |rec|
+          expect(Krikri::Harvesters::OAISkipDeletedBehavior)
+            .to receive(:process_record).with(rec, activity_uri).and_return(true)
+        end
+        subject.run(activity_uri)
+      end
+    end
+
+    context 'when behavior fails' do
       it 'logs error' do
         records.each do |rec|
           allow(rec).to receive(:save)

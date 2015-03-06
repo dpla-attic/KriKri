@@ -5,4 +5,5 @@ describe Krikri::ModsParser do
   let(:record) { build(:mods_record) }
 
   it_behaves_like 'a parser'
+  it_behaves_like 'a parser with oai headers'
 end

@@ -1,14 +1,28 @@
 require 'spec_helper'
 
 describe Krikri::IndexService do
-
-  subject { Krikri::IndexService }
   let(:solr) { RSolr.connect }
 
+  describe '#initialize' do
+    context 'with args' do
+      subject { described_class.new(opts) }
+      let(:opts) { { url: 'http://my-client-uri/' } }
+
+      it 'passes options to RSolr client' do
+        expect(subject.solr.uri.to_s).to eq opts[:url]
+      end
+    end
+
+    it 'defaults to Krikri::Settings.solr' do
+      uri = 'http://moomin.org/'
+      allow(Krikri::Settings)
+        .to receive(:solr).and_return(url: uri)
+      expect(subject.solr.uri.to_s).to eq uri
+    end
+  end
+
   describe '#solr_doc' do
-
     context 'without models' do
-
       before :each do
         fake_schema_keys = ['a', 'b', 'c', 'b_c', 'b_d']
         allow(subject).to receive(:schema_keys).and_return(fake_schema_keys)
@@ -17,8 +31,7 @@ describe Krikri::IndexService do
       it 'converts JSON into Solr-compatible hash' do
         json = { 'a' => '1', 'b' => { 'c' => '2', 'd' => '3' } }.to_json
         flat_hash = { 'a' => '1', 'b_c' => '2', 'b_d' => '3' }
-        result = subject.class_eval { solr_doc(json) }
-        expect(result).to eq flat_hash
+        expect(subject.solr_doc(json)).to eq flat_hash
       end
 
       it 'removes special character strings from keys' do
@@ -28,15 +41,13 @@ describe Krikri::IndexService do
           '@c' => '3'
         }.to_json
         flat_hash = { 'a' => '1', 'b' => '2', 'c' => '3' }
-        result = subject.class_eval { solr_doc(json) }
-        expect(result).to eq flat_hash
+        expect(subject.solr_doc(json)).to eq flat_hash
       end
 
       it 'removes keys that are not in solr schema' do
         json = { 'a' => '1', 'invalid_key' => '0' }.to_json
         valid_hash = { 'a' => '1' }
-        result = subject.class_eval { solr_doc(json) }
-        expect(result).to eq valid_hash
+        expect(subject.solr_doc(json)).to eq valid_hash
       end
     end
 
@@ -45,14 +56,14 @@ describe Krikri::IndexService do
 
       before do
         aggregation.set_subject!('http://api.dp.la/item/123')
-        Krikri::IndexService.add aggregation.to_jsonld['@graph'][0].to_json
-        Krikri::IndexService.commit
+        subject.add aggregation.to_jsonld['@graph'][0].to_json
+        subject.commit
       end
 
       after do
         q = 'id:*'
-        Krikri::IndexService.delete_by_query(q)
-        Krikri::IndexService.commit
+        subject.delete_by_query(q)
+        subject.commit
       end
 
       it 'posts DPLA MAP JSON to solr' do

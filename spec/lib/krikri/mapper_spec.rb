@@ -6,10 +6,16 @@ describe Krikri::Mapper do
       Krikri::Mapper.define(:integration) do
         sourceResource :class => DPLA::MAP::SourceResource do
           title record.field('dc:title')
+          # test non-root methods
+          identifier header.field('xmlns:identifier')
 
           creator :class => DPLA::MAP::Agent do
             providedLabel record.field('dc:creator')
           end
+        end
+
+        provider :class => DPLA::MAP::Agent, :each => header.field('xmlns:identifier'), :as => :ident do
+          providedLabel ident
         end
       end
     end
@@ -18,8 +24,14 @@ describe Krikri::Mapper do
 
     it 'maps nested values' do
       mapped = Krikri::Mapper.map(:integration, record).first
+
       expect(mapped.sourceResource.first.creator.first.providedLabel)
         .to eq record.root['dc:creator'].map(&:value)
+
+      expect(mapped.sourceResource.first.identifier)
+        .to eq Array(record.header.first['xmlns:identifier'].first.value)
+      expect(mapped.provider.first.providedLabel)
+        .to eq Array(record.header.first['xmlns:identifier'].first.value)
     end
   end
 

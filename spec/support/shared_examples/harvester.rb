@@ -102,14 +102,16 @@ shared_examples 'a harvester' do
   describe '#run' do
     before do
       allow(harvester).to receive(:records)
-        .and_return [double('Original Record 1'), double('Record 2')]
+                           .and_return [double('Original Record 1'),
+                                        double('Record 2')]
     end
 
     let(:activity_uri) { RDF::URI('http://example.org/prov/activity/1') }
 
-    it 'saves the OriginalRecords' do
+    it 'processes the OriginalRecords' do
       harvester.records.each do |r|
-        expect(r).to receive(:save).with(activity_uri)
+        expect(harvester).to receive(:process_record).with(r, activity_uri)
+                             .and_return(true)
       end
       harvester.run(activity_uri)
     end
