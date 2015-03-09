@@ -144,6 +144,12 @@ describe Krikri::Activity, type: :model do
   describe '#generated_entity_uris' do
     include_context 'provenance queries'
     include_context 'generated entities query'
+    # See spec/factories/krikri_activities.rb
+    # generator_uri is the URI of the harvest activity
+    # generator_uri matches what Krikri::Activity will construct as the
+    # uri, given its value of #rdf_subject, in #aggregations_as_json
+    # See 'provenance queries' shared context.  
+    let(:generator_uri) { 'http://localhost:8983/marmotta/ldp/activity/1' }
 
     it 'enumerates generated entity URIs' do
       # 'result uri' is what the mocked query solution's record should contain.

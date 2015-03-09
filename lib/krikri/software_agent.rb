@@ -30,6 +30,32 @@ module Krikri
     end
 
     ##
+    # Store this agent's generator activity, which is the activity that
+    # produced the target entities upon which the current agent will operate.
+    #
+    # It is assumed that the class that includes SoftwareAgent will define
+    # class methods .entity_behavior and .generator_entity_behavior, which
+    # return the class of the appropriate behavior.
+    # @see Krikri::Mapper::Agent
+    # @see Krikri::Harvester
+    #
+    def set_generator_activity!(opts)
+      if opts.include?(:generator_uri) && opts.include?(:generator_activity)
+        fail 'generator_uri and generator_activity are redundant arguments'
+      end
+      if opts.include?(:generator_activity)
+        @generator_activity = opts.delete(:generator_activity)
+      elsif opts.include?(:generator_uri)
+        generator_uri = opts.delete(:generator_uri)
+        activity_id = generator_uri[/\d+$/].to_i  # 0 if no match
+        fail "Can not determine ID for #{generator_uri}" if activity_id == 0
+        @generator_activity = Krikri::Activity.find_by_id(activity_id)
+        raise "Generator activity not found for id #{activity_id}" \
+          if !@generator_activity
+      end
+    end
+
+    ##
     # Class methods for extension by ActiveSupport::Concern
     module ClassMethods
 

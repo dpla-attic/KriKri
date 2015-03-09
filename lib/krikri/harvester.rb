@@ -43,6 +43,12 @@ module Krikri
         def queue_name
           :harvest
         end
+        def entity_behavior
+          Krikri::OriginalRecordEntityBehavior
+        end
+        def generator_entity_behavior
+          raise 'A Harvester does not have a generator Activity.'
+        end
       end
     end
 

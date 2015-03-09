@@ -5,6 +5,15 @@ module Krikri
   module Enrichment
     extend SoftwareAgent
 
+    module ClassMethods
+      def entity_behavior
+        Krikri::OriginalRecordEntityBehavior
+      end
+      def generator_entity_behavior
+        Krikri::AggregationEntityBehavior
+      end
+    end
+
     ##
     # The main enrichment method; passes specified input fields to
     # #enrich_values, which must return an array of values with length equal to

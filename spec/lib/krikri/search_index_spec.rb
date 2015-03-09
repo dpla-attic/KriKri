@@ -54,6 +54,16 @@ describe Krikri::QASearchIndex do
     context 'with models' do
       include_context 'provenance queries'
       include_context 'generated entities query'
+
+      # generator_uri matches what Krikri::Activity will construct as the
+      # uri, given its value of #rdf_subject, in #aggregations_as_json
+      # See 'provenance queries' shared context.
+      #
+      # FIXME:  See the activities factory for generator_uri,
+      #         spec/factories/krikri_activities.rb.  This generator URI would
+      #         ideally be for ID 3.
+      let(:generator_uri) { 'http://localhost:8983/marmotta/ldp/activity/1' }
+
       let(:activity) do
         a = build(:krikri_activity)
         a.id = 1

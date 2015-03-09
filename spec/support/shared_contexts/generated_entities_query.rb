@@ -8,12 +8,6 @@
 shared_context 'generated entities query' do
   # aggregation comes from lib/dpla/map/factories.rb in DPLA::MAP
   let(:aggregation) { build(:aggregation) }
-  # generator_uri matches what Krikri::Activity will construct as the
-  # RDF::URI, given its value of #rdf_subject, in #aggregations_as_json
-  # See 'provenance quereies' shared context.
-  let(:generator_uri) do
-    RDF::URI('http://localhost:8983/marmotta/ldp/activity/1')
-  end
 
   before do
     allow(DPLA::MAP::Aggregation).to receive(:new)

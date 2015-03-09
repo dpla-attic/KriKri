@@ -101,24 +101,39 @@ module Krikri
     #       generator_uri: 'http://ldp.local.dp.la/ldp/activity/1'
     #     }
     #   )
+    #   Or, supposing you already have a harvest Activity instance named
+    #   `my_activity':
+    #   [ ... ]
+    #     opts = {
+    #       name: 'scdl_qdc',
+    #       activity: my_activity
+    #     }
     #
     # @see: Krikri::SoftwareAgent, Krikri::Activity
     class Agent
       include SoftwareAgent
 
-      attr_reader :name, :generator_uri
+      attr_reader :name
 
       def self.queue_name
         :mapping
       end
 
+      def self.entity_behavior
+        Krikri::AggregationEntityBehavior
+      end
+
+      def self.generator_entity_behavior
+        Krikri::OriginalRecordEntityBehavior
+      end
+
       def initialize(opts = {})
         @name = opts.fetch(:name).to_sym
-        @generator_uri = RDF::URI(opts.fetch(:generator_uri))
+        set_generator_activity!(opts)
       end
 
       def run(activity_uri = nil)
-        Krikri::Mapper.map(name, records).each do |rec|
+        Krikri::Mapper.map(name, target_records).each do |rec|
           begin
             rec.mint_id! if rec.node?
             rec << RDF::Statement(rec, RDF::PROV.wasGeneratedBy, activity_uri) if
@@ -131,12 +146,15 @@ module Krikri
         end
       end
 
-      def records
-        Krikri::ProvenanceQueryClient.find_by_activity(generator_uri)
-          .execute.lazy.flat_map do |solution|
-          OriginalRecord.load(solution.record.to_s)
-        end
+      ##
+      # Return an enumerator over the original records affected by the harvest
+      # activity.
+      # @see Krikri::SoftwareAgent#set_generator_activity!
+      # @see Krikri::OriginalRecordEntityBehavior
+      def target_records
+        @generator_activity.generated_entities
       end
+
     end
   end
 end
