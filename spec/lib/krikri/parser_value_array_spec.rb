@@ -23,8 +23,19 @@ describe Krikri::Parser::ValueArray do
   end
 
   describe '#values' do
+    before do
+      values.each do |v|
+        allow(v).to receive(:respond_to?).with(:value).and_return(true)
+      end
+    end
+
     it 'gives values for items in array' do
       expect(subject.values).to eq ['value_0', 'value_1', 'value_2']
+    end
+
+    it 'gives item when item has no value property' do
+      values << double('valueless')
+      expect(subject.values).to eq ['value_0', 'value_1', 'value_2', values.last]
     end
   end
 
@@ -180,6 +191,16 @@ describe Krikri::Parser::ValueArray do
 
     it 'returns an instance of its class' do
       expect(subject.select {}).to be_a described_class
+    end
+  end
+
+  describe '#map' do
+    it 'calls block on all' do
+      expect { |b| subject.map(&b) }.to yield_successive_args(*subject.to_a)
+    end
+
+    it 'returns an instance of its class' do
+      expect(subject.map {}).to be_a described_class
     end
   end
 

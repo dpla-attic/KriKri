@@ -26,7 +26,7 @@ describe Krikri::Mapper do
       mapped = Krikri::Mapper.map(:integration, record).first
 
       expect(mapped.sourceResource.first.creator.first.providedLabel)
-        .to eq record.root['dc:creator'].map(&:value)
+        .to eq record.root['dc:creator'].to_a.map(&:value)
 
       expect(mapped.sourceResource.first.identifier)
         .to eq Array(record.header.first['xmlns:identifier'].first.value)
