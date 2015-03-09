@@ -107,6 +107,7 @@ describe Krikri::Mapper::Agent do
   # TODO: these tests are tied closely to implementation.
   #       This is a code smell. Consider refactor of ProvenanceQueryClient
   #       and #records.
+  #       Remove this after removing #target_records from lib/krikri/mapper.rb
   describe '#target_records' do
     include_context 'provenance queries'
     include_context 'generated entities query'
