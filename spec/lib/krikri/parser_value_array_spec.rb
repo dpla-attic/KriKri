@@ -183,6 +183,16 @@ describe Krikri::Parser::ValueArray do
     end
   end
 
+  describe '#map' do
+    it 'calls block on all' do
+      expect { |b| subject.map(&b) }.to yield_successive_args(*subject.to_a)
+    end
+
+    it 'returns an instance of its class' do
+      expect(subject.map {}).to be_a described_class
+    end
+  end
+
   describe '#reject' do
     it 'creates new array not containing rejected values' do
       expect(subject.reject { |v| v.value == 'value_1'})
