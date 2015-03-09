@@ -14,6 +14,14 @@ end
 describe Krikri::Activity, type: :model do
   subject { create(:krikri_activity) }
 
+  describe '#save' do
+    subject { build(:krikri_activity_with_long_opts) }
+
+    it 'saves long :opts values successfully' do
+      expect { subject.save }.not_to raise_error
+    end
+  end
+
   describe '#rdf_subject' do
     it 'is a URI' do
       expect(subject.rdf_subject).to be_a RDF::URI
