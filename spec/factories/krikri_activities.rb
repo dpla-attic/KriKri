@@ -1,23 +1,25 @@
 FactoryGirl.define do
   factory :krikri_activity, class: Krikri::Activity do
+    id 1
     agent 'Krikri::Harvesters::OAIHarvester'
     opts '{"uri": "http://example.org/endpoint"}'
   end
 
   factory :krikri_harvest_activity, parent: :krikri_activity do
-    id 1
+    id 2
     agent 'Krikri::Harvesters::OAIHarvester'
     opts '{"uri": "http://example.org/endpoint", ' \
     '"oai": {"metadata_prefix": "mods", "set": "set1"}}'
   end
 
   factory :krikri_mapping_activity, parent: :krikri_activity do
-    id 2
+    id 3
     agent 'Krikri::Mapper::Agent'
     opts(
       {
         name: 'test_map',
-        generator_uri: 'http://localhost:8983/marmotta/ldp/activity/1'
+        generator_uri: (RDF::URI(Krikri::Settings['marmotta']['ldp']) /
+          Krikri::Settings['prov']['activity'] / '1').to_s
       }.to_json
     )
   end
@@ -51,7 +53,7 @@ FactoryGirl.define do
   # enrichments, and what agent class name should be saved in `activity.agent'
   #
   # factory :krikri_enrichment_activity, parent: :krikri_activity do
-  #   id 3
+  #   id 4
   #   agent 'Krikri::Enrichments::StripHtml'
   #   opts(
   #     {

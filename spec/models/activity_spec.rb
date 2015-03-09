@@ -149,7 +149,10 @@ describe Krikri::Activity, type: :model do
     # generator_uri matches what Krikri::Activity will construct as the
     # uri, given its value of #rdf_subject, in #aggregations_as_json
     # See 'provenance queries' shared context.  
-    let(:generator_uri) { 'http://localhost:8983/marmotta/ldp/activity/1' }
+    let(:generator_uri) do
+      (RDF::URI(Krikri::Settings['marmotta']['ldp']) /
+        Krikri::Settings['prov']['activity'] / '1').to_s
+    end
 
     it 'enumerates generated entity URIs' do
       # 'result uri' is what the mocked query solution's record should contain.
