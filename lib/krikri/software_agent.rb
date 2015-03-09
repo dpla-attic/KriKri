@@ -36,6 +36,11 @@ module Krikri
     # It is assumed that the class that includes SoftwareAgent will define
     # class methods .entity_behavior and .generator_entity_behavior, which
     # return the class of the appropriate behavior.
+    #
+    # We look for either `generator_activity' or `generator_uri' in the `opts'
+    # keys.  `generator_activity' must be a Krikri::Activity object, and
+    # `generator_uri' can be a string or RDF::URI
+    #
     # @see Krikri::Mapper::Agent
     # @see Krikri::Harvester
     #
@@ -47,7 +52,8 @@ module Krikri
         @generator_activity = opts.delete(:generator_activity)
       elsif opts.include?(:generator_uri)
         generator_uri = opts.delete(:generator_uri)
-        activity_id = generator_uri[/\d+$/].to_i  # 0 if no match
+        # allow generator_uri to be string or RDF::URI with `to_s' ...
+        activity_id = generator_uri.to_s[/\d+$/].to_i  # 0 if no match
         fail "Can not determine ID for #{generator_uri}" if activity_id == 0
         @generator_activity = Krikri::Activity.find_by_id(activity_id)
         raise "Generator activity not found for id #{activity_id}" \
