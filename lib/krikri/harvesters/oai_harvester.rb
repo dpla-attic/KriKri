@@ -143,9 +143,9 @@ module Krikri::Harvesters
     # Concatinates two enumerators
     # @todo find a better home for this. Reopen Enumerable? or use the
     #    `Enumerating` gem: https://github.com/mdub/enumerating
-    def concat_enum(*enums)
+    def concat_enum(enum_enum)
       Enumerator.new do |yielder|
-        enums.each do |enum|
+        enum_enum.each do |enum|
           enum.each { |i| yielder << i }
         end
       end
@@ -165,12 +165,12 @@ module Krikri::Harvesters
       end
       sets = [nil] if sets.empty?
 
-      set_enums = sets.map do |set|
+      set_enums = sets.lazy.map do |set|
         set_opts = opts.dup
         set_opts[:set] = set unless set.nil?
         yield(set_opts) if block_given?
       end
-      concat_enum(*set_enums).lazy
+      concat_enum(set_enums).lazy
     end
 
     ##
