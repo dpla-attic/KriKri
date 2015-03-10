@@ -1,3 +1,10 @@
+0.3.2 (10 March 2015)
+---
+* Change Activity.opts to :text, allowing long option strings
+* More complete laziness on multi-set OAI harvests
+  * Fixes resumption token expiration
+* Add `#map` to mapping DSL Parser::ValueArray methods
+
 0.3.1 (6 March 2015)
 ---
 * Feature-less release fixes a problem with the v0.3.0 gem
