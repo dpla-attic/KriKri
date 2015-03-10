@@ -112,6 +112,7 @@ module Krikri
     # @see: Krikri::SoftwareAgent, Krikri::Activity
     class Agent
       include SoftwareAgent
+      include EntityConsumer
 
       attr_reader :name
 
@@ -135,10 +136,10 @@ module Krikri
       def run(activity_uri = nil)
         #
         # TODO:  Remove #target_records below and use the following:
-        # harvest_records = @generator_activity.generated_entities
+        # harvest_records = generator_activity.generated_entities
         # Krikri::Mapper.map(name, harvest_records).each do |rec|
         #
-        Krikri::Mapper.map(name, target_records).each do |rec|
+        Krikri::Mapper.map(name, generator_activity.generated_entities).each do |rec|
           begin
             rec.mint_id! if rec.node?
             rec << RDF::Statement(rec, RDF::PROV.wasGeneratedBy, activity_uri) if
@@ -149,18 +150,6 @@ module Krikri
                                "#{e.message}\n#{e.backtrace}")
           end
         end
-      end
-
-      ##
-      # Return an enumerator over the original records affected by the harvest
-      # activity.
-      # @see Krikri::SoftwareAgent#set_generator_activity!
-      # @see Krikri::OriginalRecordEntityBehavior
-      #
-      # @todo:  Remove this method.  Refactor the tests in mapper_agent_spec.rb
-      #
-      def target_records
-        @generator_activity.generated_entities
       end
 
     end
