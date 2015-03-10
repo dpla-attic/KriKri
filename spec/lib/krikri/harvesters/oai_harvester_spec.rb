@@ -276,7 +276,7 @@ EOM
           expect(subject.client).to receive(request_type)
             .with(:metadata_prefix => args[:oai][:metadata_prefix])
             .and_return(result)
-          subject.send(method)
+          subject.send(method).first
         end
 
         it 'adds options passed into request' do
@@ -284,7 +284,7 @@ EOM
             .with(:metadata_prefix => args[:oai][:metadata_prefix],
                   :set => request_opts[:set])
             .and_return(result)
-          subject.send(method, request_opts)
+          subject.send(method, request_opts).first
         end
 
         context 'with multiple sets' do
@@ -294,7 +294,7 @@ EOM
             opts.delete(:set)
             expect(subject.client).to receive(request_type).with(opts)
                                        .and_return(result)
-            subject.send(method, { :skip_set => 'moomin' })
+            subject.send(method, { :skip_set => 'moomin' }).first
           end
 
           it 'skips sets from full list when none given' do
@@ -305,7 +305,7 @@ EOM
             allow(subject).to receive(:sets).and_return(['valid', 'moomin'])
             expect(subject.client).to receive(request_type).with(opts)
                                        .and_return(result)
-            subject.send(method, { :skip_set => 'moomin' })
+            subject.send(method, { :skip_set => 'moomin' }).first
           end
         end
       end
@@ -360,6 +360,24 @@ EOM
       end
     end
 
+    describe '#request_with_sets' do
+      it 'is lazy' do
+        sets = [double('first'), double('second')]
+        opts = { :set => sets }
+        expect { |b| subject.send(:request_with_sets, opts, &b) }
+          .not_to yield_control
+      end
+
+      it 'sends requests' do
+        sets = [double('first'), double('second')]
+        opts = { :set => sets }
+        expect { |b| subject.send(:request_with_sets, opts, &b) }
+          .not_to yield_successive_args({ :set => opts[:set][0] },
+                                        { :set => opts[:set][1] })
+      end
+
+    end
+
     describe '#enqueue' do
       let(:args) do
         {uri: 'http://example.org/endpoint', oai: {metadata_prefix: 'mods'}}
@@ -400,14 +418,14 @@ EOM
     describe 'concat_enum' do
 
       it 'concatenates enums' do
-        expect(subject.concat_enum((1..10), (100..110)).to_a)
+        expect(subject.concat_enum([(1..10), (100..110)]).to_a)
           .to eq (1..10).to_a.concat((100..110).to_a)
       end
 
       it 'works with lazy' do
         enum = double
         expect(enum).not_to receive :each
-        subject.concat_enum((1..10), enum).lazy.take(10)
+        subject.concat_enum([(1..10), enum]).lazy.take(10)
       end
     end
 

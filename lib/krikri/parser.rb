@@ -133,7 +133,7 @@ module Krikri
     class ValueArray
       include Enumerable
 
-      delegate :[], :each, :empty?, :map, :to_a, :to_ary,
+      delegate :[], :each, :empty?, :to_a, :to_ary,
       :to => :@array
 
       def initialize(array = [])
@@ -169,7 +169,7 @@ module Krikri
       # @return [Array] literal values from the objects in this array.
       # @see Parser::Value#value
       def values
-        map(&:value)
+        @array.map { |v| v.respond_to?(:value) ? v.value : v }
       end
 
       ##
@@ -214,6 +214,15 @@ module Krikri
       # @return [ValueArray]
       def flatten(*args, &block)
         self.class.new(@array.flatten(*args, &block))
+      end
+
+      ##
+      # Wraps the result of Array#map in a ValueArray
+      #
+      # @see Array#map
+      # @return [ValueArray]
+      def map(*args, &block)
+        self.class.new(@array.map(*args, &block))
       end
 
       ##

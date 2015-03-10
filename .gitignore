@@ -1,5 +1,6 @@
 .bundle/
 .vagrant/
+*.gem
 log/*.log
 pkg/
 spec/dummy/db/*.sqlite3
@@ -17,4 +18,3 @@ marmotta
 
 ./spec/internal
 dump.rdb
-
