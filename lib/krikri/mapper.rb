@@ -120,12 +120,11 @@ module Krikri
         :mapping
       end
 
-      def self.entity_behavior
+      ##
+      # @see Krikri::Activity#generated_entities
+      # @see Krikri::EntityBehavior
+      def entity_behavior
         Krikri::AggregationEntityBehavior
-      end
-
-      def self.generator_entity_behavior
-        Krikri::OriginalRecordEntityBehavior
       end
 
       def initialize(opts = {})

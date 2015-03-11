@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Krikri::EntityConsumer do
 
   before(:all) do
+    DatabaseCleaner.clean_with(:truncation)
     create(:krikri_harvest_activity)
     create(:krikri_mapping_activity)
   end

@@ -98,7 +98,7 @@ module Krikri
     end
 
     def generated_entities
-      agent.constantize.entity_behavior.generated_entities(self)
+      agent_instance.entity_behavior.generated_entities(self)
     end
 
   end

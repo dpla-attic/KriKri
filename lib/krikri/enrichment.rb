@@ -5,13 +5,11 @@ module Krikri
   module Enrichment
     extend SoftwareAgent
 
-    module ClassMethods
-      def entity_behavior
-        Krikri::OriginalRecordEntityBehavior
-      end
-      def generator_entity_behavior
-        Krikri::AggregationEntityBehavior
-      end
+    ##
+    # @see Krikri::Activity#generated_entities
+    # @see Krikri::EntityBehavior
+    def entity_behavior
+      Krikri::AggregationEntityBehavior
     end
 
     ##

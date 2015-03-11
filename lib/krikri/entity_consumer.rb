@@ -19,9 +19,8 @@ module Krikri
     # Store this agent's generator activity, which is the activity that
     # produced the target entities upon which the current agent will operate.
     #
-    # It is assumed that the class that includes SoftwareAgent will define
-    # class methods .entity_behavior and .generator_entity_behavior, which
-    # return the class of the appropriate behavior.
+    # It is assumed that the agent class will define #entity_behavior, which
+    # returns the class of the appropriate behavior.
     #
     # We look for either `generator_activity' or `generator_uri' in the `opts'
     # keys.  `generator_activity' must be a Krikri::Activity object, and
