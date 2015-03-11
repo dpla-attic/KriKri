@@ -1,6 +1,4 @@
 
-# TODO:  move to a subdirectory?
-
 module Krikri
   class AggregationEntityBehavior < Krikri::EntityBehavior
     def generated_entities
