@@ -4,7 +4,6 @@ shared_examples 'a software agent' do |args|
   let(:agent_class) { described_class }
 
   it 'represents its agent name as the correct string, as a class' do
-    allow(subject).to receive(:set_generator_activity!).and_return(true)
     expect(agent_class.agent_name)
       .to eq agent_class.to_s
   end
