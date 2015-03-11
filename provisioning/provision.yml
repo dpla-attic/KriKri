@@ -19,6 +19,26 @@
         - openjdk-7-jdk
 
 - hosts: all
+  sudo: yes
+  tasks:
+    - name: Check whether ElasticSearch is installed
+      shell: if [ -e /usr/share/elasticsearch/lib/elasticsearch-{{ elasticsearch_version }}.jar ]; then echo yes; else echo no; fi;
+      register: version_exists
+    - name: Download ElasticSearch
+      get_url: url=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-{{ elasticsearch_version }}.deb dest=/tmp/elasticsearch-{{ elasticsearch_version }}.deb mode=0440
+      when: version_exists.stdout == 'no'
+    - name: Uninstall any previous version in case of a version change
+      shell: dpkg --remove elasticsearch
+      when: version_exists.stdout == 'no'
+    - name: Install ElasticSearch
+      shell: dpkg -i -E --force-confnew /tmp/elasticsearch-{{ elasticsearch_version }}.deb
+      when: version_exists.stdout == 'no'
+    - name: Ensure state of /usr/share/elasticsearch
+      file: path=/usr/share/elasticsearch state=directory owner=elasticsearch group=elasticsearch recurse=yes
+  vars:
+    - elasticsearch_version: 0.90.13
+
+- hosts: all
   # do as "vagrant" user
   sudo: no
   tasks:
