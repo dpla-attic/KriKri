@@ -133,12 +133,8 @@ module Krikri
       end
 
       def run(activity_uri = nil)
-        #
-        # TODO:  Remove #target_records below and use the following:
-        # harvest_records = generator_activity.generated_entities
-        # Krikri::Mapper.map(name, harvest_records).each do |rec|
-        #
-        Krikri::Mapper.map(name, generator_activity.generated_entities).each do |rec|
+        harvest_records = generator_activity.generated_entities
+        Krikri::Mapper.map(name, harvest_records).each do |rec|
           begin
             rec.mint_id! if rec.node?
             rec << RDF::Statement(rec, RDF::PROV.wasGeneratedBy, activity_uri) if
