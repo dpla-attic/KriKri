@@ -6,6 +6,13 @@ module Krikri
     extend SoftwareAgent
 
     ##
+    # @see Krikri::Activity#generated_entities
+    # @see Krikri::EntityBehavior
+    def entity_behavior
+      Krikri::AggregationEntityBehavior
+    end
+
+    ##
     # The main enrichment method; passes specified input fields to
     # #enrich_values, which must return an array of values with length equal to
     # the number of output fields. The values of the output fields are set to

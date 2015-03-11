@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Krikri::IndexService do
+describe Krikri::QASearchIndex do
   let(:solr) { RSolr.connect }
 
   describe '#initialize' do
@@ -52,7 +52,23 @@ describe Krikri::IndexService do
     end
 
     context 'with models' do
-      let(:aggregation) { build(:aggregation) }
+      include_context 'provenance queries'
+      include_context 'generated entities query'
+
+      # generator_uri matches what Krikri::Activity will construct as the
+      # uri, given its value of #rdf_subject, in #aggregations_as_json
+      # See 'provenance queries' shared context.
+      #
+      # FIXME:  See the activities factory for generator_uri,
+      #         spec/factories/krikri_activities.rb.  This generator URI would
+      #         ideally be for ID 3.
+      let(:generator_uri) { 'http://localhost:8983/marmotta/ldp/activity/1' }
+
+      let(:activity) do
+        a = build(:krikri_activity)
+        a.id = 1
+        a
+      end
 
       before do
         aggregation.set_subject!('http://api.dp.la/item/123')
@@ -70,6 +86,12 @@ describe Krikri::IndexService do
         response = solr.get('select', :params => { :q => '' })['response']
         expect(response['numFound']).to eq 1
       end
+
+      it 'updates records affected by an activity' do
+        expect do
+          subject.update_from_activity(activity)
+        end.to_not raise_error
+      end
     end
 
     describe '#schema_keys' do
@@ -78,6 +100,16 @@ describe Krikri::IndexService do
         expect(result).to be_a(Array)
         expect(result).not_to be_empty
       end
+    end
+  end
+end
+
+
+describe Krikri::ProdSearchIndex do
+  context 'with arguments to #initialize' do
+    describe '#initialize' do
+      let(:opts) { {} }
+      subject { described_class.new(opts) }
     end
   end
 end

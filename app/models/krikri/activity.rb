@@ -83,5 +83,23 @@ module Krikri
       RDF::URI(Krikri::Settings['marmotta']['ldp']) /
         Krikri::Settings['prov']['activity'] / id.to_s
     end
+
+    ##
+    # Return an Enumerator of URI strings of entities (e.g. aggregations or
+    # original records) that pertain to this activity
+    #
+    # @return [Enumerator] URI strings
+    def generated_entity_uris
+      activity_uri = RDF::URI(rdf_subject)  # This activity's LDP URI
+      query = Krikri::ProvenanceQueryClient.find_by_activity(activity_uri)
+      query.each_solution.lazy.map do |s|
+        s.record.to_s
+      end
+    end
+
+    def generated_entities
+      agent_instance.entity_behavior.generated_entities(self)
+    end
+
   end
 end
