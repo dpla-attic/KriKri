@@ -19,7 +19,7 @@ FactoryGirl.define do
       {
         name: 'test_map',
         generator_uri: (RDF::URI(Krikri::Settings['marmotta']['ldp']) /
-          Krikri::Settings['prov']['activity'] / '1').to_s
+          Krikri::Settings['prov']['activity'] / '2').to_s
       }.to_json
     )
   end
