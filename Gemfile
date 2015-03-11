@@ -17,6 +17,7 @@ end
 
 group :test do
   gem "codeclimate-test-reporter", require: false
+  gem 'simplecov', require: false
 end
 
 file = File.expand_path('Gemfile',
