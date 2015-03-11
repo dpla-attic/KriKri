@@ -10,6 +10,14 @@ describe Krikri::SearchIndexDocument, type: :model do
     expect(subject).to be_a SolrDocument
   end
 
+  describe '#to_param' do
+    it 'uses local name instead of full item uri for routes' do
+      item_uri = 'http://dp.la/marmotta/ldp/items/123ab'
+      doc = Krikri::SearchIndexDocument.new(id: item_uri)
+      expect(doc.to_param).to eq('123ab')
+    end
+  end
+
   describe '#aggregation' do
 
     it 'creates a DPLA::MAP::Aggregation with its id' do
