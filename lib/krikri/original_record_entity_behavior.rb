@@ -2,7 +2,7 @@
 # TODO: move to a subdirectory?
 
 module Krikri
-  class OriginalRecordEntityBehavior < EntityBehavior
+  class OriginalRecordEntityBehavior < Krikri::EntityBehavior
     def generated_entities
       @activity.generated_entity_uris.lazy.map do |uri|
         OriginalRecord.load(uri)

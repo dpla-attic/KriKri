@@ -2,7 +2,7 @@
 # TODO:  move to a subdirectory?
 
 module Krikri
-  class AggregationEntityBehavior < EntityBehavior
+  class AggregationEntityBehavior < Krikri::EntityBehavior
     def generated_entities
       @activity.generated_entity_uris.lazy.map do |uri|
         agg = DPLA::MAP::Aggregation.new(uri)
