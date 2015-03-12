@@ -2,10 +2,10 @@
   <div class='container'>
     <div class='navbar-right'>
     <ul class='nav navbar-nav'>
-        <li><%= link_to 'Admin', krikri.admin_index_path %></li>
+        <li><%= link_to 'Admin', krikri.providers_path %></li>
         <% if session[:provider].present? %>
           <li><%= link_to session[:provider], 
-            krikri.dashboard_path(id: session[:provider]) %></li>
+            krikri.provider_path(id: session[:provider]) %></li>
           <li><%= link_to 'Records', krikri.records_path %></li>
           <li><%= link_to 'Reports', krikri.report_lists_path %></li>
         <% end %>

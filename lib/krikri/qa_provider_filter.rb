@@ -25,7 +25,7 @@ module Krikri
     # to session variables.
     def authenticate_session_provider
       flash[:message] = 'Select a provider to perform QA tasks.'
-      redirect_to url_for(controller: :admin, action: :index) unless
+      redirect_to url_for(controller: :providers, action: :index) unless
         session[:provider].present?
     end
 
