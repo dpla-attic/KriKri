@@ -4,7 +4,7 @@ module Krikri
 
     # Admin Dashboard
     def index
-      @providers = Krikri::ProviderList.new.provider_names
+      @providers = Krikri::Provider.new.all
     end
 
     # Provider Dashboard
