@@ -8,7 +8,7 @@ module Krikri
   # ApplicationController.
   class RecordsController < CatalogController
     include Krikri::QaProviderFilter
-    before_action :authenticate_user!, :authenticate_session_provider
+    before_action :authenticate_user!
     self.solr_search_params_logic += [:records_by_provider]
 
     ##

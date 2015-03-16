@@ -8,7 +8,7 @@ module Krikri
   # ApplicationController.
   class ValidationReportsController < CatalogController
     include Krikri::QaProviderFilter
-    before_action :authenticate_user!, :authenticate_session_provider
+    before_action :authenticate_user!
     before_action :valid_params, :only => :index
     self.solr_search_params_logic += [:records_by_provider]
 

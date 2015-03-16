@@ -5,9 +5,6 @@ module Krikri
     # To add this functionality to a controller that inherits from
     # Blacklight::CatalogController, include this module and add:
     #   self.solr_search_params_logic += [:records_by_provider]
-    #
-    # Optionally, add :authenticate_session_provider as a before_action to any
-    # controller.
 
     ##
     # This method is intended for use in a controller, so it assumes access
@@ -15,18 +12,10 @@ module Krikri
     # @param [Hash] solr_parameters a hash of parameters to be sent to Solr.
     # @param [Hash] user_parameters a hash of user-supplied parameters.
     def records_by_provider(solr_params, user_params)
-      solr_params[:fq] ||= []
-      solr_params[:fq] << provider_fq(session[:provider])
-    end
-
-    ##
-    # If a session provider has not been assigned, redirect to admin#index.
-    # This method is intended for use in a controller, so it assumes access
-    # to session variables.
-    def authenticate_session_provider
-      flash[:message] = 'Select a provider to perform QA tasks.'
-      redirect_to url_for(controller: :providers, action: :index) unless
-        session[:provider].present?
+      if params[:id].present?
+        solr_params[:fq] ||= []
+        solr_params[:fq] << provider_fq(params[:id])
+      end
     end
 
     ##
@@ -36,7 +25,7 @@ module Krikri
     # @example:
     #   query_params = { :fq => provider_fq("Boston Public Library") }
     def provider_fq(provider)
-      "provider_name:\"#{provider}\""
+      "provider_id:\"#{provider}\""
     end
   end
 end
