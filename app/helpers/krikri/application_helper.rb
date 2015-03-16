@@ -11,6 +11,5 @@ module Krikri
     def current_provider_name
       current_provider_id
     end
-
   end
 end
