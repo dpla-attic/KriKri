@@ -1,6 +1,7 @@
-<% content_for :title do %>Report Lists<% end %>
+<% content_for :title do %>Reports<% end %>
 
 <div id="main-container" class="container">
-  <h1>Reports for all records</h1>
+  <h1>Reports</h1>
+  <h2><%= current_provider_name %></h2>
   <%= render "validation_report_list" %>
 </div>
