@@ -1,8 +1,7 @@
-<% content_for :title do %>Dashboard - <%= session[:provider] %><% end %>
+<% content_for :title do %><%= params[:id] %><% end %>
 
 <div id='main-container' class='container'>
-  <h2>Dashboard</h2>
-  <div><%= session[:provider] %></div>
+  <h2><%= params[:id] %></h2>
 
   <h3>Current Ingest</h3>
   <div>QA Tasks</div>
