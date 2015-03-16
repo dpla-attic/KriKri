@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Krikri::ReportListsController, :type => :controller do
+describe Krikri::ReportsController, :type => :controller do
 
   routes { Krikri::Engine.routes }
 

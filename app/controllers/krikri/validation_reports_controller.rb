@@ -45,7 +45,7 @@ module Krikri
     private
 
     def valid_params
-      redirect_to :report_lists if !params['report_name'] || !params['q']
+      redirect_to :reports if !params['report_name'] || !params['q']
     end
   end
 end

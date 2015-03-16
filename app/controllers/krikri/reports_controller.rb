@@ -1,5 +1,5 @@
 module Krikri
-  class ReportListsController < ApplicationController
+  class ReportsController < ApplicationController
     include Krikri::QaProviderFilter
     layout 'krikri/application'
 
