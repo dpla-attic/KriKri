@@ -12,9 +12,9 @@ module Krikri
     # @param [Hash] solr_parameters a hash of parameters to be sent to Solr.
     # @param [Hash] user_parameters a hash of user-supplied parameters.
     def records_by_provider(solr_params, user_params)
-      if params[:id].present?
+      if params[:provider_id].present?
         solr_params[:fq] ||= []
-        solr_params[:fq] << provider_fq(params[:id])
+        solr_params[:fq] << provider_fq(params[:provider_id])
       end
     end
 
