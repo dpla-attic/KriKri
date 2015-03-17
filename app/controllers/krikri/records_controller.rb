@@ -8,7 +8,7 @@ module Krikri
   # ApplicationController.
   class RecordsController < CatalogController
     include Krikri::QaProviderFilter
-    before_action :authenticate_user!
+    before_action :authenticate_user!, :session_provider
     self.solr_search_params_logic += [:records_by_provider]
 
     ##
@@ -96,6 +96,13 @@ module Krikri
       id_uri = Krikri::Settings.marmotta.item_container << '/' << id
       solr_response = solr_repository.find(id_uri, extra_controller_params)
       [solr_response, solr_response.documents.first]
+    end
+
+    private
+
+    def session_provider
+      session[:provider_id] = params[:provider_id].present? ?
+        params[:provider_id] : nil
     end
   end
 end

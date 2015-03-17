@@ -8,7 +8,7 @@ module Krikri
   # ApplicationController.
   class ValidationReportsController < CatalogController
     include Krikri::QaProviderFilter
-    before_action :authenticate_user!
+    before_action :authenticate_user!, :session_provider
     before_action :valid_params, :only => :index
     self.solr_search_params_logic += [:records_by_provider]
 
@@ -46,6 +46,11 @@ module Krikri
 
     def valid_params
       redirect_to :reports if !params['report_name'] || !params['q']
+    end
+
+    def session_provider
+      session[:provider_id] = params[:provider_id].present? ? 
+        params[:provider_id] : nil
     end
   end
 end

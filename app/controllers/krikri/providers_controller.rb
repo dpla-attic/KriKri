@@ -1,6 +1,6 @@
 module Krikri
   class ProvidersController < ApplicationController
-    before_action :session_provider, :only => :show
+    before_action :session_provider
 
     # Admin Dashboard
     def index
@@ -14,8 +14,7 @@ module Krikri
     private
 
     def session_provider
-      session[:provider] = params[:id]
+      session[:provider_id] = params[:id].present? ? params[:id] : nil
     end
-
   end
 end
