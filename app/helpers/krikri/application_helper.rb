@@ -15,7 +15,7 @@ module Krikri
     # Returns all providers that are not currently set as session provider
     # @return Array of Blacklight::SolrResponse::Facets::FacetItem's
     # TODO return names of providers along with ids
-    def non_current_providers
+    def available_providers
       Krikri::Provider.new.all.delete_if { |p| p.value == current_provider_id }
     end
   end
