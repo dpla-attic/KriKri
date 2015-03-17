@@ -2,7 +2,23 @@
   <div class='container'>
     <div class='navbar-right'>
       <ul class='nav navbar-nav'>
-        <li><%= link_to 'Admin', krikri.providers_path %></li>
+        <li class='dropdown'>
+          <a href='#' class='dropdown-toggle' data-toggle='dropdown' 
+            role='button' aria-expanded='false'>
+            <%= current_provider_name %> <span class="caret"></span>
+          </a>
+          <ul class='dropdown-menu' role='menu'>
+
+            <% if current_provider_id.present? %>
+              <li><a href='#'>All providers</a></li>
+              <li class='divider'></li>
+            <% end %>
+
+            <% non_current_providers.each do |provider| %>
+              <li><a href='#'><%= provider.value %></a></li>
+            <% end %>
+          </ul>
+        </li>
 
         <% if current_provider_id.present? %>
           <li><%= link_to 'Dashboard', 
