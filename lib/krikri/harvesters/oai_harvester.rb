@@ -156,6 +156,14 @@ module Krikri::Harvesters
     ##
     # Runs the request in the given block against the sets specified in `opts`.
     # Results are concatenated into a single enumerator
+    #
+    # @param opts [Hash] the options to pass, including all sets to process.
+    # @yield [set_opts] gives options to the block once for each set. The
+    #   block should run the harvest action with the options and give an
+    #   Enumerable.
+    #
+    # @return [Enumerator::Lazy] A lazy enumerator concatenating the results
+    #   of the block with each set.
     def request_with_sets(opts, &block)
       sets = Array(opts.delete(:set))
       if opts[:skip_set]
