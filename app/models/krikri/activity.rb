@@ -20,6 +20,7 @@ module Krikri
     #    @return [DateTime] a datestamp marking the activity's start
 
     validate :agent_must_be_a_software_agent
+    paginates_per 10
 
     def agent_must_be_a_software_agent
       errors.add(:agent, 'does not represent a SoftwareAgent') unless

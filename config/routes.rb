@@ -9,5 +9,6 @@ Krikri::Engine.routes.draw do
   resources :institutions do
     resources :harvest_sources, shallow: true
   end
+  resources :activities, only: [:index]
   mount Resque::Server.new, at: '/resque'
 end
