@@ -2,14 +2,13 @@ module Krikri
   module ApplicationHelper
 
     def current_provider_id
-      return params[:provider_id] if params[:provider_id].present?
-      return session[:provider_id] if session[:provider_id].present?
-      return "All providers"
+      return session[:provider_id].present? ? session[:provider_id] : nil
     end
 
     # TODO: Make this the name of the provider instead of the id 
     def current_provider_name
-      current_provider_id
+      return current_provider_id.present? ? current_provider_id : 
+        "All providers"
     end
   end
 end
