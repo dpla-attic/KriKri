@@ -1,4 +1,3 @@
-
 shared_examples 'a harvester' do
   opts = { uri: 'http://example.org/endpoint' }
   it_behaves_like 'a software agent', opts
@@ -50,6 +49,14 @@ shared_examples 'a harvester' do
         .and_return(gen_id)
       expect(harvester.get_record(harvester.record_ids.first).local_name)
         .to eq gen_id
+    end
+  end
+
+  describe '.expected_opts' do
+    it 'returns a hash with key and options' do
+      expect(described_class.expected_opts)
+        .to match a_hash_including(:key => (an_instance_of(Symbol)),
+                                   :opts => an_instance_of(Hash))
     end
   end
 
