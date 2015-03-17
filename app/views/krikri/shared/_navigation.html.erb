@@ -1,15 +1,23 @@
 <div id='header-navbar' class='navbar navbar-inverse navbar-static-top' role='navigation'>
   <div class='container'>
     <div class='navbar-right'>
-    <ul class='nav navbar-nav'>
+      <ul class='nav navbar-nav'>
         <li><%= link_to 'Admin', krikri.providers_path %></li>
-        <% if session[:provider].present? %>
-          <li><%= link_to session[:provider], 
-            krikri.provider_path(id: session[:provider]) %></li>
+
+        <% if current_provider_id.present? %>
+          <li><%= link_to 'Dashboard', 
+            krikri.providers_path(current_provider_id) %></li>
+          <li><%= link_to 'Records', 
+            krikri.records_path(provider_id: current_provider_id) %></li>
+          <li><%= link_to 'Reports', 
+            krikri.reports_path(provider_id: current_provider_id) %></li>
+        <% else %>
+          <li><%= link_to 'Dashboard', krikri.providers_path %></li>
           <li><%= link_to 'Records', krikri.records_path %></li>
           <li><%= link_to 'Reports', krikri.reports_path %></li>
         <% end %>
-    </ul>
+
+      </ul>
+    </div>
   </div>
-</div>
 </div>
