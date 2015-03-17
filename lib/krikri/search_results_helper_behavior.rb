@@ -2,7 +2,6 @@ module Krikri
   # This module helps controllers that display results from a querying the
   # search index.
   module SearchResultsHelperBehavior
-    include Krikri::PrettifierHelperBehavior
 
     # Override method in Blacklight::CatalogHelperBehavior.
     def render_thumbnail_tag(document, image_options = {}, url_options = {})
@@ -76,6 +75,22 @@ module Krikri
     def prettify_string(string, mime_type)
       string = prettify_json_string(string) if mime_type.include? 'json'
       string = prettify_xml_string(string) if mime_type.include? 'xml'
+      string
+    end
+
+    def prettify_json_string(string)
+      begin
+        return JSON.pretty_generate(JSON.parse(string))
+      rescue JSON::ParserError
+        return string
+      end
+    end
+
+    def prettify_xml_string(string)
+      if Nokogiri.XML(string).errors.empty?
+        doc = Nokogiri.XML(string) { |c| c.noblanks }
+        return doc.to_xml(indent: 2)
+      end
       string
     end
 
