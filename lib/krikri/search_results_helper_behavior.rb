@@ -100,8 +100,8 @@ module Krikri
 
     def random_record_url
       rrg = Krikri::RandomRecordGenerator.new
-      return url_for_document(rrg.record) unless session[:provider].present?
-      url_for_document(rrg.record_by_provider(session[:provider]))
+      return url_for_document(rrg.record) unless session[:provider_id].present?
+      url_for_document(rrg.record_by_provider(session[:provider_id]))
     end
   end
 end
