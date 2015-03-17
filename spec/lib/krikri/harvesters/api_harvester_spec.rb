@@ -14,8 +14,6 @@ describe Krikri::Harvesters::ApiHarvester do
     end
   end
 
-
-
   context 'with responses' do
     let(:query_opts) { { 'params' => { 'q' => 'tags_ssim:dpla' } } }
     let(:response_string) do
