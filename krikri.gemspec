@@ -33,8 +33,6 @@ Gem::Specification.new do |s|
   s.add_dependency "resque", "~>1.0"
   s.add_dependency "analysand", "4.0.0"
   s.add_dependency "yajl-ruby"
-  s.add_dependency "kaminari", "~>0.16"
-  s.add_dependency "bootstrap-kaminari-views"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "jettywrapper", '~> 2.0'
