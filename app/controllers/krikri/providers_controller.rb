@@ -1,13 +1,12 @@
 module Krikri
+  # This models a provider that is stored in Marmotta.
   class ProvidersController < ApplicationController
     before_action :session_provider
 
-    # Admin Dashboard
     def index
       @providers = Krikri::Provider.new.all
     end
 
-    # Provider Dashboard
     def show
     end
 
