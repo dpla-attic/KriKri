@@ -5,11 +5,10 @@ module Krikri
     # Get the names of all providers in search index
     # @return Array of Blacklight::SolrResponse::Facets::FacetItem's
     def all
-      index_querier = Krikri::IndexQuerier.new
-      default_params = { :rows => 0,
-                          :id => '*:*',
-                          'facet.field' => 'provider_id' }
-      index_querier.search(default_params).facets.first.items
+      query_params = { :rows => 0,
+                       :id => '*:*',
+                       'facet.field' => 'provider_id' }
+      Krikri::SolrResponseBuilder.new(query_params).response.facets.first.items
     end
 
     ##
