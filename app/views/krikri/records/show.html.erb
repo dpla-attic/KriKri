@@ -6,7 +6,7 @@
   <h1>Record</h1>
   <h2><%= @document.id.html_safe %></h2>
 
-  <%= link_to 'Random record from ' << current_provider_name, {:controller =>
+  <%= link_to "Random record from #{current_provider_name}", {:controller =>
     'records', :action => 'show', :id => random_record_id(current_provider_id),
     :provider_id => current_provider_id}, :method => :get, :class => 
     'btn btn-primary' %>
