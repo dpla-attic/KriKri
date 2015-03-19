@@ -5,11 +5,15 @@
 
   <h1>Validation Report: <%= params[:id] %></h1>
   <h2><%= current_provider_name %></h2>
-  <p>
+  <div>
     The following records have missing values for 
     <code><%= params[:id] %></code>.
-  </p>
+  </div>
 
-  <%= render "validation_report" %>
+  <% if @documents.count > 0 %>
+    <%= render "validation_report" %>
+  <% else %>
+    <div>There are no invalid records to report.</div>
+  <% end %>
 
 </div>
