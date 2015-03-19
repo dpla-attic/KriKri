@@ -3,20 +3,23 @@
 <div id="main-container" class="container">
   <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
 
-  <h2>QA Record: <%= @document.id.html_safe %></h2>
+  <h1>Record</h1>
+  <h2><%= current_provider_name %></h2>
+  <h3><%= @document.id.html_safe %></h3>
 
-  <%= button_to 'Random record', random_record_url,
-    :class => "btn btn-primary", :method => :get %>
+  <%= link_to 'Random record', {:controller => 'records', :action => 'show', 
+    :id => random_record_id(current_provider_id), :provider_id => 
+    current_provider_id}, :method => :get, :class => 'btn btn-primary' %>
 
-  <div class="row">
-    <div class="col-md-6 col-sm-6">
+  <div class='row'>
+    <div class='col-md-6 col-sm-6'>
       <h3>Enriched Record</h3>
-      <pre class="pre-scrollable"><%= render_enriched_record(@document) %></pre>
+      <pre class='pre-scrollable'><%= render_enriched_record(@document) %></pre>
     </div>
 
-    <div class="col-md-6 col-sm-6">
+    <div class='col-md-6 col-sm-6'>
       <h3>Original Record</h3>
-      <pre class="pre-scrollable"><%= render_original_record(@document) %></pre>
+      <pre class='pre-scrollable'><%= render_original_record(@document) %></pre>
     </div>
   </div>
 </div>
