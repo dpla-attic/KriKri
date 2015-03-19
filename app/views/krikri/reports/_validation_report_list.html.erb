@@ -1,12 +1,8 @@
 <h3>Validation Reports</h3>
-<% if @validation_report_list %>
+<% if @validation_reports %>
   <ul>
-    <% @validation_report_list.each do |report| %>
-      <% if report[:url] %>
-        <li><%= link_to report[:label], report[:url] %></li>
-      <% else %>
-        <li><%= report[:label] %></li>
-      <% end %>
+    <% @validation_reports.each do |validation_report| %>
+      <li><%= render_validation_report(validation_report) %></li>
     <% end %>
   </ul>
 <% else %>
