@@ -1,6 +1,8 @@
 <% content_for :title do %>Reports<% end %>
 
 <div id="main-container" class="container">
+  <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
+  
   <h1>Reports</h1>
   <h2><%= current_provider_name %></h2>
   <%= render "validation_report_list" %>

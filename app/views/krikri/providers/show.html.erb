@@ -1,6 +1,8 @@
 <% content_for :title do %><%= params[:id] %><% end %>
 
 <div id='main-container' class='container'>
+  <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
+  
   <h1>Dashboard</h1>
   <h2><%= params[:id] %></h2>
 
