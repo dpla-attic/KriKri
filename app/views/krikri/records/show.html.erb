@@ -1,13 +1,13 @@
 <% content_for :title do %>QA Record: <%= @document.id.html_safe %><% end %>
 
-<div id="main-container" class="container">
+<div id='main-container' class='container'>
   <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
 
   <h1>Record</h1>
-  <h2><%= current_provider_name %></h2>
-  <h3><%= @document.id.html_safe %></h3>
+  <h2><%= @document.id.html_safe %></h2>
 
-  <%= link_to 'Random record', {:controller => 'records', :action => 'show', 
+  <%= link_to 'Random record from ' << current_provider_name, {:controller => 
+    'records', :action => 'show', 
     :id => random_record_id(current_provider_id), :provider_id => 
     current_provider_id}, :method => :get, :class => 'btn btn-primary' %>
 
