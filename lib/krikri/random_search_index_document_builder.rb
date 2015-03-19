@@ -5,7 +5,7 @@ module Krikri
     attr_accessor :provider_id
 
     ##
-    # @param &block may contain provider_id and current_doc_id
+    # @param &block may contain provider_id
     #   Sample use:
     #     RandomSearchIndexDocumentBuilder.new do
     #       self.provider_id = '0123'
