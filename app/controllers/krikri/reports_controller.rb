@@ -5,11 +5,10 @@ module Krikri
     before_action :session_provider
 
     def index
-      if params[:provider_id].present?
-        @validation_report_list = Krikri::ValidationReportList.new
-          .report_list_by_provider(params[:provider_id]) and return
+      provider_id = params[:provider_id]
+      @validation_reports = Krikri::ValidationReport.new.all do 
+        self.provider_id = provider_id
       end
-      @validation_report_list = Krikri::ValidationReportList.new.report_list
     end
 
     private
