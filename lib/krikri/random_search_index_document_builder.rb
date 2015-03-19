@@ -9,7 +9,6 @@ module Krikri
     #   Sample use:
     #     RandomSearchIndexDocumentBuilder.new do
     #       self.provider_id = '0123'
-    #       self.current_doc_id = 'abcd'
     #     end
     def initialize(&block)
       # set values from block 
