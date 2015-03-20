@@ -3,7 +3,7 @@ module Krikri
   class Provider
 
     ##
-    # @return Array of Blacklight::SolrResponse::Facets::FacetItem's
+    # @return [Array of Blacklight::SolrResponse::Facets::FacetItem's]
     def all
       query_params = { :rows => 0,
                        :id => '*:*',
@@ -13,7 +13,7 @@ module Krikri
 
     ##
     # @param id [String]
-    # @return Hash
+    # @return [Hash]
     #   Sample @return: { "provider_id"=>"_:b12", 
     #                     "provider_name"=>"The New York Public Library" } 
     #
