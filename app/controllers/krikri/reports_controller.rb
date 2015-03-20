@@ -1,6 +1,5 @@
 module Krikri
   class ReportsController < ApplicationController
-    include Krikri::QaProviderFilter
     layout 'krikri/application'
     before_action :session_provider
 

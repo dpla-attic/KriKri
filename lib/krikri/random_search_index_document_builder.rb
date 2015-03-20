@@ -1,7 +1,6 @@
 module Krikri
   # Gets random records from the search index
   class RandomSearchIndexDocumentBuilder
-    include Krikri::QaProviderFilter
     attr_accessor :provider_id
 
     ##
@@ -30,7 +29,7 @@ module Krikri
       params = { :id => '*:*',
                  :sort => "random_#{rand(9999)} desc",
                  :rows => 1 }
-      params[:fq] = provider_fq(@provider_id) if @provider_id.present?
+      params[:fq] = "provider_id:\"#{@provider_id}\"" if @provider_id.present?
       params
     end
   end

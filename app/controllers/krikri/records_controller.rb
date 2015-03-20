@@ -7,8 +7,8 @@ module Krikri
   # ApplicationController.  It does not interit from Krikri's
   # ApplicationController.
   class RecordsController < CatalogController
-    include Krikri::QaProviderFilter
     before_action :authenticate_user!, :session_provider
+
     self.solr_search_params_logic += [:records_by_provider]
 
     ##
@@ -103,6 +103,18 @@ module Krikri
     def session_provider
       session[:provider_id] = params[:provider_id].present? ?
         params[:provider_id] : nil
+    end
+
+    ##
+    # Limit the records returned by a Solr request to those belonging to the
+    # provider specified in params[:provider_id].
+    # @param [Hash] solr_parameters a hash of parameters to be sent to Solr.
+    # @param [Hash] user_parameters a hash of user-supplied parameters.
+    def records_by_provider(solr_params, user_params)
+      if params[:provider_id].present?
+        solr_params[:fq] ||= []
+        solr_params[:fq] << "provider_id:\"#{params[:provider_id]}\""
+      end
     end
   end
 end
