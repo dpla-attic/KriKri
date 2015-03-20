@@ -12,9 +12,9 @@ module Krikri
     self.solr_search_params_logic += [:records_by_provider]
 
     ##
-    # RecordsReportsController has access to views in the following
+    # RecordsController has access to views in the following
     # directories:
-    #   krikri/validation_reports
+    #   krikri/records
     #   catalog (defined in Blacklight)
     # It inherits view templates from the host application's
     # ApplicationController.  It uses krikri's application layout:
