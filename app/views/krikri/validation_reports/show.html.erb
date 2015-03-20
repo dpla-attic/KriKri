@@ -4,7 +4,7 @@
   <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
 
   <h1>Validation Report: <%= params[:id] %></h1>
-  <h2><%= current_provider_name %></h2>
+  <h2><%= provider_name(@current_provider) %></h2>
   <div>
     The following records have missing values for 
     <code><%= params[:id] %></code>.
