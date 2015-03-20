@@ -1,7 +1,6 @@
 module Krikri
   # This models a provider that is stored in Marmotta.
   class ProvidersController < ApplicationController
-    before_action :session_provider
 
     def index
       @providers = Krikri::Provider.new.all
@@ -12,8 +11,9 @@ module Krikri
 
     private
 
-    def session_provider
-      session[:provider_id] = params[:id].present? ? params[:id] : nil
+    # Override ApplicationController method
+    def set_current_provider
+      @current_provider = params[:id]
     end
   end
 end
