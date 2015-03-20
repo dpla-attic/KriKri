@@ -7,7 +7,7 @@ module Krikri
   # ApplicationController.  It does not interit from Krikri's
   # ApplicationController.
   class RecordsController < CatalogController
-    before_action :authenticate_user!, :session_provider
+    before_action :authenticate_user!, :set_current_provider
 
     self.solr_search_params_logic += [:records_by_provider]
 
@@ -100,9 +100,8 @@ module Krikri
 
     private
 
-    def session_provider
-      session[:provider_id] = params[:provider_id].present? ?
-        params[:provider_id] : nil
+    def set_current_provider
+      @current_provider = params[:provider]
     end
 
     ##
@@ -111,9 +110,9 @@ module Krikri
     # @param [Hash] solr_parameters a hash of parameters to be sent to Solr.
     # @param [Hash] user_parameters a hash of user-supplied parameters.
     def records_by_provider(solr_params, user_params)
-      if params[:provider_id].present?
+      if @current_provider.present?
         solr_params[:fq] ||= []
-        solr_params[:fq] << "provider_id:\"#{params[:provider_id]}\""
+        solr_params[:fq] << "provider_id:\"#{@current_provider}\""
       end
     end
   end

@@ -10,8 +10,8 @@ module Krikri
 
     # Override method in Blacklight::UrlHelperBehavior.
     def link_to_document(document, field_or_opts = nil, opts = {})
-      link_to field_or_opts, url_for_document(document, { :provider_id =>
-        params[:provider_id] })
+      link_to field_or_opts, url_for_document(document, { :provider =>
+        params[:provider] })
     end
 
     # Disable bookmarks.
