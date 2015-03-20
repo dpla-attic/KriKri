@@ -12,12 +12,12 @@ module Krikri
     end
 
     ##
-    # @param String - id of a provider
+    # @param id [String]
     # @return Hash
     #   Sample @return: { "provider_id"=>"_:b12", 
     #                     "provider_name"=>"The New York Public Library" } 
     #
-    # TODO: Get provider data from Marmotta rather that Solr
+    # TODO: Get provider data from Marmotta rather than Solr
     def find(id)
       query_params = { :rows => 1,
                        :provider_id => id,
