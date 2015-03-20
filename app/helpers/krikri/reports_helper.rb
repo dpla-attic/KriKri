@@ -1,5 +1,5 @@
 module Krikri
-  module ValidationReportsHelper
+  module ReportsHelper
     
     def render_validation_report(report)
       return validation_report_title(report) if report.items.first.hits == 0
