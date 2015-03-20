@@ -1,8 +1,8 @@
 module Krikri
+  # This models provider data from Marmotta.
   class Provider
 
     ##
-    # Get the names of all providers in search index
     # @return Array of Blacklight::SolrResponse::Facets::FacetItem's
     def all
       query_params = { :rows => 0,
@@ -12,12 +12,16 @@ module Krikri
     end
 
     ##
-    # Find a provider from the search index.
     # @param String - id of a provider
-    # @return Krikri::SearchIndexDocument
+    # @return Hash
+    #   Sample @return: { "provider_id"=>"_:b12", 
+    #                     "provider_name"=>"The New York Public Library" } 
+    #
+    # TODO: Get provider data from Marmotta rather that Solr
     def find(id)
-
-    end
-
+      query_params = { :rows => 1,
+                       :provider_id => id,
+                       :fl => 'provider_id, provider_name' }
+      Krikri::SolrResponseBuilder.new(query_params).response.docs.first
   end
 end
