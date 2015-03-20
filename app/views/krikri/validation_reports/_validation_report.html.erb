@@ -1,17 +1,23 @@
-<dl class='dl-horizontal'>
+<%= render 'sort_and_per_page' %>
+
+<div id='documents'>
   <% @documents.each do |doc| %>
-    <dt>ID:</dt>
-    <dd>
-      <%= link_to doc.id, :controller => 'records', :action => 'show',
-      :id => doc.id, :provider_id => params[:provider_id], :method => :get %>
-    </dd>
-    <% if doc['sourceResource_title'].present? %>
-      <dt>Title:</dt>
-      <dd><%= doc['sourceResource_title'] %></dd>
-    <% end %>
-    <% if doc['isShownAt_id'].present? %>
-      <dt>Is Shown At:</dt>
-      <dd><%= link_to doc['isShownAt_id'], doc['isShownAt_id'] %></dd>
-    <% end %>
+    <div class='document'>
+      <dl class='document-metadata dl-horizontal dl-invert'>
+        <dt>ID:</dt>
+        <dd>
+          <%= link_to doc.id, :controller => 'records', :action => 'show',
+          :id => doc.id, :provider_id => params[:provider_id], :method => :get %>
+        </dd>
+        <% if doc['sourceResource_title'].present? %>
+          <dt>Title:</dt>
+          <dd><%= doc['sourceResource_title'] %></dd>
+        <% end %>
+        <% if doc['isShownAt_id'].present? %>
+          <dt>Is Shown At:</dt>
+          <dd><%= link_to doc['isShownAt_id'], doc['isShownAt_id'] %></dd>
+        <% end %>
+      </dl>
+    </div>
   <% end %>
-</dl>
+</div>
