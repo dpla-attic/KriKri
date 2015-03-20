@@ -5,17 +5,17 @@
         <li class='dropdown'>
           <a href='#' class='dropdown-toggle' data-toggle='dropdown' 
             role='button' aria-expanded='false'>
-            <%= current_provider_name %> <span class="caret"></span>
+            <%= provider_name(@current_provider) %> <span class="caret"></span>
           </a>
           <ul class='dropdown-menu' role='menu'>
 
             <% if current_provider_id.present? %>
-              <li><a href='#'>All providers</a></li>
+              <li><%= link_to_current_page_by_provider(:all) %></li>
               <li class='divider'></li>
             <% end %>
 
             <% available_providers.each do |provider| %>
-              <li><a href='#'><%= provider.value %></a></li>
+              <li><%= link_to_current_page_by_provider(provider.value) %></li>
             <% end %>
           </ul>
         </li>
