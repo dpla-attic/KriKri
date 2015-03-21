@@ -1,4 +1,6 @@
 module Krikri::Util
+  ##
+  # Utilities to parse string values into EDTF dates or Intervals.
   module ExtendedDateParser
     module_function
 
@@ -20,18 +22,21 @@ module Krikri::Util
     #   #range_match to look for range values.
     #
     # @return [Date, EDTF::Epoch, EDTF::Interval, nil] the date parsed or nil
+    # @see http://www.loc.gov/standards/datetime/
     def parse(date_str, allow_interval = false)
-      date_str.strip!
-      date_str.gsub!(/\s+/, ' ')
-      date = parse_interval(date_str) if allow_interval
-      date ||= parse_m_d_y(date_str)
-      date ||= Date.edtf(date_str.gsub('.', '-'))
-      date ||= partial_edtf(date_str)
-      date ||= decade_hyphen(date_str)
-      date ||= month_year(date_str)
-      date ||= decade_s(date_str)
-      date ||= hyphenated_partial_range(date_str)
-      date ||= parse_date(date_str)
+      str = preprocess(date_str.dup)
+      date = parse_interval(str) if allow_interval
+      date ||= parse_m_d_y(str)
+      date ||= Date.edtf(str.gsub('.', '-'))
+      date ||= partial_edtf(str)
+      date ||= decade_hyphen(str)
+      date ||= month_year(str)
+      date ||= decade_s(str)
+      date ||= hyphenated_partial_range(str)
+      date ||= parse_date(str)
+      # Only do this if certian letters are present to avoid infinite loops.
+      date ||= circa(str) if str.match(/[circabout]/i)
+      date = date.first if date.is_a? EDTF::Set
       date || nil
     end
 
@@ -53,6 +58,36 @@ module Krikri::Util
       regexp.match(str) do |m|
         [m[1], m[2]]
       end
+    end
+
+    ##
+    # Preprocess the date string to remove extra whitespace and convert ad hoc
+    # formatting to equivalent EDTF.
+    #
+    # @todo should '-` be intepreted as 'x' or '?'
+    # @see http://www.loc.gov/standards/datetime/pre-submission.html#maskedprecision
+    def preprocess(str)
+      str.gsub!(/late/i, '')
+      str.gsub!(/early/i, '')
+      str.strip!
+      str.gsub!(/\s+/, ' ')
+      str.gsub!('0s', 'x') if str.match(/^[1-9]+0s$/)
+      str.gsub!('-', 'x') if str.match(/^[1-9]+\-+$/)
+      str
+    end
+
+    ##
+    # Remove 'circa' or 'about' or variations and return an uncertian ETDF
+    # dates.
+    #
+    # @param str [String]
+    # @return [Date, nil] an EDTF date, marked uncertian; or `nil`
+    # @see #parse
+    def circa(str)
+      run = str.gsub!(/.*c[irca\.]*/i, '')
+      run ||= str.gsub!(/.*about/i, '')
+      date = parse(str) if run
+      date.nil? ? nil : date.uncertain!
     end
 
     ##
