@@ -7,7 +7,7 @@
         <dt>ID:</dt>
         <dd>
           <%= link_to doc.id, :controller => 'records', :action => 'show',
-          :id => doc.id, :provider_id => params[:provider_id], :method => :get %>
+          :id => doc.id, :provider => @current_provider, :method => :get %>
         </dd>
         <% if doc['sourceResource_title'].present? %>
           <dt>Title:</dt>

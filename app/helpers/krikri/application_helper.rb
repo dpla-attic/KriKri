@@ -30,8 +30,7 @@ module Krikri
     def link_to_current_page_by_provider(provider)
       return link_to_provider_page(provider) if params[:controller] == 
         'krikri/providers'
-      params.delete :provider if provider == nil
-      params[:provider] = provider if provider.present?
+      params[:provider] = provider
       link_to provider_name(provider), params
     end
 

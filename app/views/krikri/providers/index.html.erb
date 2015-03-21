@@ -10,7 +10,7 @@
   <% @providers.each do |provider| %>
     <li>
       <%= link_to provider_name(provider.value), { controller: 'providers', 
-        action: 'show', id: provider.value } %>
+        action: 'show', id: provider.value } %> (<%= provider.hits %> records)
     </li>
   <% end %>
   </ul>
