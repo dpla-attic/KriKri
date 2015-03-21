@@ -9,24 +9,28 @@
           </a>
           <ul class='dropdown-menu' role='menu'>
 
-            <% if current_provider_id.present? %>
-              <li><%= link_to_current_page_by_provider(:all) %></li>
+            <% if @current_provider.present? %>
+              <li>
+                <%= link_to_current_page_by_provider(nil) %>
+              </li>
               <li class='divider'></li>
             <% end %>
 
             <% available_providers.each do |provider| %>
-              <li><%= link_to_current_page_by_provider(provider.value) %></li>
+              <% if provider.value != @current_provider %>
+                <li><%= link_to_current_page_by_provider(provider.value) %></li>
+              <% end %>
             <% end %>
           </ul>
         </li>
 
-        <% if current_provider_id.present? %>
+        <% if @current_provider.present? %>
           <li><%= link_to 'Dashboard', 
-            krikri.providers_path(current_provider_id) %></li>
+            krikri.providers_path(@current_provider) %></li>
           <li><%= link_to 'Records', 
-            krikri.records_path(provider_id: current_provider_id) %></li>
+            krikri.records_path(provider: @current_provider) %></li>
           <li><%= link_to 'Reports', 
-            krikri.reports_path(provider_id: current_provider_id) %></li>
+            krikri.reports_path(provider: @current_provider) %></li>
         <% else %>
           <li><%= link_to 'Dashboard', krikri.providers_path %></li>
           <li><%= link_to 'Records', krikri.records_path %></li>
