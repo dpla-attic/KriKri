@@ -58,9 +58,7 @@ module Krikri
       target_aggregations.each do |agg|
         begin
           chain_enrichments!(agg)
-          agg << RDF::Statement(agg, RDF::PROV.wasGeneratedBy, activity_uri) if
-            activity_uri
-          agg.save
+          activity_uri ? agg.save_with_provenance(activity_uri) : agg.save
         rescue => e
           log :error, "Enrichment error: #{e.message}\n#{e.backtrace}"
         end

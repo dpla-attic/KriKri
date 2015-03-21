@@ -6,11 +6,21 @@ module Krikri
 
     module_function
 
+    ##
+    # Finds all entities generated or revised by the activity whose URI is
+    # given.
+    #
+    # @param activity_uri [#to_uri] the URI of the activity to search
+    #
+    # @return [RDF::SPARQL::Query] a query object that, when executed, will
+    #   give solutions containing the URIs for the resources in `#record`.
     def find_by_activity(activity_uri)
       raise ArgumentError, 'activity_uri must be an RDF::URI' unless
         activity_uri.respond_to? :to_uri
       SPARQL_CLIENT.select(:record)
-        .where([:record, RDF::PROV.wasGeneratedBy, activity_uri])
+        .where([:record,
+                [RDF::PROV.wasGeneratedBy, '|', RDF::DPLA.wasRevisedBy],
+                activity_uri])
     end
   end
 end
