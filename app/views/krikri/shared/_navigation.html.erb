@@ -26,7 +26,7 @@
 
         <% if @current_provider.present? %>
           <li><%= link_to 'Dashboard', 
-            krikri.providers_path(@current_provider) %></li>
+            krikri.provider_path(@current_provider) %></li>
           <li><%= link_to 'Records', 
             krikri.records_path(provider: @current_provider) %></li>
           <li><%= link_to 'Reports', 
