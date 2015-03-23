@@ -3,8 +3,6 @@ module Krikri
   # Mixin module for enriching a set of input_fields and setting the resulting
   # values to a set of output fields.
   module Enrichment
-    extend SoftwareAgent
-
     ##
     # The main enrichment method; passes specified input fields to
     # #enrich_values, which must return an array of values with length equal to

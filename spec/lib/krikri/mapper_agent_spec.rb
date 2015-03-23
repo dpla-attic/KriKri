@@ -24,6 +24,7 @@ describe Krikri::Mapper::Agent do
       allow(record_double).to receive(:node?).and_return(true)
       allow(record_double).to receive(:mint_id!)
       allow(record_double).to receive(:save)
+      allow(record_double).to receive(:save_with_provenance)
     end
 
     context 'with errors thrown' do
@@ -52,13 +53,16 @@ describe Krikri::Mapper::Agent do
         subject.run
       end
 
-      it 'sets generator' do
+      it 'saves each record' do
+        records.each do |record|
+          expect(record).to receive(:save)
+        end
+        subject.run
+      end
+
+      it 'saves with provenance' do
         records.each do |rec|
-          statement = double
-          allow(RDF).to receive(:Statement)
-                         .with(rec, RDF::PROV.wasGeneratedBy, activity_uri)
-                         .and_return(statement)
-          expect(rec).to receive(:<<).with(statement)
+          expect(rec).to receive(:save_with_provenance).with(activity_uri)
         end
         subject.run(activity_uri)
       end

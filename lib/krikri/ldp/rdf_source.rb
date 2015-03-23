@@ -2,6 +2,8 @@ module Krikri::LDP
   ##
   # Adds simple LDP persistence to ActiveTriples::Resource classes
   # @see ActiveTriples::Resource
+  #
+  # @see http://www.w3.org/TR/ldp/#ldprs
   module RdfSource
     extend ActiveSupport::Concern
     include Krikri::LDP::Resource
@@ -28,6 +30,34 @@ module Krikri::LDP
       result = super
       reload_ldp
       result
+    end
+
+    ##
+    # Adds an appropritate provenance statement with the given URI and saves
+    # the resource.
+    #
+    # This method treats RDFSources as stateful resources. This is in conflict
+    # with the PROV model, which assumes each revision is its own Resource. The
+    # internal predicate `dpla:wasRevisedBy` is used for non-generating
+    # revisions of stateful RDFSources.
+    #
+    # @todo Assuming a Marmotta LDP server, there are version URIs available
+    #   (via Memento) which could be used for a direct PROV implementation.
+    #   Consider options for doing that either alongside or in place of this
+    #   approach.
+    #
+    # @param activity_uri [#to_term] the URI of the prov:Activity to mark as
+    #   generating or revising the saved resource.
+    #
+    # @see #save
+    #
+    # @see http://www.w3.org/TR/prov-primer/
+    # @see http://www.w3.org/TR/2013/REC-prov-o-20130430/
+    def save_with_provenance(activity_uri)
+      predicate =
+        exists? ? RDF::DPLA.wasRevisedBy : RDF::PROV.wasGeneratedBy
+      self << RDF::Statement(self, predicate, activity_uri)
+      save
     end
 
     private
