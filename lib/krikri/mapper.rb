@@ -109,9 +109,7 @@ module Krikri
         Krikri::Mapper.map(name, records).each do |rec|
           begin
             rec.mint_id! if rec.node?
-            rec << RDF::Statement(rec, RDF::PROV.wasGeneratedBy, activity_uri) if
-              activity_uri
-            rec.save
+            activity_uri ? rec.save_with_provenance(activity_uri) : rec.save
           rescue => e
             Rails.logger.error("Error saving record: #{rec.rdf_subject}\n" \
                                "#{e.message}\n#{e.backtrace}")

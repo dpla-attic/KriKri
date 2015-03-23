@@ -361,21 +361,28 @@ EOM
     end
 
     describe '#request_with_sets' do
+      let(:sets) { [double('first'), double('second')] }
+      let(:opts) { { :set => sets } }
+
       it 'is lazy' do
-        sets = [double('first'), double('second')]
-        opts = { :set => sets }
         expect { |b| subject.send(:request_with_sets, opts, &b) }
           .not_to yield_control
       end
 
       it 'sends requests' do
-        sets = [double('first'), double('second')]
-        opts = { :set => sets }
         expect { |b| subject.send(:request_with_sets, opts, &b) }
           .not_to yield_successive_args({ :set => opts[:set][0] },
                                         { :set => opts[:set][1] })
       end
 
+      it 'sends requests lazily' do
+        expect(subject).to receive(:give_results).once
+                            .and_return([1,2,3])
+        enum = subject.send(:request_with_sets, opts) do |b|
+          subject.give_results
+        end
+        3.times { enum.next }
+      end
     end
 
     describe '#enqueue' do
@@ -416,7 +423,6 @@ EOM
     end
 
     describe 'concat_enum' do
-
       it 'concatenates enums' do
         expect(subject.concat_enum([(1..10), (100..110)]).to_a)
           .to eq (1..10).to_a.concat((100..110).to_a)
@@ -425,7 +431,7 @@ EOM
       it 'works with lazy' do
         enum = double
         expect(enum).not_to receive :each
-        subject.concat_enum([(1..10), enum]).lazy.take(10)
+        subject.concat_enum([(1..10), enum]).lazy.take(10).each(&:inspect)
       end
     end
 

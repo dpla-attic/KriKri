@@ -87,6 +87,21 @@ describe Krikri::Enrichments::TimespanSplit do
           end
         end
       end
+
+      context 'with precision' do
+        let(:label) { '2019' }
+
+        it 'sets begin to correct precision' do
+          expect(subject.enrich_value(timespan).begin.first.to_s)
+            .to eql Date.parse('2019-01-01').to_s
+        end
+
+        it 'sets end to correct precision' do
+          expect(subject.enrich_value(timespan).end.first.to_s)
+            .to eql Date.parse('2019-12-31').to_s
+
+        end
+      end
     end
   end
 end

@@ -18,3 +18,5 @@ marmotta
 
 ./spec/internal
 dump.rdb
+
+coverage

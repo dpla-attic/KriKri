@@ -46,6 +46,28 @@ shared_examples 'an LDP RDFSource' do
     end
   end
 
+  describe '#save_with_provenance' do
+    include_context 'with RDF subject'
+
+    let(:activity_uri) { RDF::URI 'http://example.org/act' }
+
+    it 'adds generated provenance triple' do
+      subject.save_with_provenance(activity_uri)
+      expect(subject.query([subject, RDF::PROV.wasGeneratedBy, activity_uri]))
+        .not_to be_empty
+    end
+
+    context 'when saved' do
+      before { subject.save }
+
+      it 'adds provenance triple' do
+        subject.save_with_provenance(activity_uri)
+        expect(subject.query([subject, RDF::DPLA.wasRevisedBy, activity_uri]))
+          .not_to be_empty
+      end
+    end
+  end
+
   describe '#get' do
     context 'without subject' do
       include_examples 'LDP rdf_subject errors', :get, error_msg

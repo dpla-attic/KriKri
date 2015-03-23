@@ -18,4 +18,5 @@ describe Krikri::Enrichments::StripHtml do
             }]
 
   it_behaves_like 'a string enrichment', values
+  include_examples 'skips non-strings'
 end

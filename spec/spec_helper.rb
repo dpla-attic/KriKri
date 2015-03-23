@@ -1,3 +1,8 @@
+if ENV['COVERAGE'] == 'yes'
+  require 'simplecov'
+  SimpleCov.start
+end
+
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
 
