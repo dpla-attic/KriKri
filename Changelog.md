@@ -1,3 +1,12 @@
+0.4.0 (23 March 2015)
+---
+
+* Add `Enricher` to queue and run enrichment chains as Activities
+* Use local names instead of full URIs as record IDs in routes
+* Add a small suite of enrichments to strip punctuation from fields
+* Add a basic genre filter enrichment
+* Better format support for date parsing/enrichment
+
 0.3.3 (10 March 2015)
 ---
 
