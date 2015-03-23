@@ -5,6 +5,7 @@ require 'krikri/ldp'
 require 'dpla/map'
 require 'rdf/marmotta'
 require 'oai/client'
+require 'rest-client'
 require 'edtf'
 
 require 'resque'
