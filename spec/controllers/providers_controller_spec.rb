@@ -8,8 +8,18 @@ describe Krikri::ProvidersController, :type => :controller do
     login_user
 
     it 'sets provider session variable' do
-      get :show, id: 'Sample Provider'
-      expect(session[:provider]).to eq('Sample Provider')
+      expect { get :show, id: 'moomin' }
+        .to change { assigns[:current_provider] }.to 'moomin'
+    end
+  end
+
+  describe 'GET #index' do
+    login_user
+
+    it 'sets provider session variable' do
+
+      expect { get :index, id: 'moomin' }
+        .to change { assigns[:current_provider] }.to 'moomin'
     end
   end
 end

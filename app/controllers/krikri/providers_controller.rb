@@ -3,7 +3,7 @@ module Krikri
   class ProvidersController < ApplicationController
 
     def index
-      @providers = Krikri::Provider.new.all
+      @providers = Krikri::Provider.all
     end
 
     def show

@@ -1,26 +1,29 @@
 module Krikri
   module ApplicationHelper
-
     ##
     # @param provider [String, nil]
     # @return [String]
     def provider_name(provider)
       return "All Providers" unless provider.present?
-      Krikri::Provider.new.find(provider)['provider_name']
-    end
-
-    # @return Array of Blacklight::SolrResponse::Facets::FacetItem's
-    def available_providers
-      Krikri::Provider.new.all
+      Krikri::Provider.find(provider)['provider_name']
     end
 
     ##
-    # @param uri [String]
-    # @return [String]
-    # Sample use:
-    #   local_name('http/my_domain/0123') => '0123'
+    # @return [Array<Blacklight::SolrResponse::Facets::FacetItem>]
+    def available_providers
+      Krikri::Provider.all
+    end
+
+    ##
+    # Gives the last path fragment for a given URI string in HTML escaped form
+    #
+    # @example
+    #   local_name('http://my_domain/blah/0123') => '0123'
+    #
+    # @param uri [#to_s] a URL formatted string to split
+    # @return [String] the escaped fragment
     def local_name(uri)
-      uri.split('/').last.html_safe
+      uri.to_s.split('/').last.html_safe
     end
 
     ##
@@ -28,7 +31,7 @@ module Krikri
     # value.
     # @param provider [String, nil]
     def link_to_current_page_by_provider(provider)
-      return link_to_provider_page(provider) if params[:controller] == 
+      return link_to_provider_page(provider) if params[:controller] ==
         'krikri/providers'
       params[:provider] = provider
       link_to provider_name(provider), params
