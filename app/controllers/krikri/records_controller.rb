@@ -84,20 +84,6 @@ module Krikri
       config.solr_document_model = Krikri::SearchIndexDocument
     end
 
-    ##
-    # Construct a valid item URI from a local name, and use it to fetch a single
-    # document from the search index.
-    # Override method in Blacklight::SolrHelper.
-    # TODO: This method is depreciated in Blacklight v5.10.
-    # TODO: Write appropriate test for this functionality after it is updated
-    # with Blacklight v5.10.
-    # @param String id is a local name.
-    def get_solr_response_for_doc_id(id=nil, extra_controller_params={})
-      id_uri = Krikri::Settings.marmotta.item_container << '/' << id
-      solr_response = solr_repository.find(id_uri, extra_controller_params)
-      [solr_response, solr_response.documents.first]
-    end
-
     private
 
     def set_current_provider
