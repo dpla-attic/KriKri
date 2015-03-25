@@ -126,5 +126,36 @@ EOS
           .to eq(['nice and clean'])
       end
     end
+
+    context 'with a basic enrichment' do
+      let(:chain) do
+        {
+          'Krikri::Enrichments::BasicEnrichment' => {
+            input_fields: [{sourceResource: {creator: :providedLabel}}],
+            output_fields: [{sourceResource: :creator}]
+          }
+        }
+      end
+      let(:aggregation) { build(:aggregation) }
+
+      subject do
+        described_class.new generator_uri: mapping_activity_uri, chain: chain
+      end
+
+      before do
+        module Krikri::Enrichments
+          class BasicEnrichment
+            include Krikri::Enrichment
+            def enrich_value(value)
+              value
+            end
+          end
+        end
+      end
+
+      it 'chains enrichments on basic fields' do
+        expect { subject.chain_enrichments!(aggregation) }.to_not raise_error
+      end
+    end
   end
 end
