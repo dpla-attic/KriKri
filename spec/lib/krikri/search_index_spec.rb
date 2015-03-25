@@ -63,6 +63,21 @@ describe Krikri::QASearchIndex do
         expect(subject.solr_doc(orig)).to eq flat_hash
       end
 
+      it 'converts JSON with multiple child nodes into Solr-compatible hash' do
+        json = { 'a' => '1',
+                 'b' => [{ 'c' => '2', 'd' => '3' },
+                         { 'c' => '4', 'd' => '5' },
+                         'abc'],
+                 'c' => ['abc', 'def'] }
+        flat_hash = { 'a' => '1',
+                      'b' => 'abc',
+                      'b_c' => ['2', '4'],
+                      'b_d' => ['3', '5'],
+                      'c' => ['abc', 'def'] }
+        expect(subject.solr_doc(json)).to eq flat_hash
+      end
+
+
       it 'removes special character strings from keys' do
         json = {
           'http://www.geonames.org/ontology#a' => '1',
