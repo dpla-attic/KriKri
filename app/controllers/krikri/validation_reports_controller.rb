@@ -6,6 +6,8 @@ module Krikri
   # ApplicationController.  It does not interit from Krikri's
   # ApplicationController.
   class ValidationReportsController < CatalogController
+    include Concerns::ProviderContext
+
     before_action :authenticate_user!, :set_current_provider
 
     ##
@@ -27,12 +29,6 @@ module Krikri
         self.rows = per_page
       end
       @documents = @response.documents
-    end
-
-    private
-
-    def set_current_provider
-      @current_provider = params[:provider]
     end
   end
 end

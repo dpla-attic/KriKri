@@ -1,17 +1,16 @@
 module Krikri
   module ApplicationHelper
     ##
-    # @param provider [String, nil]
-    # @return [String]
-    def provider_name(provider)
-      return "All Providers" unless provider.present?
-      Krikri::Provider.find(provider)['provider_name']
-    end
-
-    ##
     # @return [Array<Blacklight::SolrResponse::Facets::FacetItem>]
     def available_providers
       Krikri::Provider.all
+    end
+
+    ##
+    # @param provider [String, nil]
+    # @return [String]
+    def provider_name(provider)
+      provider.present? ? provider.provider_name : "All Providers"
     end
 
     ##

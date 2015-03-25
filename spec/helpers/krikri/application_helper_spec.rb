@@ -8,6 +8,19 @@ describe Krikri::ApplicationHelper, :type => :helper do
     end
   end
 
+  describe '#provider_name' do
+    it 'gives provider name' do
+      provider = double('provider')
+      name = double('name')
+      allow(provider).to receive(:provider_name).and_return(name)
+      expect(helper.provider_name(provider)).to eq name
+    end
+
+    it 'returns string if no providers given' do
+      expect(helper.provider_name(nil)).to be_a String
+    end
+  end
+
   describe '#local_name' do
     let(:uri) { 'http://example.org/blah/moomin' }
     let(:stub) { 'moomin' }

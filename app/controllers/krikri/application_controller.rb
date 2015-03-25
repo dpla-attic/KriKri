@@ -1,9 +1,7 @@
 module Krikri
   class ApplicationController < ActionController::Base
-    before_action :authenticate_user!, :set_current_provider
+    include Concerns::ProviderContext
 
-    def set_current_provider
-      @current_provider = params[:provider]
-    end
+    before_action :authenticate_user!, :set_current_provider
   end
 end
