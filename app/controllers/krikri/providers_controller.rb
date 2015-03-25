@@ -12,8 +12,8 @@ module Krikri
     private
 
     # Override ApplicationController method
-    def set_current_provider
-      @current_provider = params[:id]
+    def set_current_provider(provider_id = params[:id])
+      super
     end
   end
 end

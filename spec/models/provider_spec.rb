@@ -63,4 +63,20 @@ describe Krikri::Provider do
         .to eq provider.providedLabel
     end
   end
+
+  describe '#provider_name' do
+    it 'gives prefLabel if present' do
+      provider.label = 'littly my'
+      expect(provider.provider_name).to eq provider.label.first
+    end
+
+    it 'with multiple labels gives just one' do
+      provider.label = ['little my', 'snork']
+      expect(provider.provider_name).to eq provider.label.first
+    end
+
+    it 'gives providedLabel if no prefLabel present' do
+      expect(provider.provider_name).to eq provider.providedLabel.first
+    end
+  end
 end

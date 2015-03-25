@@ -26,5 +26,11 @@ module Krikri
       end
       provider
     end
+
+    ##
+    # @return [String] the name of the provider
+    def provider_name
+      label.empty? ? providedLabel.first : label.first
+    end
   end
 end
