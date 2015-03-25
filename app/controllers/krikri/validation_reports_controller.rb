@@ -1,14 +1,14 @@
 module Krikri
   ##
-  # Marshals SolrDocuments for views.
-  # Sets default Solr request params for Validation Reports.
+  # Marshals validation reports for views.
   #
   # ValidationReportsController inherits from the host application's
   # ApplicationController.  It does not interit from Krikri's
   # ApplicationController.
   class ValidationReportsController < CatalogController
-    before_action :authenticate_user!
-    before_filter :valid_params, :only => :index
+    include Concerns::ProviderContext
+
+    before_action :authenticate_user!, :set_current_provider
 
     ##
     # ValidationReportsController has access to views in the following
@@ -19,32 +19,16 @@ module Krikri
     # ApplicationController.  It uses krikri's application layout:
     layout 'krikri/application'
 
-    configure_blacklight do |config|
-
-      # Default parameters to send to solr for all search-like requests.
-      config.default_solr_params = {
-        :qt => 'standard',
-        :rows => 100
-      }
-
-      # solr fields to be displayed in the index (search results) view
-      #   The ordering of the field names is the order of the display
-      config.add_index_field 'sourceResource_title', :label => 'Title',
-                             helper_method: 'link_to_show'
-      config.add_index_field 'id', :label => 'ID', helper_method: 'link_to_show'
-      config.add_index_field 'isShownAt_id', :label => 'Is Shown At',
-                             helper_method: 'make_this_a_link'
-
-      config.show.route = { controller: 'records' }
-
-      config.solr_document_model = Krikri::SearchIndexDocument
+    def show
+      provider_id = @current_provider
+      page = params[:page]
+      per_page = params[:per_page]
+      @response = ValidationReport.new.find(params[:id]) do
+        self.provider_id = provider_id
+        self.start = page
+        self.rows = per_page
+      end
+      @documents = @response.documents
     end
-
-    private
-
-    def valid_params
-      redirect_to :report_lists if !params['report_name'] || !params['q']
-    end
-
   end
 end

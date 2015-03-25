@@ -10,31 +10,8 @@ module Krikri
 
     # Override method in Blacklight::UrlHelperBehavior.
     def link_to_document(document, field_or_opts = nil, opts = {})
-      link_to field_or_opts, url_for_document(document)
-    end
-
-    # This method is used to make display fields into hyperlinks.
-    def make_this_a_link(options = {})
-      # options[:document] # the original document
-      # options[:field] # the field to render
-      # options[:value] # the value of the field
-
-      link_to options[:value], options[:value]
-    end
-
-    # This method is used to link display fields to the document's show path.
-    def link_to_show(options = {})
-      # options[:document] # the original document
-      # options[:field] # the field to render
-      # options[:value] # the value of the field
-
-      link_to_document options[:document], options[:value]
-    end
-
-    def render_document_field_data(document, key)
-      if document[key]
-        render_index_field_value document, :field => key
-      end
+      link_to field_or_opts, url_for_document(document, { :provider =>
+        params[:provider] })
     end
 
     # Disable bookmarks.
@@ -96,10 +73,6 @@ module Krikri
 
     def error_msg(message = '')
       "There was a problem getting the record.\n\n#{message}"
-    end
-
-    def random_record_url
-      url_for_document(Krikri::RandomRecordGenerator.new.record)
     end
   end
 end

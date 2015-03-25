@@ -1,0 +1,10 @@
+<h3>Validation Reports</h3>
+<% if @validation_reports %>
+  <ul>
+    <% @validation_reports.each do |validation_report| %>
+      <li><%= render_validation_report(validation_report) %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <div>There was an error generating the validation reports.</div>
+<% end %>
