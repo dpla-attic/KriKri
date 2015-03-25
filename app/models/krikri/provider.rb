@@ -1,28 +1,30 @@
 module Krikri
   # This models provider data from Marmotta.
-  class Provider
+  class Provider < DPLA::MAP::Agent
+    configure :base_uri => 'http://dp.la/api/contributor/'
 
     ##
-    # @return [Array<Blacklight::SolrResponse::Facets::FacetItem>]
+    # @return [Array<Krikri::Provider>]
     def self.all
       query_params = { :rows => 0,
                        :id => '*:*',
                        'facet.field' => 'provider_id' }
-      Krikri::SolrResponseBuilder.new(query_params).response.facets.first.items
+      response = Krikri::SolrResponseBuilder.new(query_params).response
+      response.facets.first.items.map { |item| new(item.value) }
     end
 
     ##
-    # @param id [String]
-    # @return [Hash]
-    #   Sample @return: { "provider_id"=>"_:b12",
-    #                     "provider_name"=>"The New York Public Library" }
+    # @param id [String] the identifier to find
     #
-    # TODO: Get provider data from Marmotta rather than Solr
+    # @return [Krikri::Provider]
+    # @todo Use {ActiveTriples}/{RDF::Repository} to populate the object
     def self.find(id)
-      query_params = { :rows => 1,
-                       :provider_id => id,
-                       :fl => 'provider_id, provider_name' }
-      Krikri::SolrResponseBuilder.new(query_params).response.docs.first
+      provider = new(id)
+      query = Krikri::Repository.query_client.select.where([provider, :p, :o])
+      query.each_solution do |solution|
+        provider.set_value(solution.p, solution.o)
+      end
+      provider
     end
   end
 end
