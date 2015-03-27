@@ -4,7 +4,7 @@ module Krikri
 
     def index
       provider_id = @current_provider
-      @validation_reports = Krikri::ValidationReport.new.all do 
+      @validation_reports = Krikri::ValidationReport.new.all do
         self.provider_id = provider_id
       end
     end

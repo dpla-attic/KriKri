@@ -9,8 +9,8 @@
   <ul>
   <% @providers.each do |provider| %>
     <li>
-      <%= link_to provider_name(provider.value), { controller: 'providers', 
-        action: 'show', id: provider.value } %> (<%= provider.hits %> records)
+      <%= link_to provider_name(provider), { controller: 'providers',
+        action: 'show', id: provider.id } %> (<%= provider.records.count %> records)
     </li>
   <% end %>
   </ul>

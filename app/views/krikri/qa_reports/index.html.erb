@@ -1,0 +1,11 @@
+<% # krikri/qa_reports/index %>
+
+<h1>QA Reports</h1>
+
+<ul>
+<% @reports.each do |report| %>
+  <li><span><%= provider_name(report.build_provider) %></span>
+    <%= link_to 'fields csv', qa_report_path(report, format: 'csv') %> -
+    <%= link_to 'count csv', qa_report_path(report, format: 'csv', type: 'count') %>
+<% end %>
+</ul>

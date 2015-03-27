@@ -3,13 +3,14 @@ module Krikri
     ##
     # @return [Array<Blacklight::SolrResponse::Facets::FacetItem>]
     def available_providers
-      Krikri::Provider.all
+      Krikri::Provider.all(&:reload)
     end
 
     ##
     # @param provider [String, nil]
     # @return [String]
     def provider_name(provider)
+      provider = Krikri::Provider.find(provider) if provider.is_a? String
       provider.present? ? provider.provider_name : "All Providers"
     end
 
@@ -32,7 +33,7 @@ module Krikri
     def link_to_current_page_by_provider(provider)
       return link_to_provider_page(provider) if params[:controller] ==
         'krikri/providers'
-      params[:provider] = provider
+      params[:provider] = provider.id
       link_to provider_name(provider), params
     end
 
@@ -42,7 +43,7 @@ module Krikri
     # @param provider [String, nil]
     def link_to_provider_page(provider)
       return link_to provider_name(provider), providers_path if provider == nil
-      return link_to provider_name(provider), provider_path(provider)
+      return link_to provider_name(provider), provider_path(provider.id)
     end
 
   end

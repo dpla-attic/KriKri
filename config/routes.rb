@@ -6,6 +6,7 @@ Krikri::Engine.routes.draw do
   resources :validation_reports, only: [:show]
   resources :records, only: [:index, :show]
   resources :reports, only: [:index]
+  resources :qa_reports, only: [:index, :show]
   resources :institutions do
     resources :harvest_sources, shallow: true
   end

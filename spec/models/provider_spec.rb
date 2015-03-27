@@ -64,6 +64,27 @@ describe Krikri::Provider do
     end
   end
 
+  describe '#records' do
+    include_context 'with indexed item'
+
+    it 'gives the record' do
+      # @todo fix once {ActiveTriples::RDFSource} equality is figured out
+      expect(provider.records.map(&:rdf_subject))
+        .to contain_exactly agg.rdf_subject
+    end
+  end
+
+  describe '#id' do
+    it 'gives a valid id for initializing resource' do
+      expect(Krikri::Provider.new(provider.id).rdf_subject)
+        .to eq provider.rdf_subject
+    end
+
+    it 'does not include the base uri' do
+      expect(provider.id).not_to include provider.base_uri
+    end
+  end
+
   describe '#provider_name' do
     it 'gives prefLabel if present' do
       provider.label = 'littly my'
@@ -77,6 +98,12 @@ describe Krikri::Provider do
 
     it 'gives providedLabel if no prefLabel present' do
       expect(provider.provider_name).to eq provider.providedLabel.first
+    end
+
+    it 'gives `#id` with with no labels' do
+      provider.label = nil
+      provider.providedLabel = nil
+      expect(provider.provider_name).to eq provider.id
     end
   end
 end

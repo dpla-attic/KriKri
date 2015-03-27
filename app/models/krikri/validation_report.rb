@@ -14,14 +14,14 @@ module Krikri
     #     end
     # @return Array of Blacklight::SolrResponse::Facet's
     def all(&block)
-      # set values from block 
+      # set values from block
       instance_eval &block if block_given?
 
       query_params = { :rows => 0,
                        'facet.field' => REQUIRED_FIELDS,
                        'facet.mincount' => 10000000,
                        'facet.missing' => true }
-      query_params[:fq] = "provider_id:\"#{@provider_id}\"" if 
+      query_params[:fq] = "provider_id:\"#{@provider_id}\"" if
         @provider_id.present?
 
       Krikri::SolrResponseBuilder.new(query_params).response.facets
@@ -36,12 +36,12 @@ module Krikri
     #     end
     # @return Blacklight::SolrResponse
     def find(id, &block)
-      # set values from block 
+      # set values from block
       instance_eval &block if block_given?
 
       query_params = { :qt => 'standard', :q => "-#{id}:[* TO *]" }
       query_params[:rows] = @rows.present? ? @rows : '10'
-      query_params[:fq] = "provider_id:\"#{@provider_id}\"" if 
+      query_params[:fq] = "provider_id:\"#{@provider_id}\"" if
         @provider_id.present?
       query_params[:start] = @start if @start.present?
 

@@ -3,7 +3,7 @@
     <div class='navbar-right'>
       <ul class='nav navbar-nav'>
         <li class='dropdown'>
-          <a href='#' class='dropdown-toggle' data-toggle='dropdown' 
+          <a href='#' class='dropdown-toggle' data-toggle='dropdown'
             role='button' aria-expanded='false'>
             <%= provider_name(@current_provider) %> <span class="caret"></span>
           </a>
@@ -11,26 +11,26 @@
 
             <% if @current_provider.present? %>
               <li>
-                <%= link_to_current_page_by_provider(nil) %>
+                <%= link_to_current_page_by_provider(@current_provider) %>
               </li>
               <li class='divider'></li>
             <% end %>
 
             <% available_providers.each do |provider| %>
-              <% if provider.value != @current_provider %>
-                <li><%= link_to_current_page_by_provider(provider.value) %></li>
+              <% if @current_provider.nil? || provider.rdf_subject != @current_provider.rdf_subject %>
+                <li><%= link_to_current_page_by_provider(provider) %></li>
               <% end %>
             <% end %>
           </ul>
         </li>
 
         <% if @current_provider.present? %>
-          <li><%= link_to 'Dashboard', 
-            krikri.provider_path(@current_provider) %></li>
-          <li><%= link_to 'Records', 
-            krikri.records_path(provider: @current_provider) %></li>
-          <li><%= link_to 'Reports', 
-            krikri.reports_path(provider: @current_provider) %></li>
+          <li><%= link_to 'Dashboard',
+            krikri.provider_path(@current_provider.id) %></li>
+          <li><%= link_to 'Records',
+            krikri.records_path(provider: @current_provider.id) %></li>
+          <li><%= link_to 'Reports',
+            krikri.reports_path(provider: @current_provider.id) %></li>
         <% else %>
           <li><%= link_to 'Dashboard', krikri.providers_path %></li>
           <li><%= link_to 'Records', krikri.records_path %></li>

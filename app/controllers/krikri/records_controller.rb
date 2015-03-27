@@ -7,6 +7,8 @@ module Krikri
   # ApplicationController.  It does not interit from Krikri's
   # ApplicationController.
   class RecordsController < CatalogController
+    include Concerns::ProviderContext
+
     before_action :authenticate_user!, :set_current_provider
 
     self.solr_search_params_logic += [:records_by_provider]
@@ -86,10 +88,6 @@ module Krikri
 
     private
 
-    def set_current_provider
-      @current_provider = params[:provider]
-    end
-
     ##
     # Construct a valid item URI from a local name, and use it to fetch a single
     # document from the search index.
@@ -112,7 +110,7 @@ module Krikri
     def records_by_provider(solr_params, user_params)
       if @current_provider.present?
         solr_params[:fq] ||= []
-        solr_params[:fq] << "provider_id:\"#{@current_provider}\""
+        solr_params[:fq] << "provider_id:\"#{@current_provider.rdf_subject}\""
       end
     end
   end
