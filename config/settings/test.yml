@@ -8,5 +8,3 @@ marmotta:
 prov:
   activity: 'activity'
 
-solr:
-  url: 'http://localhost:8983/solr/'
