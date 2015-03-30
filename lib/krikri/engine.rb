@@ -18,6 +18,7 @@ module Krikri
     isolate_namespace Krikri
 
     def configure_blacklight!
+      return unless File.exist?(Blacklight.solr_file)
       krikri_solr = Krikri::Settings.solr
       Blacklight.solr_config = Blacklight.solr_config.merge(krikri_solr) unless
         krikri_solr.nil?
