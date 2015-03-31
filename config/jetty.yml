@@ -5,3 +5,6 @@ default:
     - "-XX:MaxPermSize=128m"
     - "-Xmx256m"
     - "-Dmarmotta.home=<%= MARMOTTA_HOME %>"
+test:
+  jetty_port: <%= ENV['TEST_JETTY_PORT'] || 8983 %>
+  <%= ENV['TEST_JETTY_PATH'] ? "jetty_home: " + ENV['TEST_JETTY_PATH'] : '' %>
