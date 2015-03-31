@@ -1,4 +1,39 @@
 module Krikri
+  ##
+  # Represents a QA Report, giving details about a set of records associated
+  # with a given provider. Reports are given as structured hashes, containing
+  # keys for each registered property in the {DPLA::MAP::Aggregation} structure.
+  #
+  # Reports include two report types, a `#field_report` and a `#count_report`.
+  #
+  # The `#field_report` includes values for each property with the URIs for the
+  # `ore:Aggregation` and `edm:isShownAt` (`edm:WebResource`) associated with
+  # that field.
+  #
+  # The `#count_report` includes values for each field, with the count occurances
+  # for that value across all records for the provider.
+  #
+  # `QAReports` are saved to the database (with timestamp, etc... via
+  # {ActiveRecord}). More than one report can be associated with each provider.
+  #
+  # Reports can also serialize themselves as `csv`, via `#field_csv` and
+  # `#count_csv`.
+  #
+  # @example:
+  #
+  #   report = QAReport.create(provider: 'moomin_valley')
+  #   report.generate_field_report!
+  #   report.generate_count_report!
+  #
+  #   report.field_report['edm:aggregatedCHO->dc:alternative']
+  #   => {"Stonewall Inn Graffiti"=>
+  #      [{:aggregation=>"http://localhost:8983/marmotta/ldp/items/krikri_sample",
+  #        :isShownAt=> "http://digitalcollections.nypl.org/items/12345"}]}
+  #
+  #   report.count_report['edm:aggregatedCHO->dc:alternative']
+  #   => {"Stonewall Inn Graffiti"=>1}
+  #
+  # @see Krikri::QAQueryClient
   class QAReport < ActiveRecord::Base
     serialize :field_report, Hash
     serialize :count_report, Hash
@@ -112,7 +147,8 @@ module Krikri
       queries = {}
       each_property(DPLA::MAP::Aggregation).each do |properties|
         queries[property_name(properties)] =
-          QAQueryClient.counts_for_predicate(properties, RDF::URI(provider))
+          QAQueryClient.counts_for_predicate(properties,
+                                             RDF::URI(build_provider.rdf_subject))
       end
       queries
     end
@@ -123,7 +159,8 @@ module Krikri
       queries = {}
       each_property(DPLA::MAP::Aggregation).each do |properties|
         queries[property_name(properties)] =
-          QAQueryClient.values_for_predicate(properties, RDF::URI(provider))
+          QAQueryClient.values_for_predicate(properties,
+                                             RDF::URI(build_provider.rdf_subject))
       end
       queries
     end

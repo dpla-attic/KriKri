@@ -12,7 +12,8 @@ module Krikri
     #     ValidationReport.new.all do
     #       self.provider_id = '0123'
     #     end
-    # @return Array of Blacklight::SolrResponse::Facet's
+    #
+    # @return [Array<Blacklight::SolrResponse::Facet>]
     def all(&block)
       # set values from block
       instance_eval &block if block_given?
@@ -34,7 +35,9 @@ module Krikri
     #     ValidationReport.new.find('sourceResource_title') do
     #       self.provider_id = '0123'
     #     end
-    # @return Blacklight::SolrResponse
+    #
+    # @raise [RSolr::Error::Http] for non-existant field requests
+    # @return [Blacklight::SolrResponse]
     def find(id, &block)
       # set values from block
       instance_eval &block if block_given?

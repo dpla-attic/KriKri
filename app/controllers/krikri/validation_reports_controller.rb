@@ -6,9 +6,7 @@ module Krikri
   # ApplicationController.  It does not interit from Krikri's
   # ApplicationController.
   class ValidationReportsController < CatalogController
-    include Concerns::ProviderContext
-
-    before_action :authenticate_user!, :set_current_provider
+    before_action :authenticate_user!
 
     ##
     # ValidationReportsController has access to views in the following
@@ -20,7 +18,7 @@ module Krikri
     layout 'krikri/application'
 
     def show
-      provider_id = @current_provider
+      provider_id = params[:provider]
       page = params[:page]
       per_page = params[:per_page]
       @response = ValidationReport.new.find(params[:id]) do

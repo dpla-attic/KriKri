@@ -12,12 +12,6 @@ describe Krikri::QaReportsController, :type => :controller do
 
     before { allow(Krikri::QAReport).to receive(:all).and_return(reports) }
 
-    it 'sets provider variable' do
-      expect { get :index, provider: '123' }
-        .to change { assigns[:current_provider] }
-             .to an_instance_of(Krikri::Provider)
-    end
-
     it 'renders the index view' do
       get :index
       expect(response).to render_template('krikri/qa_reports/index')
@@ -47,12 +41,6 @@ describe Krikri::QaReportsController, :type => :controller do
 
     let(:count_csv) do
       CSV::Table.new([CSV::Row.new(['name', 'count'], ['moomin', '1'])])
-    end
-
-    it 'sets provider variable' do
-      expect { get :show, id: report_id, provider: '123' }
-        .to change { assigns[:current_provider] }
-             .to an_instance_of(Krikri::Provider)
     end
 
     it 'accepts a type ' do

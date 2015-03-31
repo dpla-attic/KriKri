@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Krikri::QAReport do
 
-  subject { described_class.new(:provider => provider.rdf_subject.to_s) }
+  subject { described_class.new(:provider => provider.id.to_s) }
 
   let(:provider) do
     agent = build(:agent)
@@ -30,6 +30,19 @@ describe Krikri::QAReport do
                                   .to_term)])
   end
 
+  shared_context 'with multiple aggregations' do
+    before do
+      agg = build(:aggregation)
+      agg.set_subject!('mummi123')
+      agg.provider = provider
+      agg.save
+      agg2 = build(:aggregation)
+      agg2.set_subject!('mummi223')
+      agg2.provider = provider
+      agg2.save
+    end
+  end
+
   describe '#provider' do
     it 'is set on initalization' do
       expect(subject.provider).to eq provider.rdf_subject.to_s
@@ -47,20 +60,23 @@ describe Krikri::QAReport do
   end
 
 
-  describe '#generate' do
-    before do
-      agg = build(:aggregation)
-      agg.set_subject!('mummi123')
-      agg.provider = provider
-      agg.save
-      agg2 = build(:aggregation)
-      agg2.set_subject!('mummi223')
-      agg2.provider = provider
-      agg2.save
+  describe '#generate_field_report!' do
+    it 'populates report with hash' do
+      subject.generate_field_report!
+      expect(subject.field_report).to be_a Hash
     end
 
-    it 'populates report with hash'
     it 'generates data for all fields'
+  end
+
+  describe '#generate_count_report!' do
+
+    it 'populates report with hash' do
+      subject.generate_count_report!
+      expect(subject.count_report).to be_a Hash
+    end
+
+    it 'generates count data for all fields'
   end
 
   describe '#solutions_to_hash' do

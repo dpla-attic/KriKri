@@ -27,14 +27,30 @@ module Krikri
     end
 
     ##
-    # Link to the current page, changing the provider param or id to the given
+    # Link to the current page, changing the session provider the given
     # value.
     # @param provider [String, nil]
     def link_to_current_page_by_provider(provider)
+      provider = Krikri::Provider.find(provider) if provider.is_a? String
+
       return link_to_provider_page(provider) if params[:controller] ==
-        'krikri/providers'
+                                                'krikri/providers'
       params[:provider] = provider.id
+      params[:session_provider] = provider.id
       link_to provider_name(provider), params
+    end
+
+    def set_session_provider(provider)
+      provider = Krikri::Provider.find(provider) if provider.is_a? String
+      link_to provider_name(provider),
+              krikri.provider_path(provider.id, set_session: 1),
+              rel: 'nofollow'
+    end
+
+    def remove_session_provider
+      link_to "All Providers",
+              krikri.provider_path('clear', clear_session: 1),
+              rel: 'nofollow'
     end
 
     ##
@@ -42,9 +58,9 @@ module Krikri
     # provider id in the case of :show.
     # @param provider [String, nil]
     def link_to_provider_page(provider)
-      return link_to provider_name(provider), providers_path if provider == nil
-      return link_to provider_name(provider), provider_path(provider.id)
+      return link_to(provider_name(provider), providers_path) unless provider
+      return link_to provider_name(provider),
+              provider_path(provider.id, set_session: provider.id)
     end
-
   end
 end

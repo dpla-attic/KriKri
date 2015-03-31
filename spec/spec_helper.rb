@@ -47,12 +47,20 @@ RSpec.configure do |config|
     Krikri::Repository.clear!
   end
 
+  def clear_search_index
+    indexer = Krikri::QASearchIndex.new
+    indexer.delete_by_query(['*:*'])
+    indexer.commit
+  end
+
   config.before(:suite) do
     clear_repository
+    clear_search_index
   end
 
   config.after(:suite) do
     clear_repository
+    clear_search_index
     WebMock.disable_net_connect!(:allow => 'codeclimate.com')
   end
 end

@@ -1,9 +1,8 @@
 module Krikri
   module ReportsHelper
-    
     def render_validation_report(report)
       return validation_report_title(report) if report.items.first.hits == 0
-      link_to validation_report_title(report), { :controller => 
+      link_to validation_report_title(report), { :controller =>
         'validation_reports', :action => 'show', :id => report.name,
         :provider => @current_provider }, :method => :get
     end

@@ -6,10 +6,10 @@
   <h1>Record</h1>
   <h2><%= @document.id.html_safe %></h2>
 
-  <%= link_to "Random record from #{provider_name(@current_provider)}", { :controller =>
-    'records', :action => 'show', :id => random_record_id(@current_provider),
-    :provider => @current_provider }, :method => :get, :class =>
-    'btn btn-primary' %>
+  <%= link_to "Random record from #{provider_name(@provider_id)}",
+      { :controller => 'records', :action => 'show',
+  :id => random_record_id(@provider_id), :provider => @provider_id },
+  :method => :get, :class => 'btn btn-primary' %>
 
   <div class='row'>
     <div class='col-md-6 col-sm-6'>

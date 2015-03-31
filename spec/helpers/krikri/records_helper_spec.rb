@@ -5,6 +5,21 @@ describe Krikri::RecordsHelper, :type => :helper do
   let(:agg) { build(:aggregation) }
   let(:original) { double }
 
+  describe '#random_record_id' do
+    it 'gives nil with no items' do
+      expect(helper.random_record_id('abc')).to be_nil
+    end
+
+    context 'with indexed item' do
+      include_context 'with indexed item'
+
+      it 'gives a record local_name' do
+        expect(helper.random_record_id(provider.id))
+          .to eq helper.local_name(agg.rdf_subject)
+      end
+    end
+  end
+
   describe '#render_enriched_record' do
     context 'with existing aggregation' do
       before(:each) do
@@ -25,7 +40,6 @@ describe Krikri::RecordsHelper, :type => :helper do
       it 'returns an error message' do
         expect(helper.render_enriched_record(document)).to be_a(String)
       end
-
     end
 
     describe '#render_original_record' do

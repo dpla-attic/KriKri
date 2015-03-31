@@ -30,10 +30,9 @@ namespace :krikri do
       provider = Krikri::Provider.new('123')
       provider.label = 'Moomin valley Historical Society'
 
-      agg = build(:aggregation,
-                  originalRecord: original_record.rdf_source,
-                  provider: provider)
-
+      agg = build(:aggregation)
+      agg.originalRecord = original_record.rdf_source
+      agg.provider = provider
 
       agg.mint_id!('krikri_sample')
 

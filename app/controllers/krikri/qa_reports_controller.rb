@@ -1,6 +1,8 @@
 module Krikri
   ##
   # Handles HTTP requests for QA Reports
+  #
+  # @see Krikri::QAReport
   class QaReportsController < ApplicationController
     ##
     # Renders a list of current reports
@@ -11,7 +13,8 @@ module Krikri
     ##
     # Rendering the report as either a full `field` report or a `count` report.
     #
-    # Responds to `text/csv` with a CSV rendering of the requested report type.
+    # Responds to format of `text/csv` with a CSV rendering of the requested
+    # report type.
     def show
       @report = Krikri::QAReport.find(params[:id])
       @type = params[:type] == 'count' ? :count : :field

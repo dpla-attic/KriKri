@@ -44,6 +44,16 @@ describe Krikri::Provider do
           .to contain_exactly provider.rdf_subject
       end
     end
+
+    context 'with bnode provider' do
+      include_context 'with indexed item'
+
+      let(:provider) { DPLA::MAP::Agent.new }
+
+      it 'ignores bnodes' do
+        expect(described_class.all).to be_empty
+      end
+    end
   end
 
   describe '.find' do

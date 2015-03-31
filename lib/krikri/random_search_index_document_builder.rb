@@ -10,14 +10,16 @@ module Krikri
     #       self.provider_id = '0123'
     #     end
     def initialize(&block)
-      # set values from block 
+      # set values from block
       instance_eval &block if block_given?
     end
 
     # @return Krikri::SearchIndexDocument
     def document
-      Krikri::SearchIndexDocument.new(Krikri::SolrResponseBuilder
-        .new(query_params).response.docs.first)
+      solr_response = Krikri::SolrResponseBuilder.new(query_params)
+      return nil if solr_response.response.docs.empty?
+
+      Krikri::SearchIndexDocument.new(solr_response.response.docs.first)
     end
 
     private
@@ -29,7 +31,10 @@ module Krikri
       params = { :id => '*:*',
                  :sort => "random_#{rand(9999)} desc",
                  :rows => 1 }
-      params[:fq] = "provider_id:\"#{@provider_id}\"" if @provider_id.present?
+      return params unless provider_id.present?
+
+      provider = RDF::URI(Krikri::Provider.base_uri) / provider_id
+      params[:fq] = "provider_id:\"#{provider}\""
       params
     end
   end
