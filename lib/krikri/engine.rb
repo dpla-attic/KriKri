@@ -1,6 +1,7 @@
 require 'active_support'
 require 'rails_config'
 require 'krikri/ldp'
+require 'krikri/search_index'
 
 require 'dpla/map'
 require 'rdf/marmotta'

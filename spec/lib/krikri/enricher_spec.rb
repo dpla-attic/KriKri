@@ -9,6 +9,12 @@ describe Krikri::Enricher do
      Krikri::Settings['prov']['activity'] / '3').to_s
   end
 
+  before(:all) do
+    DatabaseCleaner.clean_with(:truncation)
+    create(:krikri_harvest_activity)
+    create(:krikri_mapping_activity)
+  end
+
   shared_context 'with enrichment chain' do
     subject do
       described_class.new generator_uri: mapping_activity_uri,
@@ -62,7 +68,7 @@ EOS
     let(:aggs) { [agg_double, agg_double.clone, agg_double.clone] }
 
     before do
-      allow(subject).to receive(:target_aggregations)
+      allow(subject.generator_activity).to receive(:entities)
                          .and_return(aggs)
     end
 

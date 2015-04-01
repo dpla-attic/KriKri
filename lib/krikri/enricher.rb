@@ -25,11 +25,20 @@ module Krikri
   #
   class Enricher
     include SoftwareAgent
+    include EntityConsumer
 
     attr_reader :chain, :generator_uri
 
     def self.queue_name
       :enrichment
+    end
+
+    ##
+    # @see Krikri::Activity#entities
+    # @see Krikri::EntityBehavior
+    # @see Krikri::SoftwareAgent#entity_behavior
+    def entity_behavior
+      @entity_behavior ||= Krikri::AggregationEntityBehavior
     end
 
     ##
@@ -44,6 +53,7 @@ module Krikri
     def initialize(opts = {})
       @generator_uri = RDF::URI(opts.fetch(:generator_uri))
       @chain = deep_sym(opts.fetch(:chain) { {} })
+      assign_generator_activity!(opts)
     end
 
     ##
@@ -54,27 +64,16 @@ module Krikri
     #
     def run(activity_uri = nil)
       log :info, 'enricher is running'
-      # see TODO below
-      target_aggregations.each do |agg|
+      mapped_records = generator_activity.entities
+      mapped_records.each do |rec|
         begin
-          chain_enrichments!(agg)
-          activity_uri ? agg.save_with_provenance(activity_uri) : agg.save
+          chain_enrichments!(rec)
+          activity_uri ? rec.save_with_provenance(activity_uri) : rec.save
         rescue => e
           log :error, "Enrichment error: #{e.message}\n#{e.backtrace}"
         end
       end
       log :info, 'enricher is done'
-    end
-
-    # TODO:  remove this when the current topic branch that introduces the
-    # EntityConsumer mixin has been merged.
-    def target_aggregations
-      query = Krikri::ProvenanceQueryClient.find_by_activity(generator_uri)
-      query.execute.lazy.flat_map do |solution|
-        agg = DPLA::MAP::Aggregation.new(solution.record.to_s)
-        agg.get
-        agg
-      end
     end
 
     ##

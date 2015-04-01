@@ -5,5 +5,10 @@ marmotta:
   record_container: 'http://localhost:8983/marmotta/ldp/original_record'
   item_container: 'http://localhost:8983/marmotta/ldp/items'
 
+elasticsearch:
+  host: 'localhost:9200'
+  # index_name is the alias that points to whatever index is deployed:
+  index_name: 'dpla_alias'
+
 prov:
   activity: 'activity'

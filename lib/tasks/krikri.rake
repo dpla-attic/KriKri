@@ -4,7 +4,7 @@ require 'dpla/map/factories'
 require 'open-uri'
 require 'resque/tasks'
 
-require 'krikri/index_service'
+require 'krikri/search_index'
 
 krikri_dir = Gem::Specification.find_by_name('krikri').gem_dir
 require "#{krikri_dir}/app/models/krikri/original_record"
@@ -14,7 +14,7 @@ namespace :krikri do
 
   def index_aggregation(agg)
     graph = agg.to_jsonld['@graph'].first
-    indexer = Krikri::IndexService.new
+    indexer = Krikri::QASearchIndex.new
     indexer.add graph.to_json
     indexer.commit
   end
@@ -81,7 +81,7 @@ namespace :krikri do
       original_record.delete! if original_record.exists?
 
       # Delete all sample records from Solr
-      indexer = Krikri::IndexService.new
+      indexer = Krikri::QASearchIndex.new
       indexer.delete_by_query 'id:*krikri_sample*'
       indexer.commit
     end
