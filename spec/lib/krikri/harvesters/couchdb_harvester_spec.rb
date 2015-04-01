@@ -4,11 +4,14 @@ require 'pry'
 
 describe Krikri::Harvesters::CouchdbHarvester do
 
-  let(:args) { { uri: 'http://example.org:5984/couchdb' } }
-  let(:svr) { double(Analysand::StreamingViewResponse) }
+  let(:args) { { uri: 'http://example.org:5984/couchdb', limit: 4 } }
+  let(:str_view_resp) { double(Analysand::StreamingViewResponse) }
+  let(:view_response) { double(Analysand::ViewResponse) }
+  let(:view_response_page_1) { double(Analysand::ViewResponse) }
+  let(:view_response_page_2) { double(Analysand::ViewResponse) }
 
   # Set up some responses to reuse
-  let(:view_response) do
+  let(:view_response_body) do
     <<-EOS.strip_heredoc
 {"total_rows":5,"offset":0,"rows":[
 {"id":"10046--http://ark.cdlib.org/ark:/13030/kt009nc254","key":"10046--http://ark.cdlib.org/ark:/13030/kt009nc254","value":{"rev":"11-e68fd829f55b85dec51d044fe4711530"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt009nc254","_rev":"11-e68fd829f55b85dec51d044fe4711530","object":"e6d7a72d8e957175a46965f104b9bb52"}},
@@ -20,6 +23,37 @@ describe Krikri::Harvesters::CouchdbHarvester do
 EOS
   end
 
+  let(:view_opts_page_1) do
+    {include_docs: true, stream: false, limit: 4, startkey: '0'}
+  end
+  let(:view_response_body_page_1) do
+    <<-EOS.strip_heredoc
+{"total_rows":4,"offset":0,"rows":[
+{"id":"10046--http://ark.cdlib.org/ark:/13030/kt009nc254","key":"10046--http://ark.cdlib.org/ark:/13030/kt009nc254","value":{"rev":"11-e68fd829f55b85dec51d044fe4711530"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt009nc254","_rev":"11-e68fd829f55b85dec51d044fe4711530","object":"e6d7a72d8e957175a46965f104b9bb52"}},
+{"id":"10046--http://ark.cdlib.org/ark:/13030/kt0199p9ph","key":"10046--http://ark.cdlib.org/ark:/13030/kt0199p9ph","value":{"rev":"11-fec45c2c32bf6b468d8d6413796ff85b"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt0199p9ph","_rev":"11-fec45c2c32bf6b468d8d6413796ff85b","object":"744cc17058614440ae6c3722aaacb4c3"}},
+{"id":"10046--http://ark.cdlib.org/ark:/13030/kt029016nn","key":"10046--http://ark.cdlib.org/ark:/13030/kt029016nn","value":{"rev":"11-b3e9a75b56599a78cb875ffb5c508c2b"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt029016nn","_rev":"11-b3e9a75b56599a78cb875ffb5c508c2b","object":"bfecb6c11db808ca6603cd13def5f9bf"}},
+{"id":"10046--http://ark.cdlib.org/ark:/13030/kt038nc34r","key":"10046--http://ark.cdlib.org/ark:/13030/kt038nc34r","value":{"rev":"11-c9ebbeb8064280e674ea79c0b16c59d6"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt038nc34r","_rev":"11-c9ebbeb8064280e674ea79c0b16c59d6","object":"d2e3b4d91fba4f77df6fb8fab46f3375"}}
+]}
+EOS
+  end
+
+  let(:view_opts_page_2) do
+    { include_docs: true, stream: false, limit: 4,
+      startkey: '10046--http://ark.cdlib.org/ark:/13030/kt038nc34r0' }
+  end
+  let(:view_response_body_page_2) do
+    <<-EOS.strip_heredoc
+{"total_rows":1,"offset":0,"rows":[
+{"id":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","key":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","value":{"rev":"11-7fbb604516852656d30f37bbe1f09d5f"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","_rev":"11-7fbb604516852656d30f37bbe1f09d5f","object":"0162e70cde3d9d77ba8cbe9e146beda4"}}
+]}
+EOS
+  end
+
+  let(:view_opts_common_stream) { { include_docs: false, stream: true } }
+  let(:view_opts_common_nostream) do
+    { include_docs: true, stream: false, limit: 10, startkey: '0'}
+  end
+
   let(:document_response) do
     <<-EOS.strip_heredoc
 {"_id":"10046--http://ark.cdlib.org/ark:/13030/kt009nc254","_rev":"11-e68fd829f55b85dec51d044fe4711530","object":"e6d7a72d8e957175a46965f104b9bb52"}
@@ -28,17 +62,47 @@ EOS
 
   let(:identifier) { '10046--http://ark.cdlib.org/ark:/13030/kt009nc254' }
 
-  let(:parsed_response) { JSON.parse(view_response) }
+  let(:parsed_response) { JSON.parse(view_response_body) }
+  let(:parsed_response_page_1) { JSON.parse(view_response_body_page_1) }
+  let(:parsed_response_page_2) { JSON.parse(view_response_body_page_2) }
 
   before do
-    allow(svr).to receive(:docs)
+
+    allow(view_response).to receive(:docs)
       .and_return(parsed_response['rows'].map { |r| r['doc'] })
-    allow(svr).to receive(:keys)
+    allow(view_response).to receive(:keys)
       .and_return(parsed_response['rows'].map { |r| r['key'] })
-    allow(svr).to receive(:total_rows)
+    allow(view_response).to receive(:total_rows)
       .and_return(parsed_response['total_rows'])
+
+    allow(view_response_page_1).to receive(:docs)
+      .and_return(parsed_response_page_1['rows'].map { |r| r['doc'] })
+    allow(view_response_page_2).to receive(:docs)
+      .and_return(parsed_response_page_2['rows'].map { |r| r['doc'] })
+
+    allow(str_view_resp).to receive(:docs)
+      .and_return(parsed_response['rows'].map { |r| r['doc'] })
+    allow(str_view_resp).to receive(:keys)
+      .and_return(parsed_response['rows'].map { |r| r['key'] })
+    allow(str_view_resp).to receive(:total_rows)
+      .and_return(parsed_response['total_rows'])
+
     allow(subject.client).to receive(:view)
-      .with(instance_of(String), instance_of(Hash)).and_return(svr)
+      .with(instance_of(String), view_opts_page_1)
+      .and_return(view_response_page_1)
+    allow(subject.client).to receive(:view)
+      .with(instance_of(String), view_opts_page_2)
+      .and_return(view_response_page_2)
+
+    # Allow view requests that are made within `#get_record', `#record_ids',
+    # and `#count'
+    allow_any_instance_of(Analysand::StreamingViewResponse).to receive(:view)
+      .with(instance_of(String), view_opts_common_stream)
+      .and_return(str_view_resp)
+    allow_any_instance_of(Analysand::ViewResponse).to receive(:view)
+      .with(instance_of(String), view_opts_common_nostream)
+      .and_return(view_response)
+
   end
 
   subject { described_class.new(args) }
@@ -65,43 +129,68 @@ EOS
           couchdb: { view: '_all_docs' } }
       end
 
-      let(:request_opts) { { view: 'foo/bar' } }
-
-      shared_examples 'send options' do
-        it 'sends request with option' do
-          result = subject.send(method)
-          result.first if [:records, :record_ids].include? method
-          expect(subject.client).to have_received(request_type)
-            .with(args[:couchdb][:view], hash_including(view_args))
+      # "send options" shared example takes these options:
+      #
+      # `method`: method to test
+      # `m_opts`: options passed into the given method
+      # `r_opts`: options that should be passed to client.view for the request,
+      #           given the method opts
+      # `default_r_opts`: default options that should be used for client.view
+      #           given no options from the caller
+      #
+      shared_examples 'send options' do |ex_opts|
+        before do
+          allow(subject.client).to receive(:view).and_return view_response
+          allow(view_response).to receive(:keys).and_return []
+          allow(view_response).to receive(:total_rows).and_return 0
+        end
+        it 'sends request with correct default options' do
+          records = subject.send(ex_opts[:method])
+          records.first if ex_opts[:method] == :records  # start enumerator
+          expect(subject.client).to have_received(:view)
+            .with('_all_docs', ex_opts[:default_r_opts])
         end
 
         it 'adds options passed into request' do
-          result = subject.send(method, request_opts)
-          result.first if [:records, :record_ids].include? method
-          expect(subject.client).to have_received(request_type)
-            .with(request_opts[:view], hash_including(view_args))
+          records = subject.send(ex_opts[:method], ex_opts[:m_opts])
+          records.first if ex_opts[:method] == :records  # start enumerator
+          expect(subject.client).to have_received(:view)
+            .with(ex_opts[:m_opts][:view], ex_opts[:r_opts])
         end
       end
 
       describe '#count' do
-        include_examples 'send options'
-        let(:request_type) { :view }
-        let(:method) { :count }
-        let(:view_args) { { :limit => 0, :include_docs=>false, :stream=>true } }
+        default_request_opts = {limit: 0, include_docs: false, stream: true}
+        include_examples 'send options', method: :count,
+                                         m_opts: {view: 'foo/bar'},
+                                         r_opts: default_request_opts,
+                                         default_r_opts: default_request_opts
       end
 
       describe '#records' do
-        include_examples 'send options'
-        let(:request_type) { :view }
-        let(:method) { :records }
-        let(:view_args) { { :include_docs=>true, :stream=>true } }
+        before do
+          allow(Krikri::OriginalRecord).to receive(:build)
+            .and_return instance_double(Krikri::OriginalRecord)
+        end
+        default_request_opts = {
+          include_docs: true, stream: false, limit: 10, startkey: '0'
+        }
+        request_opts = {
+          include_docs: true, stream: false, limit: 5, startkey: '0'
+        }
+        include_examples 'send options', method: :records,
+                                         m_opts: {view: 'foo/bar', limit: 5},
+                                         r_opts: request_opts,
+                                         default_r_opts: default_request_opts
+
       end
 
       describe '#record_ids' do
-        include_examples 'send options'
-        let(:request_type) { :view }
-        let(:method) { :record_ids }
-        let(:view_args) { { :include_docs=>false, :stream=>true } }
+        default_request_opts = { :include_docs=>false, :stream=>true }
+        include_examples 'send options', method: :record_ids,
+                                         m_opts: {view: 'foo/bar'},
+                                         r_opts: default_request_opts,
+                                         default_r_opts: default_request_opts
       end
     end
 
@@ -143,7 +232,12 @@ EOS
       end
     end
 
-    it_behaves_like 'a harvester'
+    context do
+      before do
+        allow(subject.client).to receive(:view).and_return view_response
+      end
+      it_behaves_like 'a harvester'
+    end
   end
 end
 

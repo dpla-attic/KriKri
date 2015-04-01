@@ -20,6 +20,7 @@ module Krikri::Harvesters
       super
       @opts = opts.fetch(:couchdb, view: '_all_docs')
       @opts[:view] ||= '_all_docs'
+      @opts[:limit] ||= 10
       @client = Analysand::Database.new(uri)
     end
 
@@ -49,20 +50,41 @@ module Krikri::Harvesters
     end
 
     ##
-    # Streams a response from a CouchDB view to yield documents.
+    # Makes requests to a CouchDB view to yield documents.
     #
     # The following will only send requests to the endpoint until it
     # has 1000 records:
     #
     #     records.take(1000)
     #
+    # Batches of records are requested, in order to avoid using
+    # `Analysand::StreamingViewResponse`, and the CouchDB `startkey` parameter
+    # is used for greater efficiency than `skip` in locating the next page of
+    # records.
+    #
+    # @return [Enumerator]
     # @see Analysand::Viewing
-    # @see Analysand::StreamingViewResponse
+    # @see http://docs.couchdb.org/en/latest/couchapp/views/collation.html#all-docs
     def records(opts = {})
       view = opts[:view] || @opts[:view]
-      client.view(view, include_docs: true, stream: true).docs.lazy.map do |r|
-        @record_class.build(mint_id(r['_id']), r.to_json, 'application/json')
+      limit = opts[:limit] || @opts[:limit]
+
+      en = Enumerator.new do |e|
+        startkey = '0'
+        view_opts = {include_docs: true, stream: false, limit: limit}
+        loop do
+          view_opts[:startkey] = startkey
+          docs = client.view(view, view_opts).docs
+          docs.each do |doc|
+            e.yield @record_class.build(
+              mint_id(doc['_id']), doc.to_json, 'application/json'
+            )
+          end
+          break if docs.size < limit
+          startkey = docs.last['_id'] + '0'
+        end
       end
+      en.lazy
     end
 
     ##
