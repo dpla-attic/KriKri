@@ -13,9 +13,8 @@ require "#{krikri_dir}/spec/factories/krikri_original_record"
 namespace :krikri do
 
   def index_aggregation(agg)
-    graph = agg.to_jsonld['@graph'].first
     indexer = Krikri::QASearchIndex.new
-    indexer.add graph.to_json
+    indexer.add agg.to_jsonld['@graph'].first
     indexer.commit
   end
 
