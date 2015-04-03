@@ -5,5 +5,14 @@ marmotta:
   record_container: 'http://localhost:8983/marmotta/ldp/original_record'
   item_container: 'http://localhost:8983/marmotta/ldp/items'
 
+elasticsearch:
+  host: 'localhost:9200'
+  # In testing, index_name refers to a temporary index created just for tests.
+  index_name: 'dpla_test'
+
 prov:
   activity: 'activity'
+  provider_base: 'http://dp.la/api/contributor/'
+
+solr:
+  url: 'http://localhost:8983/solr/'

@@ -4,13 +4,12 @@ describe Krikri::ValidationReportsController, :type => :controller do
 
   routes { Krikri::Engine.routes }
 
-  describe 'GET #index' do
+  describe '#show' do
     login_user
 
-    it 'redirects to /krikri/report_lists#index in absence of valid params' do
-      get :index
-      expect(response).to redirect_to('/krikri/report_lists')
+    it 'renders the :show view' do
+      get :show, id: 'sourceResource_title', provider: 'nypl'
+      expect(response).to render_template('krikri/validation_reports/show')
     end
   end
-
 end

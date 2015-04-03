@@ -4,7 +4,7 @@ require 'dpla/map/factories'
 require 'open-uri'
 require 'resque/tasks'
 
-require 'krikri/index_service'
+require 'krikri/search_index'
 
 krikri_dir = Gem::Specification.find_by_name('krikri').gem_dir
 require "#{krikri_dir}/app/models/krikri/original_record"
@@ -13,9 +13,8 @@ require "#{krikri_dir}/spec/factories/krikri_original_record"
 namespace :krikri do
 
   def index_aggregation(agg)
-    graph = agg.to_jsonld['@graph'].first
-    indexer = Krikri::IndexService.new
-    indexer.add graph.to_json
+    indexer = Krikri::QASearchIndex.new
+    indexer.add agg.to_jsonld['@graph'].first
     indexer.commit
   end
 
@@ -28,12 +27,12 @@ namespace :krikri do
       original_record = build(:oai_dc_record)
       original_record.save unless original_record.exists?
 
-      # Make a DPLA::MAP::Aggregation with an original record instantiated as an
-      # ActiveTriples::Resource object.
-      agg = build(:aggregation,
-                  :originalRecord => ActiveTriples::Resource
-                                  .new(original_record.rdf_subject)
-            )
+      provider = Krikri::Provider.new('123')
+      provider.label = 'Moomin valley Historical Society'
+
+      agg = build(:aggregation)
+      agg.originalRecord = original_record.rdf_source
+      agg.provider = provider
 
       agg.mint_id!('krikri_sample')
 
@@ -81,7 +80,7 @@ namespace :krikri do
       original_record.delete! if original_record.exists?
 
       # Delete all sample records from Solr
-      indexer = Krikri::IndexService.new
+      indexer = Krikri::QASearchIndex.new
       indexer.delete_by_query 'id:*krikri_sample*'
       indexer.commit
     end

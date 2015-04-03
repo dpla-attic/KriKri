@@ -13,4 +13,9 @@ module Krikri
   autoload :ModsParser,       'krikri/parsers/mods_parser'
   autoload :QdcParser,        'krikri/parsers/qdc_parser'
   autoload :OaiParserHeaders, 'krikri/parsers/oai_parser_headers'
+  autoload :AggregationEntityBehavior,
+           'krikri/entity_behaviors/aggregation_entity_behavior'
+  autoload :OriginalRecordEntityBehavior,
+           'krikri/entity_behaviors/original_record_entity_behavior'
+
 end

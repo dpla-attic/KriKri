@@ -90,23 +90,45 @@ module Krikri
     ##
     # A SoftwareAgent to run mapping processes.
     #
+    # @example
+    #
+    #   To map the records harvested by the harvest activity with ID 1:
+    #
+    #   Krikri::Mapper::Agent.enqueue(
+    #     :mapping,
+    #     opts = {
+    #       name: 'scdl_qdc',
+    #       generator_uri: 'http://ldp.local.dp.la/ldp/activity/1'
+    #     }
+    #   )
+    #
     # @see: Krikri::SoftwareAgent, Krikri::Activity
     class Agent
       include SoftwareAgent
+      include EntityConsumer
 
-      attr_reader :name, :generator_uri
+      attr_reader :name
 
       def self.queue_name
         :mapping
       end
 
+      ##
+      # @see Krikri::Activity#entities
+      # @see Krikri::EntityBehavior
+      # @see Krikri::SoftwareAgent#entity_behavior
+      def entity_behavior
+        @entity_behavior ||= Krikri::AggregationEntityBehavior
+      end
+
       def initialize(opts = {})
         @name = opts.fetch(:name).to_sym
-        @generator_uri = RDF::URI(opts.fetch(:generator_uri))
+        assign_generator_activity!(opts)
       end
 
       def run(activity_uri = nil)
-        Krikri::Mapper.map(name, records).each do |rec|
+        harvest_records = generator_activity.entities
+        Krikri::Mapper.map(name, harvest_records).each do |rec|
           begin
             rec.mint_id! if rec.node?
             activity_uri ? rec.save_with_provenance(activity_uri) : rec.save
@@ -117,12 +139,6 @@ module Krikri
         end
       end
 
-      def records
-        Krikri::ProvenanceQueryClient.find_by_activity(generator_uri)
-          .execute.lazy.flat_map do |solution|
-          OriginalRecord.load(solution.record.to_s)
-        end
-      end
     end
   end
 end

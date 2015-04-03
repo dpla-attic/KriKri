@@ -9,6 +9,12 @@ describe Krikri::Enricher do
      Krikri::Settings['prov']['activity'] / '3').to_s
   end
 
+  before(:all) do
+    DatabaseCleaner.clean_with(:truncation)
+    create(:krikri_harvest_activity)
+    create(:krikri_mapping_activity)
+  end
+
   shared_context 'with enrichment chain' do
     subject do
       described_class.new generator_uri: mapping_activity_uri,
@@ -62,7 +68,7 @@ EOS
     let(:aggs) { [agg_double, agg_double.clone, agg_double.clone] }
 
     before do
-      allow(subject).to receive(:target_aggregations)
+      allow(subject.generator_activity).to receive(:entities)
                          .and_return(aggs)
     end
 
@@ -124,6 +130,37 @@ EOS
         subject.chain_enrichments!(aggregation)
         expect(aggregation.sourceResource.first.title)
           .to eq(['nice and clean'])
+      end
+    end
+
+    context 'with a basic enrichment' do
+      let(:chain) do
+        {
+          'Krikri::Enrichments::BasicEnrichment' => {
+            input_fields: [{sourceResource: {creator: :providedLabel}}],
+            output_fields: [{sourceResource: :creator}]
+          }
+        }
+      end
+      let(:aggregation) { build(:aggregation) }
+
+      subject do
+        described_class.new generator_uri: mapping_activity_uri, chain: chain
+      end
+
+      before do
+        module Krikri::Enrichments
+          class BasicEnrichment
+            include Krikri::Enrichment
+            def enrich_value(value)
+              value
+            end
+          end
+        end
+      end
+
+      it 'chains enrichments on basic fields' do
+        expect { subject.chain_enrichments!(aggregation) }.to_not raise_error
       end
     end
   end

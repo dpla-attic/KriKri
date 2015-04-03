@@ -1,3 +1,23 @@
+0.5.0 (3 April 2015)
+---
+
+NOTE: Run `rake db:migrate` when upgrading to this release. If you have
+production data in your Solr index, you will need to reindex your items.
+
+* Support multivalued node fields in solr index
+* Fix Solr document ID builder regression which modifies item container
+* Fix validation report's use of IDs
+* Revamp provider controller for cleaner REST interactions
+* Adds QA Reports MVC
+* Add SPARQL queries for QA
+* Make `Provider` an ActiveTriples::Resource
+* QA by provider
+* Check existence of Blacklight settings file
+* Improve indexing of property values /w many nodes
+* Fixes rake sample record
+* Add and refactor search indexing, and add associated behaviors
+* Add a test that covers Enricher#do_basic_enrichment
+
 0.4.0 (23 March 2015)
 ---
 

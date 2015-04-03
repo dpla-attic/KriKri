@@ -6,7 +6,22 @@ module Krikri
   module SoftwareAgent
     extend ActiveSupport::Concern
 
+    included do
+      attr_writer :entity_behavior
+    end
+
     Logger = ActiveSupport::TaggedLogging.new(Rails.logger)
+
+    ##
+    # Return the EntityBehavior associated with the SoftwareAgent.
+    # Meant to be overridden as necessary.
+    #
+    # @see Krikri::Activity#entities
+    # @see Krikri::EntityBehavior
+    #
+    def entity_behavior
+      @entity_behavior ||= nil
+    end
 
     ##
     # Return an agent name suitable for saving in an Activity.

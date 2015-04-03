@@ -29,6 +29,14 @@ describe Krikri::Engine do
     end
 
     describe '#configure_blacklight!' do
+      before do
+        @old_solr_config = Blacklight.solr_config
+      end
+
+      after do
+        Blacklight.solr_config = @old_solr_config
+      end
+
       it 'merges solr settings with blacklight settings' do
         uri = 'http://moomin.org/'
         allow(Krikri::Settings).to receive(:solr).and_return(url: uri)
