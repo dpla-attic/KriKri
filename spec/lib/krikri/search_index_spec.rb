@@ -102,6 +102,7 @@ describe Krikri::QASearchIndex do
         subject.delete_by_query('id:*')
         subject.commit
         aggregation.set_subject!('http://api.dp.la/item/123')
+        aggregation.provider << build(:krikri_provider, rdf_subject: 'snork')
         subject.add aggregation.to_jsonld['@graph'][0]
         subject.commit
       end
