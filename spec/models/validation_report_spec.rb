@@ -25,5 +25,25 @@ describe Krikri::ValidationReport do
       expect { subject.find('notA_field') }
         .to raise_error RSolr::Error::Http
     end
+
+    it 'gets by provider_id' do
+      provider_uri = RDF::URI(Krikri::Settings.prov.provider_base) / '123'
+      params = { :qt => 'standard',
+                 :q => '-sourceResource_title:[* TO *]',
+                 :rows => '10',
+                 :fq => "provider_id:\"#{provider_uri}\"" }
+
+
+      response = double('solr response')
+      allow(Krikri::SolrResponseBuilder).to receive(:new).with(params)
+                                             .and_return(response)
+      allow(response).to receive(:response).and_return(:result)
+
+      result = subject.find('sourceResource_title') do
+        self.provider_id = '123'
+      end
+
+      expect(result).to eq :result
+    end
   end
 end

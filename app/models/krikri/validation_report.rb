@@ -22,8 +22,8 @@ module Krikri
                        'facet.field' => REQUIRED_FIELDS,
                        'facet.mincount' => 10000000,
                        'facet.missing' => true }
-      query_params[:fq] = "provider_id:\"#{@provider_id}\"" if
-        @provider_id.present?
+      query_params[:fq] = "provider_id:\"#{provider_uri}\"" if
+        provider_id.present?
 
       Krikri::SolrResponseBuilder.new(query_params).response.facets
     end
@@ -42,13 +42,21 @@ module Krikri
       # set values from block
       instance_eval &block if block_given?
 
+
       query_params = { :qt => 'standard', :q => "-#{id}:[* TO *]" }
       query_params[:rows] = @rows.present? ? @rows : '10'
-      query_params[:fq] = "provider_id:\"#{@provider_id}\"" if
-        @provider_id.present?
-      query_params[:start] = @start if @start.present?
+      query_params[:fq] = "provider_id:\"#{provider_uri}\""
+      query_params[:start] = @start if @start.present? if
+        provider_id.present?
 
       Krikri::SolrResponseBuilder.new(query_params).response
+    end
+
+    private
+
+    def provider_uri
+      return unless provider_id.present?
+      Krikri::Provider.new(provider_id).rdf_subject
     end
   end
 end
