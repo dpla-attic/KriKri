@@ -95,8 +95,8 @@ module Krikri
     # with Blacklight v5.10.
     # @param String id is a local name.
     def get_solr_response_for_doc_id(id=nil, extra_controller_params={})
-      id_uri = Krikri::Settings.marmotta.item_container << '/' << id
-      solr_response = solr_repository.find(id_uri, extra_controller_params)
+      id = (RDF::URI(Krikri::Settings.marmotta.item_container) / id).to_s if id
+      solr_response = solr_repository.find(id, extra_controller_params)
       [solr_response, solr_response.documents.first]
     end
 
