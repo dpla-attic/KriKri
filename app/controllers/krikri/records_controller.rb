@@ -7,11 +7,14 @@ module Krikri
   # ApplicationController.  It does not interit from Krikri's
   # ApplicationController.
   class RecordsController < CatalogController
-    before_action :authenticate_user!
+    before_action :authenticate_user!, :set_provider
+
+    self.solr_search_params_logic += [:records_by_provider]
+
     ##
-    # RecordsReportsController has access to views in the following
+    # RecordsController has access to views in the following
     # directories:
-    #   krikri/validation_reports
+    #   krikri/records
     #   catalog (defined in Blacklight)
     # It inherits view templates from the host application's
     # ApplicationController.  It uses krikri's application layout:
@@ -81,6 +84,8 @@ module Krikri
       config.solr_document_model = Krikri::SearchIndexDocument
     end
 
+    private
+
     ##
     # Construct a valid item URI from a local name, and use it to fetch a single
     # document from the search index.
@@ -90,9 +95,28 @@ module Krikri
     # with Blacklight v5.10.
     # @param String id is a local name.
     def get_solr_response_for_doc_id(id=nil, extra_controller_params={})
-      id_uri = Krikri::Settings.marmotta.item_container << '/' << id
-      solr_response = solr_repository.find(id_uri, extra_controller_params)
+      id = (RDF::URI(Krikri::Settings.marmotta.item_container) / id).to_s if id
+      solr_response = solr_repository.find(id, extra_controller_params)
       [solr_response, solr_response.documents.first]
+    end
+
+    ##
+    # Limit the records returned by a Solr request to those belonging to the
+    # current provider.
+    # @param [Hash] solr_parameters a hash of parameters to be sent to Solr.
+    # @param [Hash] user_parameters a hash of user-supplied parameters.
+    def records_by_provider(solr_params, user_params)
+      if @provider_id.present?
+        provider = Krikri::Provider.find(@provider_id)
+        solr_params[:fq] ||= []
+        solr_params[:fq] << "provider_id:\"#{provider.rdf_subject}\""
+      end
+    end
+
+    ##
+    # Sets the provider id for use as a search filter/view
+    def set_provider
+      @provider_id = params[:provider]
     end
   end
 end

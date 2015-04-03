@@ -12,3 +12,7 @@ elasticsearch:
 
 prov:
   activity: 'activity'
+  provider_base: 'http://dp.la/api/contributor/'
+
+solr:
+  url: 'http://localhost:8983/solr/'

@@ -12,3 +12,4 @@ elasticsearch:
 
 prov:
   activity: 'activity'
+  provider_base: 'http://dp.la/api/contributor/'

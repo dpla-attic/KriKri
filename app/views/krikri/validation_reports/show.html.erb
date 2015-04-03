@@ -1,0 +1,19 @@
+<% content_for :title do %>Validation Report - <%= params[:id] %><% end %>
+
+<div id="main-container" class="container">
+  <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
+
+  <h1>Validation Report: <%= params[:id] %></h1>
+  <h2><%= provider_name(@current_provider) %></h2>
+  <div>
+    The following records have missing values for 
+    <code><%= params[:id] %></code>.
+  </div>
+
+  <% if @documents.count > 0 %>
+    <%= render "validation_report" %>
+  <% else %>
+    <div>There are no invalid records to report.</div>
+  <% end %>
+
+</div>

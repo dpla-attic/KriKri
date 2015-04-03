@@ -222,11 +222,22 @@ module Krikri
       new_hash = {}
 
       hash.each do |key, val|
+        new_hash[format_key(keys + [key])] = val unless
+          val.is_a?(Array) || val.is_a?(Hash)
+        new_hash.merge!(flat_hash(val, keys + [key])) if val.is_a? Hash
 
-        if val.is_a? Hash
-          new_hash.merge!(flat_hash(val, keys + [key]))
-        else
-          new_hash[format_key(keys + [key])] = val
+        if val.is_a? Array
+          val.each do |v|
+            if v.is_a? Hash
+              new_hash.merge!(flat_hash(v, keys + [key])) do |key, f, s|
+                Array(f) << s
+              end
+            else
+              formatted_key = format_key(keys + [key])
+              new_hash[formatted_key] =
+                new_hash[formatted_key] ? (Array(new_hash[formatted_key]) << v) : v
+            end
+          end
         end
       end
 

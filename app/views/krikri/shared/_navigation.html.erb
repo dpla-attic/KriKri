@@ -1,10 +1,40 @@
-<div id="header-navbar" class="navbar navbar-inverse navbar-static-top" role="navigation">
-  <div class="container">
-    <div class="navbar-right">
-    <ul class="nav navbar-nav">
-        <li><%= link_to 'Institutions', krikri.institutions_path %></li>
-        <li><%= link_to 'QA', krikri.records_path %></li>
-    </ul>
+<div id='header-navbar' class='navbar navbar-inverse navbar-static-top' role='navigation'>
+  <div class='container'>
+    <div class='navbar-right'>
+      <ul class='nav navbar-nav'>
+        <li class='dropdown'>
+          <a href='#' class='dropdown-toggle' data-toggle='dropdown'
+            role='button' aria-expanded='false'>
+            <%= provider_name(session[:current_provider]) %> <span class="caret"></span>
+          </a>
+          <ul class='dropdown-menu' role='menu'>
+	    <li>
+              <%= remove_session_provider %>
+            </li>
+	    <li class='divider'></li>
+
+            <% available_providers.each do |provider| %>
+	      <% unless session[:current_provider] == provider.id %>
+              <li><%= set_session_provider(provider) %></li>
+	      <% end %>
+            <% end %>
+          </ul>
+        </li>
+
+        <% if session[:current_provider].present? %>
+          <li><%= link_to 'Dashboard',
+            krikri.provider_path(session[:current_provider]) %></li>
+          <li><%= link_to 'Records',
+            krikri.records_path(provider: session[:current_provider]) %></li>
+          <li><%= link_to 'Reports',
+            krikri.reports_path(provider: session[:current_provider]) %></li>
+        <% else %>
+          <li><%= link_to 'Dashboard', krikri.providers_path %></li>
+          <li><%= link_to 'Records', krikri.records_path %></li>
+          <li><%= link_to 'Reports', krikri.reports_path %></li>
+        <% end %>
+
+      </ul>
+    </div>
   </div>
-</div>
 </div>

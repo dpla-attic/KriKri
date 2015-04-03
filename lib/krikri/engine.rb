@@ -8,6 +8,7 @@ require 'rdf/marmotta'
 require 'oai/client'
 require 'rest-client'
 require 'edtf'
+require 'csv'
 
 require 'resque'
 
@@ -18,6 +19,7 @@ module Krikri
     isolate_namespace Krikri
 
     def configure_blacklight!
+      return unless File.exist?(Blacklight.solr_file)
       krikri_solr = Krikri::Settings.solr
       Blacklight.solr_config = Blacklight.solr_config.merge(krikri_solr) unless
         krikri_solr.nil?
@@ -134,6 +136,13 @@ module Krikri
           local_name_from_original_record
         end
       end
+    end
+
+    ##
+    # Allow the methods in Krikri::ApplicatoinHelper to be accessible by the
+    # host application.
+    initializer 'krikri.helpers' do |app|
+      ActionView::Base.send :include, Krikri::ApplicationHelper
     end
   end
 end

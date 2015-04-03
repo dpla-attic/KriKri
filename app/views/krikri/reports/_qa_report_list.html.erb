@@ -1,0 +1,13 @@
+<h3>QA Reports</h3>
+<% if @qa_reports %>
+  <dl>
+    <% @qa_reports.each do |qa_report| %>
+    <dt><%= provider_name(qa_report.provider) %><dt>
+      <dd><%= link_to 'fields csv', qa_report_path(qa_report, format: 'csv') %> -
+      <%= link_to 'count csv',
+          qa_report_path(qa_report, format: 'csv', type: 'count') %></dd>
+    <% end %>
+  </dl>
+<% else %>
+  <div>There was an error generating the QA reports.</div>
+<% end %>

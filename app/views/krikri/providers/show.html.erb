@@ -1,0 +1,21 @@
+<% content_for :title do %>
+  <%= provider_name(@current_provider) %> Dashboard
+<% end %>
+
+<div id='main-container' class='container'>
+  <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
+
+  <h1>Dashboard</h1>
+  <h2><%= provider_name(@current_provider) %></h2>
+
+  <h3>Current Ingest</h3>
+  <div>QA Tasks</div>
+  <ul>
+    <li>
+      <%= link_to 'Records', krikri.records_path(provider: @current_provider.id) %>
+    </li>
+    <li>
+      <%= link_to 'Reports', krikri.reports_path(provider: @current_provider.id) %>
+    </li>
+  </ul>
+</div>

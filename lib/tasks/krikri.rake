@@ -27,12 +27,12 @@ namespace :krikri do
       original_record = build(:oai_dc_record)
       original_record.save unless original_record.exists?
 
-      # Make a DPLA::MAP::Aggregation with an original record instantiated as an
-      # ActiveTriples::Resource object.
-      agg = build(:aggregation,
-                  :originalRecord => ActiveTriples::Resource
-                                  .new(original_record.rdf_subject)
-            )
+      provider = Krikri::Provider.new('123')
+      provider.label = 'Moomin valley Historical Society'
+
+      agg = build(:aggregation)
+      agg.originalRecord = original_record.rdf_source
+      agg.provider = provider
 
       agg.mint_id!('krikri_sample')
 
