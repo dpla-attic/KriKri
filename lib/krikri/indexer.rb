@@ -33,7 +33,13 @@ module Krikri
       @index_opts = opts
     end
 
-    def run
+    # Despite Krikri::Indexer using Krikri::EntityConsumer to identify the
+    # activity for which to index records, Krikri::Indexer#run still needs
+    # an activity_uri parameter to meet the expectations of the interface
+    # for Krikri::Job#self.run.
+    #
+    # @see Krikri::Job
+    def run(activity_uri = nil)
       log :info, 'indexer is running'
       search_index = index_class.constantize.new(index_opts)
       search_index.update_from_activity(generator_activity)
