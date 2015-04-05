@@ -87,13 +87,6 @@ EOS
     allow(str_view_resp).to receive(:total_rows)
       .and_return(parsed_response['total_rows'])
 
-    allow(subject.client).to receive(:view)
-      .with(instance_of(String), view_opts_page_1)
-      .and_return(view_response_page_1)
-    allow(subject.client).to receive(:view)
-      .with(instance_of(String), view_opts_page_2)
-      .and_return(view_response_page_2)
-
     # Allow view requests that are made within `#get_record', `#record_ids',
     # and `#count'
     allow_any_instance_of(Analysand::StreamingViewResponse).to receive(:view)
@@ -172,6 +165,7 @@ EOS
           allow(Krikri::OriginalRecord).to receive(:build)
             .and_return instance_double(Krikri::OriginalRecord)
         end
+
         default_request_opts = {
           include_docs: true, stream: false, limit: 10, startkey: '0'
         }
@@ -183,6 +177,19 @@ EOS
                                          r_opts: request_opts,
                                          default_r_opts: default_request_opts
 
+        it 'iterates over paginated requests' do
+          # See the view_opts_page_* and related mocks above.
+          # given those, the call to #records with a limit of 4 will make two
+          # Analysand::Database.view calls and return 5 records.
+          expect(subject.client).to receive(:view)
+            .with(instance_of(String), view_opts_page_1)
+            .and_return(view_response_page_1)
+          expect(subject.client).to receive(:view)
+            .with(instance_of(String), view_opts_page_2)
+            .and_return(view_response_page_2)
+          recs = subject.records(limit: 4)
+          expect(recs.count).to eq 5
+        end
       end
 
       describe '#record_ids' do
