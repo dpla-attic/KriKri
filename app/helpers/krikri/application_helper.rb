@@ -3,7 +3,11 @@ module Krikri
     ##
     # @return [Array<Blacklight::SolrResponse::Facets::FacetItem>]
     def available_providers
-      Krikri::Provider.all(&:reload)
+      Rails.cache.fetch('krikri/application_helper/available_providers',
+                        expires_in: 1.hour,
+                        race_condition_ttl: 3.minutes) do
+        Krikri::Provider.all(&:reload)
+      end
     end
 
     ##
