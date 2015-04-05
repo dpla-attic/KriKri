@@ -26,14 +26,23 @@ module Krikri
     ##
     # Return an agent name suitable for saving in an Activity.
     # This is the name of the most-derived class upon which this is invoked.
+    #
+    # @return [String]
     # @see Krikri::Activity
     def agent_name
       self.class.agent_name
     end
 
     ##
-    # @abstract Perform this agent's work
-    # @return [Boolean]
+    # @abstract Perform this agent's work. The method may accept an
+    #   `activity_uri` to record as the Activity in provenance metadata.
+    #   If so, the implementation must be optional and handle `nil` values by
+    #   declining to record provenance
+    #
+    # @return [Boolean] `true` if the run has succeeded; otherwise `false`
+    #
+    # @see Krirkri::Activity
+    # @see Krikri::Job.run
     def run
       fail NotImplementedError
     end

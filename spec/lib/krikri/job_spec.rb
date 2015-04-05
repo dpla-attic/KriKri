@@ -32,8 +32,16 @@ describe Krikri::Job do
       described_class.run(agent, activity_uri)
     end
 
-    it 'defaults activity to nil' do
-      expect(agent).to receive(:run).with(nil).and_return(true)
+    it 'passes with no args if no activity given' do
+      expect(agent).to receive(:run).with(no_args).and_return(true)
+      described_class.run(agent)
+    end
+
+    it 'passes with no args if no agent accepts no args' do
+      arity_zero = Proc.new {}
+      allow(agent).to receive(:method).with(:run).and_return(arity_zero)
+
+      expect(agent).to receive(:run).with(no_args).and_return(true)
       described_class.run(agent)
     end
   end
