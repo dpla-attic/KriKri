@@ -28,6 +28,7 @@ module Krikri
     # @param activity_uri  the URI of the activity responsible for
     #   generating the resources. Set this to (e.g.) prov:wasGeneratedBy
     def self.run(agent, activity_uri = nil)
+      return agent.run unless activity_uri && agent.method(:run).arity != 0
       agent.run(activity_uri)
     end
   end

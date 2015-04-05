@@ -28,6 +28,12 @@ shared_examples 'a software agent' do |args|
     it { expect(subject.agent_name).to be_a String }
   end
 
+  describe '#run' do
+    it 'accepts one or no arguments' do
+      expect(subject.method(:run).arity).to satisfy { |v| v == -1 || v == 0 }
+    end
+  end
+
   describe '#enqueue' do
     let(:queue_name) { described_class.queue_name.to_s }
 
