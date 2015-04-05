@@ -4,13 +4,19 @@ require 'pry'
 
 describe Krikri::Harvesters::CouchdbHarvester do
 
-  let(:args) { { uri: 'http://example.org:5984/couchdb', limit: 4 } }
-  let(:str_view_resp) { double(Analysand::StreamingViewResponse) }
+  let(:args) { { uri: 'http://example.org:5984/couchdb' } }
+  # Generic Analysand view response for all records.  Note that we're using a
+  # ViewResponse when it could be a StreamingViewResponse in some cases.  The
+  # interfaces of these classes is the same, so it keeps these tests cleaner to
+  # stick to ViewResponse.
   let(:view_response) { double(Analysand::ViewResponse) }
+  # Analysand view responses for paginated requests that are used in `#records'
   let(:view_response_page_1) { double(Analysand::ViewResponse) }
   let(:view_response_page_2) { double(Analysand::ViewResponse) }
 
-  # Set up some responses to reuse
+  # The HTTP response bodies from the view responses above, plus the options
+  # passed in the corresponding client.view calls
+  #
   let(:view_response_body) do
     <<-EOS.strip_heredoc
 {"total_rows":5,"offset":0,"rows":[
@@ -67,7 +73,6 @@ EOS
   let(:parsed_response_page_2) { JSON.parse(view_response_body_page_2) }
 
   before do
-
     allow(view_response).to receive(:docs)
       .and_return(parsed_response['rows'].map { |r| r['doc'] })
     allow(view_response).to receive(:keys)
@@ -79,23 +84,6 @@ EOS
       .and_return(parsed_response_page_1['rows'].map { |r| r['doc'] })
     allow(view_response_page_2).to receive(:docs)
       .and_return(parsed_response_page_2['rows'].map { |r| r['doc'] })
-
-    allow(str_view_resp).to receive(:docs)
-      .and_return(parsed_response['rows'].map { |r| r['doc'] })
-    allow(str_view_resp).to receive(:keys)
-      .and_return(parsed_response['rows'].map { |r| r['key'] })
-    allow(str_view_resp).to receive(:total_rows)
-      .and_return(parsed_response['total_rows'])
-
-    # Allow view requests that are made within `#get_record', `#record_ids',
-    # and `#count'
-    allow_any_instance_of(Analysand::StreamingViewResponse).to receive(:view)
-      .with(instance_of(String), view_opts_common_stream)
-      .and_return(str_view_resp)
-    allow_any_instance_of(Analysand::ViewResponse).to receive(:view)
-      .with(instance_of(String), view_opts_common_nostream)
-      .and_return(view_response)
-
   end
 
   subject { described_class.new(args) }
