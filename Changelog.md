@@ -1,3 +1,8 @@
+0.5.1 (4 April 2015)
+---
+
+* Improve `SoftwareAgent`/`Job` activity URI handling
+
 0.5.0 (3 April 2015)
 ---
 
