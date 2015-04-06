@@ -19,14 +19,19 @@ module Krikri
 
     def show
       @current_provider = params[:provider]
-      page = params[:page]
-      per_page = params[:per_page]
-      @response = ValidationReport.new.find(params[:id]) do
-        self.provider_id = @current_provider
-        self.start = page
-        self.rows = per_page
-      end
+
+      @response = build_report.find(params[:id])
       @documents = @response.documents
+    end
+
+    private
+
+    def build_report
+      report = ValidationReport.new
+      report.provider_id = @current_provider
+      report.start = params[:page]
+      report.rows = params[:per_page]
+      report
     end
   end
 end

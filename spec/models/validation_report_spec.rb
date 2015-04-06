@@ -1,9 +1,6 @@
 require 'spec_helper'
 
 describe Krikri::ValidationReport do
-  include_context 'with indexed item'
-
-  # @todo: need more tests for ValidationReport#all
   describe `#all` do
     it 'returns facet for each required field' do
       count = described_class::REQUIRED_FIELDS.count
@@ -12,9 +9,20 @@ describe Krikri::ValidationReport do
 
       expect(subject.all).to contain_exactly(*fields)
     end
+
+    context 'with missing value in record' do
+      include_context 'with missing values'
+
+      it 'returns facets by provider' do
+        subject.provider_id = provider.id
+        hits = subject.all.select { |fct| fct.name == 'sourceResource_title' }
+               .first.items.first.hits
+
+        expect(hits).to eq 1
+      end
+    end
   end
 
-  # @todo: need more tests for ValidationReport#find
   describe `#find` do
     it 'gives a blacklight solr response' do
       expect(subject.find('sourceResource_title'))
@@ -26,24 +34,33 @@ describe Krikri::ValidationReport do
         .to raise_error RSolr::Error::Http
     end
 
-    it 'gets by provider_id' do
-      provider_uri = RDF::URI(Krikri::Settings.prov.provider_base) / '123'
-      params = { :qt => 'standard',
-                 :q => '-sourceResource_title:[* TO *]',
-                 :rows => '10',
-                 :fq => "provider_id:\"#{provider_uri}\"" }
+    context 'with missing values in record' do
+      include_context 'with missing values'
 
+      it 'gets docs for all providers' do
+        docs = subject.find('sourceResource_title').response['docs']
 
-      response = double('solr response')
-      allow(Krikri::SolrResponseBuilder).to receive(:new).with(params)
-                                             .and_return(response)
-      allow(response).to receive(:response).and_return(:result)
-
-      result = subject.find('sourceResource_title') do
-        self.provider_id = '123'
+        expect(docs.map { |d| d['id'] })
+          .to contain_exactly(empty.rdf_subject.to_s,
+                              empty_new_provider.rdf_subject.to_s)
       end
 
-      expect(result).to eq :result
+      context 'with provider set' do
+        before { subject.provider_id = provider.id }
+
+        it 'gets by provider_id' do
+          expect(subject.find('sourceResource_title').response['numFound'])
+            .to eq 1
+        end
+
+        it 'gets docs by provider_id' do
+          subject.provider_id = provider.id
+          docs = subject.find('sourceResource_title').response['docs']
+
+          expect(docs.map { |d| d['id'] })
+            .to contain_exactly empty.rdf_subject.to_s
+        end
+      end
     end
   end
 end

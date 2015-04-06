@@ -4,13 +4,15 @@ shared_context 'with indexed item' do
   before do
     clear_search_index
     indexer = Krikri::QASearchIndex.new
-    indexer.add agg.to_jsonld['@graph'].first
+    records.each { |rec| indexer.add rec.to_jsonld['@graph'].first }
     indexer.commit
   end
 
   after do
     clear_search_index
   end
+
+  let(:records) { [agg] }
 
   let(:agg) do
     a = build(:aggregation)
@@ -23,5 +25,25 @@ shared_context 'with indexed item' do
     build(:krikri_provider,
           rdf_subject: 'moomin_valley',
           label: 'moomin valley')
+  end
+end
+
+shared_context 'with missing values' do
+  include_context 'with indexed item' do
+    let(:records) { [agg, empty, empty_new_provider] }
+
+    let(:empty) do
+      aggregation = build(:aggregation, provider: provider, sourceResource: nil)
+      aggregation.set_subject! 'empty'
+      aggregation
+    end
+
+    let(:empty_new_provider) do
+      aggregation = build(:aggregation,
+                          provider: RDF::URI('http://example.com/fake'),
+                          sourceResource: nil)
+      aggregation.set_subject! 'empty_new_provider'
+      aggregation
+    end
   end
 end
