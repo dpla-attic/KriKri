@@ -50,12 +50,19 @@ describe Krikri::ValidationReport do
         expect(subject.find('sourceResource_title').docs.count).to eq 1
       end
 
-      it 'allows limiting of rows per page' do
+      it 'allows pagination' do
         subject.rows = '1'
         page_one_docs = subject.find('sourceResource_title').docs
         subject.page = '2'
         expect(subject.find('sourceResource_title').docs)
           .not_to eq page_one_docs
+      end
+
+      it 'multilies default pagination' do
+        page_one_docs = subject.find('sourceResource_title').docs
+        subject.page = '4'
+        expect(subject.find('sourceResource_title').response['start'])
+          .to eq 30
       end
 
       context 'with provider set' do

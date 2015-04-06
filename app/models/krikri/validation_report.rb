@@ -46,13 +46,17 @@ module Krikri
     #
     # @raise [RSolr::Error::Http] for non-existant field requests
     # @return [Blacklight::SolrResponse]
+    #
+    # @todo possibly make better use of blacklight controllers? This currently
+    #   assumes that the default pagination is 10. Anything else will cause
+    #   trouble.
     def find(id)
       query_params = { :qt => 'standard', :q => "-#{id}:[* TO *]" }
       query_params[:rows] = @rows.present? ? @rows : '10'
       query_params[:fq] = "provider_id:\"#{provider_uri}\"" if
         provider_id.present?
-      query_params[:start] = (@page.to_i * @rows.to_i - 1) if @page.present? &&
-                                                              @rows.present?
+      multiplier = @rows ? @rows.to_i : 10
+      query_params[:start] = ((@page.to_i - 1) * multiplier) if @page.present?
 
       Krikri::SolrResponseBuilder.new(query_params).response
     end
