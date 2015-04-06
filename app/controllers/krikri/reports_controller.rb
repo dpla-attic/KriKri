@@ -10,9 +10,9 @@ module Krikri
     # for the specified provider.
     def index
       @current_provider = params[:provider]
-      @validation_reports = Krikri::ValidationReport.new.all do
-        self.provider_id = @current_provider
-      end
+      report = Krikri::ValidationReport.new
+      report.provider_id = @current_provider
+      @validation_reports = report.all
 
       if @current_provider
         @qa_reports = Array(Krikri::QAReport.find_by(provider: @current_provider))
