@@ -18,11 +18,11 @@ module Krikri
     layout 'krikri/application'
 
     def show
-      provider_id = params[:provider]
+      @current_provider = params[:provider]
       page = params[:page]
       per_page = params[:per_page]
       @response = ValidationReport.new.find(params[:id]) do
-        self.provider_id = provider_id
+        self.provider_id = @current_provider
         self.start = page
         self.rows = per_page
       end
