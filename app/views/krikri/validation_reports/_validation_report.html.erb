@@ -7,15 +7,19 @@
         <dt>ID:</dt>
         <dd>
           <%= link_to doc.id, :controller => 'records', :action => 'show',
-          :id => doc.id, :provider => @current_provider, :method => :get %>
+          :id => local_name(doc.id), :provider => @current_provider, :method => :get %>
         </dd>
         <% if doc['sourceResource_title'].present? %>
           <dt>Title:</dt>
-          <dd><%= doc['sourceResource_title'] %></dd>
+          <% doc['sourceResource_title'].each do |title| %>
+            <dd><%= title %></dd>
+          <% end %>
         <% end %>
         <% if doc['isShownAt_id'].present? %>
           <dt>Is Shown At:</dt>
-          <dd><%= link_to doc['isShownAt_id'], doc['isShownAt_id'] %></dd>
+          <% doc['isShownAt_id'].each do |is_shown_at| %>
+            <dd><%= link_to is_shown_at, is_shown_at %></dd>
+          <% end %>
         <% end %>
       </dl>
     </div>
