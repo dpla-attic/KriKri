@@ -1,4 +1,11 @@
 require 'spec_helper'
+require 'rdf/isomorphic'
+
+module RDF
+  module Isomorphic
+    alias_method :==, :isomorphic_with?
+  end
+end
 
 describe Krikri::Provider do
   let(:local_name) { '123' }

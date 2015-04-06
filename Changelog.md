@@ -1,3 +1,12 @@
+0.5.2 (6 April 2015)
+---
+
+* Fixup validation report views
+* Krikri::Provider-related performance improvements:
+    * Remove record counts from provider index view
+    * Cache `all_providers` for navigation bar.
+    * Krikri::Provider#reload query should use a DISTINCT clause
+
 0.5.1 (4 April 2015)
 ---
 

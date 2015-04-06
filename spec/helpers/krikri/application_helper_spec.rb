@@ -2,9 +2,24 @@ require 'spec_helper'
 
 describe Krikri::ApplicationHelper, :type => :helper do
   describe '#available_providers' do
+    before { Rails.cache.clear }
+    after { Rails.cache.clear }
+
     it 'gets available providers' do
       allow(Krikri::Provider).to receive(:all).and_return([:all_providers])
       expect(helper.available_providers).to eq [:all_providers]
+    end
+
+    it 'caches providers' do
+      providers = helper.available_providers
+
+      expect(Krikri::Provider).not_to receive(:all)
+      helper.available_providers
+    end
+
+    it 'returns same providers after cache' do
+      providers = helper.available_providers
+      expect(helper.available_providers).to eq providers
     end
   end
 

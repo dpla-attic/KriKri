@@ -42,7 +42,7 @@ module Krikri
     #
     # @return [Krikri::Provider] self
     def reload
-      query = Krikri::Repository.query_client.select.where([self, :p, :o])
+      query = Krikri::Repository.query_client.select.distinct.where([self, :p, :o])
       query.each_solution do |solution|
         set_value(solution.p, solution.o)
       end
