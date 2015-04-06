@@ -10,7 +10,7 @@
   <% @providers.each do |provider| %>
     <li>
       <%= link_to provider_name(provider), { controller: 'providers',
-        action: 'show', id: provider.id } %> (<%= provider.records.count %> records)
+        action: 'show', id: provider.id } %>
     </li>
   <% end %>
   </ul>
