@@ -36,17 +36,34 @@ module Krikri::Harvesters
     # @see Analysand::StreamingViewResponse
     def record_ids(opts = {})
       view = opts[:view] || @opts[:view]
-      client.view(view, include_docs: false, stream: true).keys.lazy
+      # The set of record ids is all of the record IDs in the database minus
+      # the IDs of CouchDB design documents.
+      view_opts = {include_docs: false, stream: true}
+      client.view(view, view_opts).keys.lazy.select do |k|
+        !k.start_with?('_design')
+      end
     end
 
     ##
-    # Returns the total number of documents reported by a CouchDB view.
+    # Return the total number of documents reported by a CouchDB view.
+    #
+    # @param opts [Hash]  Analysand `#view' options
+    # @return [Fixnum]
+    #
     def count(opts = {})
       view = opts[:view] || @opts[:view]
-      client.view(view,
-                  limit: 0,
-                  include_docs: false,
-                  stream: true).total_rows
+      # The count that we want is the total documents in the database minus
+      # CouchDB design documents.  Asking for the design documents will give us
+      # the total count in addition to letting us determine the number of
+      # design documents.
+      v = client.view(view,
+                      include_docs: false,
+                      stream: false,
+                      startkey: '_design',
+                      endkey: '_design0')
+      total = v.total_rows
+      design_doc_count = v.keys.size
+      total - design_doc_count
     end
 
     ##
@@ -70,18 +87,24 @@ module Krikri::Harvesters
       limit = opts[:limit] || @opts[:limit]
 
       en = Enumerator.new do |e|
-        startkey = '0'
         view_opts = {include_docs: true, stream: false, limit: limit}
+        rows_retrieved = 0
+        total_rows = 0
         loop do
-          view_opts[:startkey] = startkey
-          docs = client.view(view, view_opts).docs
-          docs.each do |doc|
+          v = client.view(view, view_opts)
+          rows = v.rows
+          total_rows = v.total_rows
+          rows_retrieved += rows.size
+          rows.each do |row|
+            next if row['id'].start_with?('_design')
             e.yield @record_class.build(
-              mint_id(doc['_id']), doc.to_json, 'application/json'
+              mint_id(row['doc']['_id']),
+              row['doc'].to_json,
+              'application/json'
             )
           end
-          break if docs.size < limit
-          startkey = docs.last['_id'] + '0'
+          break if rows_retrieved == total_rows
+          view_opts[:startkey] = rows.last['id'] + '0'
         end
       end
       en.lazy
