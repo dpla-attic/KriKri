@@ -45,6 +45,19 @@ describe Krikri::ValidationReport do
                               empty_new_provider.rdf_subject.to_s)
       end
 
+      it 'allows limiting of rows per page' do
+        subject.rows = 1
+        expect(subject.find('sourceResource_title').docs.count).to eq 1
+      end
+
+      it 'allows limiting of rows per page' do
+        subject.rows = '1'
+        page_one_docs = subject.find('sourceResource_title').docs
+        subject.page = '2'
+        expect(subject.find('sourceResource_title').docs)
+          .not_to eq page_one_docs
+      end
+
       context 'with provider set' do
         before { subject.provider_id = provider.id }
 

@@ -29,7 +29,7 @@ module Krikri
     def build_report
       report = ValidationReport.new
       report.provider_id = @current_provider
-      report.start = params[:page]
+      report.page = params[:page]
       report.rows = params[:per_page]
       report
     end

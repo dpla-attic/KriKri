@@ -1,6 +1,6 @@
 module Krikri
   class ValidationReport
-    attr_accessor :provider_id, :start, :rows
+    attr_accessor :provider_id, :page, :rows
 
     REQUIRED_FIELDS = ['dataProvider_name', 'isShownAt_id', 'preview_id',
                        'sourceResource_rights', 'sourceResource_title',
@@ -51,8 +51,8 @@ module Krikri
       query_params[:rows] = @rows.present? ? @rows : '10'
       query_params[:fq] = "provider_id:\"#{provider_uri}\"" if
         provider_id.present?
-      query_params[:start] = @start if @start.present? if
-        provider_id.present?
+      query_params[:start] = (@page.to_i * @rows.to_i - 1) if @page.present? &&
+                                                              @rows.present?
 
       Krikri::SolrResponseBuilder.new(query_params).response
     end

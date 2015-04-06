@@ -45,6 +45,32 @@ describe Krikri::ValidationReportsController, :type => :controller do
         expect(assigns[:documents].first['isShownAt_id'])
           .not_to be_empty
       end
+
+      describe 'pagination' do
+        it 'finds all matching items' do
+          get :show, id: 'sourceResource_title', per_page: 1
+
+          expect(assigns[:response].count).to eq 2
+        end
+
+        it 'gets current page' do
+          get :show, id: 'sourceResource_title', per_page: 1
+
+          expect(assigns[:response].docs.count).to eq 1
+        end
+
+        it 'sets next page' do
+          get :show, id: 'sourceResource_title', per_page: 1
+
+          expect(assigns[:response].next_page).to eq 2
+        end
+
+        it 'knows when there are no more pages' do
+          get :show, id: 'sourceResource_title', per_page: 1, page: 2
+
+          expect(assigns[:response].next_page).to eq nil
+        end
+      end
     end
   end
 end
