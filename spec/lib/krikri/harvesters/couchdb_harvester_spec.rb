@@ -28,9 +28,9 @@ describe Krikri::Harvesters::CouchdbHarvester do
 {"id":"10046--http://ark.cdlib.org/ark:/13030/kt029016nn","key":"10046--http://ark.cdlib.org/ark:/13030/kt029016nn","value":{"rev":"11-b3e9a75b56599a78cb875ffb5c508c2b"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt029016nn","_rev":"11-b3e9a75b56599a78cb875ffb5c508c2b","object":"bfecb6c11db808ca6603cd13def5f9bf"}},
 {"id":"10046--http://ark.cdlib.org/ark:/13030/kt038nc34r","key":"10046--http://ark.cdlib.org/ark:/13030/kt038nc34r","value":{"rev":"11-c9ebbeb8064280e674ea79c0b16c59d6"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt038nc34r","_rev":"11-c9ebbeb8064280e674ea79c0b16c59d6","object":"d2e3b4d91fba4f77df6fb8fab46f3375"}},
 {"id":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","key":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","value":{"rev":"11-7fbb604516852656d30f37bbe1f09d5f"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","_rev":"11-7fbb604516852656d30f37bbe1f09d5f","object":"0162e70cde3d9d77ba8cbe9e146beda4"}},
-{"id":"_design/all_provider_docs","key":"_design/all_provider_docs","value":{"rev":"1-9347ba9fffa89bdd76092466a0e83d71"}},
-{"id":"_design/auth","key":"_design/auth","value":{"rev":"1-1beca9b6e893c434a7d4fc19d9468d9b"}},
-{"id":"_design/export_database","key":"_design/export_database","value":{"rev":"1-82e865010760bbe7760acd013a0913ba"}}
+{"id":"_design/all_provider_docs","key":"_design/all_provider_docs","value":{"rev":"1-5f16aec70767aa294b07ad4396bc56af"},"doc":{"_id":"_design/all_provider_docs","_rev":"1-9347ba9fffa89bdd76092466a0e83d71"}},
+{"id":"_design/auth","key":"_design/auth","value":{"rev":"1-1beca9b6e893c434a7d4fc19d9468d9b"},"doc":{"_id":"_design/auth","_rev":"1-1beca9b6e893c434a7d4fc19d9468d9b"}},
+{"id":"_design/export_database","key":"_design/export_database","value":{"rev":"1-82e865010760bbe7760acd013a0913ba"},"doc":{"_id":"_design/export_database","_rev":"1-82e865010760bbe7760acd013a0913ba"}}
 ]}
 EOS
   end
@@ -57,9 +57,9 @@ EOS
     <<-EOS.strip_heredoc
 {"total_rows":8,"offset":0,"rows":[
 {"id":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","key":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","value":{"rev":"11-7fbb604516852656d30f37bbe1f09d5f"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","_rev":"11-7fbb604516852656d30f37bbe1f09d5f","object":"0162e70cde3d9d77ba8cbe9e146beda4"}},
-{"id":"_design/all_provider_docs","key":"_design/all_provider_docs","value":{"rev":"1-9347ba9fffa89bdd76092466a0e83d71"}},
-{"id":"_design/auth","key":"_design/auth","value":{"rev":"1-1beca9b6e893c434a7d4fc19d9468d9b"}},
-{"id":"_design/export_database","key":"_design/export_database","value":{"rev":"1-82e865010760bbe7760acd013a0913ba"}}
+{"id":"_design/all_provider_docs","key":"_design/all_provider_docs","value":{"rev":"1-5f16aec70767aa294b07ad4396bc56af"},"doc":{"_id":"_design/all_provider_docs","_rev":"1-9347ba9fffa89bdd76092466a0e83d71"}},
+{"id":"_design/auth","key":"_design/auth","value":{"rev":"1-1beca9b6e893c434a7d4fc19d9468d9b"},"doc":{"_id":"_design/auth","_rev":"1-1beca9b6e893c434a7d4fc19d9468d9b"}},
+{"id":"_design/export_database","key":"_design/export_database","value":{"rev":"1-82e865010760bbe7760acd013a0913ba"},"doc":{"_id":"_design/export_database","_rev":"1-82e865010760bbe7760acd013a0913ba"}}
 ]}
 EOS
   end
@@ -171,7 +171,6 @@ EOS
 
         end
         it 'sends request with correct default options' do
-          p 'sends request ...'
           records = subject.send(ex_opts[:method])
           records.first if ex_opts[:method] == :records  # start enumerator
           expect(subject.client).to have_received(:view)

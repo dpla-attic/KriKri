@@ -47,7 +47,8 @@ module Krikri::Harvesters
     ##
     # Return the total number of documents reported by a CouchDB view.
     #
-    # @param opts [Hash]  Analysand `#view' options
+    # @param opts [Hash]  Analysand::Database#view options
+    #                     - view:  database view name
     # @return [Fixnum]
     #
     def count(opts = {})
@@ -85,26 +86,36 @@ module Krikri::Harvesters
     def records(opts = {})
       view = opts[:view] || @opts[:view]
       limit = opts[:limit] || @opts[:limit]
+      record_rows(view, limit).map do |row|
+        @record_class.build(
+          mint_id(row['doc']['_id']),
+          row['doc'].to_json,
+          'application/json'
+        )
+      end
+    end
 
+    ##
+    # Return an enumerator that provides individual records from batched view
+    # requests.
+    #
+    # @return [Enumerator]
+    # @see #records
+    def record_rows(view, limit)
       en = Enumerator.new do |e|
         view_opts = {include_docs: true, stream: false, limit: limit}
         rows_retrieved = 0
-        total_rows = 0
+        total_rows = nil
         loop do
           v = client.view(view, view_opts)
-          rows = v.rows
-          total_rows = v.total_rows
-          rows_retrieved += rows.size
-          rows.each do |row|
+          total_rows ||= v.total_rows
+          rows_retrieved += v.rows.size
+          v.rows.each do |row|
             next if row['id'].start_with?('_design')
-            e.yield @record_class.build(
-              mint_id(row['doc']['_id']),
-              row['doc'].to_json,
-              'application/json'
-            )
+            e.yield row
           end
           break if rows_retrieved == total_rows
-          view_opts[:startkey] = rows.last['id'] + '0'
+          view_opts[:startkey] = v.rows.last['id'] + '0'
         end
       end
       en.lazy
