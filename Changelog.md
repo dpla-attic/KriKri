@@ -1,3 +1,8 @@
+0.5.3 (7 April 2015)
+---
+
+* Rewrite validation reports model/controller - addresses pagination issues
+
 0.5.2 (6 April 2015)
 ---
 
