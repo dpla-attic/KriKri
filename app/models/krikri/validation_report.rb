@@ -1,23 +1,25 @@
 module Krikri
   class ValidationReport
-    attr_accessor :provider_id, :start, :rows
+    attr_accessor :provider_id, :page, :rows
 
     REQUIRED_FIELDS = ['dataProvider_name', 'isShownAt_id', 'preview_id',
                        'sourceResource_rights', 'sourceResource_title',
                        'sourceResource_type_id']
 
     ##
-    # @param &block may contain provider_id
-    #   Sample use:
-    #     ValidationReport.new.all do
-    #       self.provider_id = '0123'
-    #     end
+    # @example
+    #   ValidationReport.new.all
+    #   => [#<Blacklight::SolrResponse::Facets::FacetField:0x007fce32f46fe8 ...]
     #
-    # @return [Array<Blacklight::SolrResponse::Facet>]
-    def all(&block)
-      # set values from block
-      instance_eval &block if block_given?
-
+    # @example
+    #   report = ValidationReport.new
+    #   report.provider_id = '0123'
+    #   report.all
+    #   => [#<Blacklight::SolrResponse::Facets::FacetField:0x007fce32f46fe8 ...]
+    #
+    # @return [Array<Blacklight::SolrResponse::Facets::FacetField>] a report for
+    #   missing values in each of the `REQUIRED_FIELDS`
+    def all
       query_params = { :rows => 0,
                        'facet.field' => REQUIRED_FIELDS,
                        'facet.mincount' => 10000000,
@@ -29,25 +31,32 @@ module Krikri
     end
 
     ##
-    # @param id [String]
-    # @param &block may contain provider_id, start, rows
-    #   Sample use:
-    #     ValidationReport.new.find('sourceResource_title') do
-    #       self.provider_id = '0123'
-    #     end
+    # @param id [String] a field to check for missing values
+    #
+    # @example
+    #   ValidationReport.new.find('sourceResource_title')
+    #   => {"responseHeader"=>{"status"=>0, "QTime"=>123},
+    #       "response"=>{"numFound"=>2653, "start"=>0, "docs"=>[...]}}
+    #
+    # @example
+    #   report = ValidationReport.new
+    #   report.provider_id = '0123'
+    #   report.rows = 100
+    #   report.find('sourceResource_title')
     #
     # @raise [RSolr::Error::Http] for non-existant field requests
     # @return [Blacklight::SolrResponse]
-    def find(id, &block)
-      # set values from block
-      instance_eval &block if block_given?
-
-
+    #
+    # @todo possibly make better use of blacklight controllers? This currently
+    #   assumes that the default pagination is 10. Anything else will cause
+    #   trouble.
+    def find(id)
       query_params = { :qt => 'standard', :q => "-#{id}:[* TO *]" }
       query_params[:rows] = @rows.present? ? @rows : '10'
-      query_params[:fq] = "provider_id:\"#{provider_uri}\""
-      query_params[:start] = @start if @start.present? if
+      query_params[:fq] = "provider_id:\"#{provider_uri}\"" if
         provider_id.present?
+      multiplier = @rows ? @rows.to_i : 10
+      query_params[:start] = ((@page.to_i - 1) * multiplier) if @page.present?
 
       Krikri::SolrResponseBuilder.new(query_params).response
     end
