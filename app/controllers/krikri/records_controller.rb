@@ -51,14 +51,14 @@ module Krikri
       # :show may be set to false if you don't want the facet to be drawn in the
       # facet bar
 
-      config.add_facet_field 'sourceResource_type_id', :label => 'Type'
+      config.add_facet_field 'sourceResource_type_providedLabel', :label => 'Type'
       config.add_facet_field 'sourceResource_format', :label => 'Format'
-      config.add_facet_field 'sourceResource_spatial_name', :label => 'Place'
-      config.add_facet_field 'sourceResource_subject_name', :label => 'Subject'
+      config.add_facet_field 'sourceResource_spatial_providedLabel', :label => 'Place'
+      config.add_facet_field 'sourceResource_subject_providedLabel', :label => 'Subject'
       config.add_facet_field 'sourceResource_collection_title',
                              :label => 'Collection'
-      config.add_facet_field 'dataProvider_name', :label => 'Data Provider'
-      config.add_facet_field 'sourceResource_creator_name', :label => 'Creator'
+      config.add_facet_field 'dataProvider_providedLabel', :label => 'Data Provider'
+      config.add_facet_field 'sourceResource_creator_providedLabel', :label => 'Creator'
 
       # Have BL send all facet field names to Solr, which has been the default
       # previously. Simply remove these lines if you'd rather use Solr request
@@ -72,10 +72,10 @@ module Krikri
                              :label => 'Description'
       config.add_index_field 'sourceResource_date_providedLabel',
                              :label => 'Date'
-      config.add_index_field 'sourceResource_type_id', :label => 'Type'
+      config.add_index_field 'sourceResource_type_providedLabel', :label => 'Type'
       config.add_index_field 'sourceResource_format', :label => 'Format'
       config.add_index_field 'sourceResource_rights', :label => 'Rights'
-      config.add_index_field 'dataProvider_name', :label => 'Data Provider'
+      config.add_index_field 'dataProvider_providedLabel', :label => 'Data Provider'
 
       config.index.thumbnail_field = :preview_id
 
