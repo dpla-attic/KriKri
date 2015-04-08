@@ -2,7 +2,7 @@ module Krikri
   class ValidationReport
     attr_accessor :provider_id, :page, :rows
 
-    REQUIRED_FIELDS = ['dataProvider_name', 'isShownAt_id', 'preview_id',
+    REQUIRED_FIELDS = ['dataProvider_providedLabel', 'isShownAt_id', 'preview_id',
                        'sourceResource_rights', 'sourceResource_title',
                        'sourceResource_type_id']
 
