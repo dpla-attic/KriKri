@@ -1,3 +1,14 @@
+0.5.4 (9 April 2015)
+---
+* QA interface bug fixes
+    * Fix RecordsController to use correct Solr field names
+    * Refactor Krikri::Harvesters::CouchdbHarvester
+* Update dataProvider field in validation report
+    * Exclude design docs
+    * Refactor specs for CouchdbHarvester
+    * Test that `#records` iterates over pages
+    * Have CouchdbHarvester make batch requests
+
 0.5.3 (7 April 2015)
 ---
 

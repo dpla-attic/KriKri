@@ -5,17 +5,80 @@ require 'pry'
 describe Krikri::Harvesters::CouchdbHarvester do
 
   let(:args) { { uri: 'http://example.org:5984/couchdb' } }
-  let(:svr) { double(Analysand::StreamingViewResponse) }
+  # Generic Analysand view responses for all records.  Note that we're using a
+  # ViewResponse when it could be a StreamingViewResponse in some cases.  The
+  # interfaces of these classes is the same, so it keeps these tests cleaner to
+  # stick to ViewResponse.
+  let(:view_response) { double(Analysand::ViewResponse) }
+  # Analysand view responses for paginated requests that are used in `#records'
+  let(:view_response_page_1) { double(Analysand::ViewResponse) }
+  let(:view_response_page_2) { double(Analysand::ViewResponse) }
+  # Analysand view responses for `#count'
+  let(:view_response_totalrows) { double(Analysand::ViewResponse) }
+  let(:view_response_ddcount) { double(Analysand::ViewResponse) }
 
-  # Set up some responses to reuse
-  let(:view_response) do
+  # The HTTP response bodies from the view responses above, plus the options
+  # passed in the corresponding client.view calls
+  #
+  let(:view_response_body) do
     <<-EOS.strip_heredoc
-{"total_rows":5,"offset":0,"rows":[
+{"total_rows":8,"offset":0,"rows":[
 {"id":"10046--http://ark.cdlib.org/ark:/13030/kt009nc254","key":"10046--http://ark.cdlib.org/ark:/13030/kt009nc254","value":{"rev":"11-e68fd829f55b85dec51d044fe4711530"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt009nc254","_rev":"11-e68fd829f55b85dec51d044fe4711530","object":"e6d7a72d8e957175a46965f104b9bb52"}},
 {"id":"10046--http://ark.cdlib.org/ark:/13030/kt0199p9ph","key":"10046--http://ark.cdlib.org/ark:/13030/kt0199p9ph","value":{"rev":"11-fec45c2c32bf6b468d8d6413796ff85b"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt0199p9ph","_rev":"11-fec45c2c32bf6b468d8d6413796ff85b","object":"744cc17058614440ae6c3722aaacb4c3"}},
 {"id":"10046--http://ark.cdlib.org/ark:/13030/kt029016nn","key":"10046--http://ark.cdlib.org/ark:/13030/kt029016nn","value":{"rev":"11-b3e9a75b56599a78cb875ffb5c508c2b"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt029016nn","_rev":"11-b3e9a75b56599a78cb875ffb5c508c2b","object":"bfecb6c11db808ca6603cd13def5f9bf"}},
 {"id":"10046--http://ark.cdlib.org/ark:/13030/kt038nc34r","key":"10046--http://ark.cdlib.org/ark:/13030/kt038nc34r","value":{"rev":"11-c9ebbeb8064280e674ea79c0b16c59d6"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt038nc34r","_rev":"11-c9ebbeb8064280e674ea79c0b16c59d6","object":"d2e3b4d91fba4f77df6fb8fab46f3375"}},
-{"id":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","key":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","value":{"rev":"11-7fbb604516852656d30f37bbe1f09d5f"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","_rev":"11-7fbb604516852656d30f37bbe1f09d5f","object":"0162e70cde3d9d77ba8cbe9e146beda4"}}
+{"id":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","key":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","value":{"rev":"11-7fbb604516852656d30f37bbe1f09d5f"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","_rev":"11-7fbb604516852656d30f37bbe1f09d5f","object":"0162e70cde3d9d77ba8cbe9e146beda4"}},
+{"id":"_design/all_provider_docs","key":"_design/all_provider_docs","value":{"rev":"1-5f16aec70767aa294b07ad4396bc56af"},"doc":{"_id":"_design/all_provider_docs","_rev":"1-9347ba9fffa89bdd76092466a0e83d71"}},
+{"id":"_design/auth","key":"_design/auth","value":{"rev":"1-1beca9b6e893c434a7d4fc19d9468d9b"},"doc":{"_id":"_design/auth","_rev":"1-1beca9b6e893c434a7d4fc19d9468d9b"}},
+{"id":"_design/export_database","key":"_design/export_database","value":{"rev":"1-82e865010760bbe7760acd013a0913ba"},"doc":{"_id":"_design/export_database","_rev":"1-82e865010760bbe7760acd013a0913ba"}}
+]}
+EOS
+  end
+
+  let(:view_opts_page_1) do
+    { include_docs: true, stream: false, limit: 4 }
+  end
+  let(:view_response_body_page_1) do
+    <<-EOS.strip_heredoc
+{"total_rows":8,"offset":0,"rows":[
+{"id":"10046--http://ark.cdlib.org/ark:/13030/kt009nc254","key":"10046--http://ark.cdlib.org/ark:/13030/kt009nc254","value":{"rev":"11-e68fd829f55b85dec51d044fe4711530"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt009nc254","_rev":"11-e68fd829f55b85dec51d044fe4711530","object":"e6d7a72d8e957175a46965f104b9bb52"}},
+{"id":"10046--http://ark.cdlib.org/ark:/13030/kt0199p9ph","key":"10046--http://ark.cdlib.org/ark:/13030/kt0199p9ph","value":{"rev":"11-fec45c2c32bf6b468d8d6413796ff85b"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt0199p9ph","_rev":"11-fec45c2c32bf6b468d8d6413796ff85b","object":"744cc17058614440ae6c3722aaacb4c3"}},
+{"id":"10046--http://ark.cdlib.org/ark:/13030/kt029016nn","key":"10046--http://ark.cdlib.org/ark:/13030/kt029016nn","value":{"rev":"11-b3e9a75b56599a78cb875ffb5c508c2b"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt029016nn","_rev":"11-b3e9a75b56599a78cb875ffb5c508c2b","object":"bfecb6c11db808ca6603cd13def5f9bf"}},
+{"id":"10046--http://ark.cdlib.org/ark:/13030/kt038nc34r","key":"10046--http://ark.cdlib.org/ark:/13030/kt038nc34r","value":{"rev":"11-c9ebbeb8064280e674ea79c0b16c59d6"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt038nc34r","_rev":"11-c9ebbeb8064280e674ea79c0b16c59d6","object":"d2e3b4d91fba4f77df6fb8fab46f3375"}}
+]}
+EOS
+  end
+
+  let(:view_opts_page_2) do
+    { include_docs: true, stream: false, limit: 4,
+      startkey: '10046--http://ark.cdlib.org/ark:/13030/kt038nc34r0' }
+  end
+  let(:view_response_body_page_2) do
+    <<-EOS.strip_heredoc
+{"total_rows":8,"offset":0,"rows":[
+{"id":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","key":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","value":{"rev":"11-7fbb604516852656d30f37bbe1f09d5f"},"doc":{"_id":"10046--http://ark.cdlib.org/ark:/13030/kt0489p9km","_rev":"11-7fbb604516852656d30f37bbe1f09d5f","object":"0162e70cde3d9d77ba8cbe9e146beda4"}},
+{"id":"_design/all_provider_docs","key":"_design/all_provider_docs","value":{"rev":"1-5f16aec70767aa294b07ad4396bc56af"},"doc":{"_id":"_design/all_provider_docs","_rev":"1-9347ba9fffa89bdd76092466a0e83d71"}},
+{"id":"_design/auth","key":"_design/auth","value":{"rev":"1-1beca9b6e893c434a7d4fc19d9468d9b"},"doc":{"_id":"_design/auth","_rev":"1-1beca9b6e893c434a7d4fc19d9468d9b"}},
+{"id":"_design/export_database","key":"_design/export_database","value":{"rev":"1-82e865010760bbe7760acd013a0913ba"},"doc":{"_id":"_design/export_database","_rev":"1-82e865010760bbe7760acd013a0913ba"}}
+]}
+EOS
+  end
+
+  let(:view_opts_common_stream) { { include_docs: false, stream: true } }
+  let(:view_opts_common_nostream) do
+    { include_docs: true, stream: false, limit: 10 }
+  end
+
+  let(:view_opts_designdoc_count) do
+    { include_docs: false, stream: false,
+      startkey: '_design', endkey: '_design0' }
+  end
+  let(:view_response_body_designdoc_count) do
+    <<-EOS.strip_heredoc
+{"total_rows":8,"offset":5,"rows":[
+{"id":"_design/all_provider_docs","key":"_design/all_provider_docs","value":{"rev":"1-9347ba9fffa89bdd76092466a0e83d71"}},
+{"id":"_design/auth","key":"_design/auth","value":{"rev":"1-1beca9b6e893c434a7d4fc19d9468d9b"}},
+{"id":"_design/export_database","key":"_design/export_database","value":{"rev":"1-82e865010760bbe7760acd013a0913ba"}}
 ]}
 EOS
   end
@@ -28,17 +91,41 @@ EOS
 
   let(:identifier) { '10046--http://ark.cdlib.org/ark:/13030/kt009nc254' }
 
-  let(:parsed_response) { JSON.parse(view_response) }
+  let(:parsed_response) { JSON.parse(view_response_body) }
+  let(:parsed_response_page_1) { JSON.parse(view_response_body_page_1) }
+  let(:parsed_response_page_2) { JSON.parse(view_response_body_page_2) }
+  let(:parsed_response_designdoc_count) do
+    JSON.parse(view_response_body_designdoc_count)
+  end
+  let(:parsed_response_no_dd) do
+    rv = parsed_response
+    rv['rows'] = parsed_response['rows'].select do |r|
+      !r['id'].start_with?('_design')
+    end
+    rv
+  end
 
   before do
-    allow(svr).to receive(:docs)
-      .and_return(parsed_response['rows'].map { |r| r['doc'] })
-    allow(svr).to receive(:keys)
+    allow(view_response).to receive(:rows)
+      .and_return(parsed_response['rows'])
+    allow(view_response).to receive(:keys)
       .and_return(parsed_response['rows'].map { |r| r['key'] })
-    allow(svr).to receive(:total_rows)
+    allow(view_response).to receive(:total_rows)
       .and_return(parsed_response['total_rows'])
-    allow(subject.client).to receive(:view)
-      .with(instance_of(String), instance_of(Hash)).and_return(svr)
+
+    allow(view_response_page_1).to receive(:rows)
+      .and_return(parsed_response_page_1['rows'])
+    allow(view_response_page_1).to receive(:total_rows)
+      .and_return(parsed_response_page_1['total_rows'])
+    allow(view_response_page_2).to receive(:rows)
+      .and_return(parsed_response_page_2['rows'])
+    allow(view_response_page_2).to receive(:total_rows)
+      .and_return(parsed_response_page_2['total_rows'])
+
+    allow(view_response_ddcount).to receive(:keys)
+      .and_return(parsed_response_designdoc_count['rows'].map { |r| r['key'] })
+    allow(view_response_ddcount).to receive(:total_rows)
+      .and_return(parsed_response_designdoc_count['total_rows'])
   end
 
   subject { described_class.new(args) }
@@ -65,43 +152,110 @@ EOS
           couchdb: { view: '_all_docs' } }
       end
 
-      let(:request_opts) { { view: 'foo/bar' } }
+      # "send options" shared example takes these options:
+      #
+      # `method`: method to test
+      # `m_opts`: options passed into the given method
+      # `r_opts`: options that should be passed to client.view for the request,
+      #           given the method opts
+      # `default_r_opts`: default options that should be used for client.view
+      #           given no options from the caller
+      #
+      shared_examples 'send options' do |ex_opts|
+        before do
+          allow(subject.client).to receive(:view).and_return view_response
+          allow(view_response).to receive(:keys)
+            .and_return(parsed_response['rows'].map { |r| r['key'] })
+          allow(view_response).to receive(:total_rows)
+           .and_return(parsed_response['total_rows'])
 
-      shared_examples 'send options' do
-        it 'sends request with option' do
-          result = subject.send(method)
-          result.first if [:records, :record_ids].include? method
-          expect(subject.client).to have_received(request_type)
-            .with(args[:couchdb][:view], hash_including(view_args))
+        end
+        it 'sends request with correct default options' do
+          records = subject.send(ex_opts[:method])
+          records.first if ex_opts[:method] == :records  # start enumerator
+          expect(subject.client).to have_received(:view)
+            .with('_all_docs', ex_opts[:default_r_opts])
         end
 
         it 'adds options passed into request' do
-          result = subject.send(method, request_opts)
-          result.first if [:records, :record_ids].include? method
-          expect(subject.client).to have_received(request_type)
-            .with(request_opts[:view], hash_including(view_args))
+          records = subject.send(ex_opts[:method], ex_opts[:m_opts])
+          records.first if ex_opts[:method] == :records  # start enumerator
+          expect(subject.client).to have_received(:view)
+            .with(ex_opts[:m_opts][:view], ex_opts[:r_opts])
         end
       end
 
       describe '#count' do
-        include_examples 'send options'
-        let(:request_type) { :view }
-        let(:method) { :count }
-        let(:view_args) { { :limit => 0, :include_docs=>false, :stream=>true } }
+        default_request_opts = {
+          include_docs: false, stream: false,
+          startkey: '_design', endkey: '_design0'
+        }
+        include_examples 'send options', method: :count,
+                                         m_opts: { view: 'foo/bar' },
+                                         r_opts: default_request_opts,
+                                         default_r_opts: default_request_opts
+
+        it 'returns the correct count' do
+          expect(subject.client).to receive(:view)
+            .with(instance_of(String), view_opts_designdoc_count)
+            .and_return(view_response_ddcount)
+          expect(subject.count).to eq 5
+        end
       end
 
       describe '#records' do
-        include_examples 'send options'
-        let(:request_type) { :view }
-        let(:method) { :records }
-        let(:view_args) { { :include_docs=>true, :stream=>true } }
+        before do
+          allow(Krikri::OriginalRecord).to receive(:build)
+            .and_return instance_double(Krikri::OriginalRecord)
+        end
+
+        default_request_opts = {
+          include_docs: true, stream: false, limit: 10
+        }
+        request_opts = {
+          include_docs: true, stream: false, limit: 5
+        }
+        include_examples 'send options', method: :records,
+                                         m_opts: { view: 'foo/bar', limit: 5 },
+                                         r_opts: request_opts,
+                                         default_r_opts: default_request_opts
+
+        it 'iterates over paginated requests' do
+          # See the view_opts_page_* and related mocks above.
+          # given those, the call to #records with a limit of 4 will make two
+          # Analysand::Database.view calls and return 5 records.
+          expect(subject.client).to receive(:view)
+            .with(instance_of(String), view_opts_page_1)
+            .and_return(view_response_page_1)
+          expect(subject.client).to receive(:view)
+            .with(instance_of(String), view_opts_page_2)
+            .and_return(view_response_page_2)
+
+          recs = subject.records(limit: 4)
+          expect(recs.count).to eq 5
+        end
       end
 
       describe '#record_ids' do
-        include_examples 'send options'
-        let(:request_type) { :view }
-        let(:method) { :record_ids }
-        let(:view_args) { { :include_docs=>false, :stream=>true } }
+        default_request_opts = { :include_docs=>false, :stream=>true }
+        include_examples 'send options', method: :record_ids,
+                                         m_opts: { view: 'foo/bar' },
+                                         r_opts: default_request_opts,
+                                         default_r_opts: default_request_opts
+
+        it 'returns record ids without design documents' do
+          expect(subject.client).to receive(:view)
+            .with(instance_of(String), view_opts_common_stream)
+            .and_return(view_response)
+          allow(view_response).to receive(:keys)
+            .and_return(parsed_response['rows'].map { |r| r['key'] })
+          expected_ids = parsed_response_no_dd['rows'].map { |r| r['id'] }
+          # The actual IDs will be returned as an emumerator, so create an
+          # array for the sake of comparison.
+          actual_ids = []
+          subject.record_ids.each { |id| actual_ids << id }
+          expect(actual_ids).to eq expected_ids
+        end
       end
     end
 
@@ -143,7 +297,12 @@ EOS
       end
     end
 
-    it_behaves_like 'a harvester'
+    context do
+      before do
+        allow(subject.client).to receive(:view).and_return view_response
+      end
+      it_behaves_like 'a harvester'
+    end
   end
 end
 
