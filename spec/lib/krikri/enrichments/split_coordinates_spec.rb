@@ -6,9 +6,7 @@ describe Krikri::Enrichments::SplitCoordinates do
   context 'with place object' do
     let(:lat) { nil }
     let(:long) { nil }
-    let(:place) do
-      build(:place, lat: lat, long: long)
-    end
+    let(:place) { build(:place, lat: lat, long: long) }
 
     shared_examples 'latitude and longitude' do |expected_lat, expected_long|
       it 'assigns latitude' do
@@ -16,14 +14,14 @@ describe Krikri::Enrichments::SplitCoordinates do
       end
       it 'assigns longitude' do
         expect(subject.enrich_value(place).long).to eq expected_long
-      end      
+      end
     end
 
     shared_examples 'nonsensical coordinates' do
-      it 'returns empty coordinates' do
+      it 'retains original coordinates' do
         rv = subject.enrich_value(place)
-        expect(rv.lat).to eq []
-        expect(rv.long).to eq []
+        expect(rv.lat).to eq [lat].compact
+        expect(rv.long).to eq [long].compact
       end
     end
 
@@ -53,7 +51,7 @@ describe Krikri::Enrichments::SplitCoordinates do
     end
 
     context 'with a latitude containing non-decimal characters' do
-      let(:lat) {'10.0,10;'}
+      let(:lat) { '10.0,10;' }
       include_examples 'nonsensical coordinates'
     end
   end  # context 'with place object'

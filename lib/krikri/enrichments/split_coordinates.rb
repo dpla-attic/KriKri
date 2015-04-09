@@ -19,20 +19,21 @@ module Krikri::Enrichments
     # Enrich a `DPLA::MAP::Place' object by splitting the string given
     # in its `lat' or `long'.
     #
-    # @param place [DPLA::MAP::Place]
-    # @return [DPLA::MAP::Place]
+    # place.lat and place.long are ActiveTriples::Terms, we only care
+    # about the first value. If multiple values are given, this enrichment
+    # will remove them.
     #
+    # @param place [DPLA::MAP::Place]
+    #
+    # @return [DPLA::MAP::Place]
     def enrich_value(place)
       return place if !place.is_a? DPLA::MAP::Place
+      return place unless splittable?(place.lat) || splittable?(place.long)
 
-      # place.lat and place.long are arrays of one value if they are assigned.
-
-      return place if place.lat.first && place.long.first  # no split required
-
-      if place.lat.first
+      if place.lat.any?
         latlong = coord_values(place.lat.first)
         assign_latlong!(place, latlong.first, latlong.last)
-      elsif place.long.first
+      elsif place.long.any?
         latlong = coord_values(place.long.first)
         assign_latlong!(place, latlong.last, latlong.first)
       end
@@ -41,15 +42,8 @@ module Krikri::Enrichments
     end
 
     def assign_latlong!(place, lat, long)
-      # We have to assign these one at a time because we can't do this:
-      # place.lat, place.long = [[nil], [nil]]
-      # ... which results in:
-      #     "value must be an RDF URI, Node, Literal, or a valid datatype.
-      #     See RDF::Literal. You provided nil"
-      # ... although this works fine:
-      # place.lat, place.long = [['10.0'], ['11.1']]
-      place.lat = lat
-      place.long = long
+      place.lat = lat if lat
+      place.long = long if long
     end
 
     ##
@@ -61,6 +55,7 @@ module Krikri::Enrichments
     # coordinates.
     #
     # @param s [String]  String of, hopefully, comma-separated decimals
+    #
     # @return [Array]
     def coord_values(s)
       coords = s.split(/ *, */)
@@ -68,6 +63,18 @@ module Krikri::Enrichments
       coords.map! { |c| c.to_f.to_s == c ? c : nil }   # must be decimal ...
       return [nil, nil] unless coords[0] && coords[1]  # ... i.e. not nil
       [coords[0], coords[1]]
+    end
+
+    private
+
+    ##
+    # @param value [ActiveTriples::Term<String>]
+    #
+    # @return [Boolean] true if value contains a string with a ','; false
+    #   otherwise
+    def splittable?(value)
+      return false if value.empty?
+      value.first.include? ','
     end
   end
 end
