@@ -1,67 +1,122 @@
 # coding: utf-8
 module Krikri::Enrichments
   ##
+  # Maps string values to DCMI Type vocabulary terms.
+  #
+  # Mapping is performed by comparing a hash of string keys to the pre-enriched
+  # value, using White Similarity comparisons to determine the closest match. If
+  # a suitable match is found, a {DLPA::MAP::Controlled::DCMIType} object is
+  # built from the appropriate hash value and set as the new value.
+  #
+  # This enrichment filters any values without a DCMI Type match, but ignores
+  # strings.
+  #
+  # @example
+  #
+  #   type_mapper = DcmiTypeMap.new
+  #   type_mapper.enrich_value('image') # finds RDF::DCMITYPE.Image
+  #   type_mapper.enrich_value('a book') # finds RDF::DCMITYPE.Text
+  #   type_mapper.enrich_value('a really cool book') # => nil
+  #
+  # @example
+  #
+  #   type_mapper = DcmiTypeMap.new('poloriod' => RDF::DCMIType.Image)
+  #   type_mapper.enrich_value('poloroid.') # finds RDF::DCMITYPE.Image
   #
   class DcmiTypeMap
     include Krikri::FieldEnrichment
 
-    DEFAULT_MAP = { 'image' => RDF::DCMIType.Image,
-                    'photograph' => RDF::DCMIType.Image,
-                    'sample book' => RDF::DCMIType.Image,
-                    'specimen' => RDF::DCMIType.Image,
-                    'textile' => RDF::DCMIType.Image,
-                    'frame' => RDF::DCMIType.Image,
-                    'costume' => RDF::DCMIType.Image,
-                    'statue' => RDF::DCMIType.Image,
-                    'sculpture' => RDF::DCMIType.Image,
-                    'container' => RDF::DCMIType.Image,
-                    'jewelry' => RDF::DCMIType.Image,
-                    'furnishing' => RDF::DCMIType.Image,
-                    'furniture' => RDF::DCMIType.Image,
-                    'drawing' => RDF::DCMIType.Image,
-                    'print' => RDF::DCMIType.Image,
-                    'paniting' => RDF::DCMIType.Image,
-                    'illumination' => RDF::DCMIType.Image,
-                    'poster' => RDF::DCMIType.Image,
-                    'appliance' => RDF::DCMIType.Image,
-                    'tool' => RDF::DCMIType.Image,
-                    'electronic component' => RDF::DCMIType.Image,
-                    'postcard' => RDF::DCMIType.Image,
-                    'equipment' => RDF::DCMIType.Image,
-                    'cartographic' => RDF::DCMIType.Image,
-                    'notated music' => RDF::DCMIType.Image,
-                    'mixed material' => RDF::DCMIType.Image,
-                    'text' => RDF::DCMIType.Text,
-                    'book' => RDF::DCMIType.Text,
-                    'publication' => RDF::DCMIType.Text,
-                    'magazine' => RDF::DCMIType.Text,
-                    'journal' => RDF::DCMIType.Text,
-                    'correspondence' => RDF::DCMIType.Text,
-                    'writing' => RDF::DCMIType.Text,
-                    'manuscript' => RDF::DCMIType.Text,
-                    'audio' => RDF::DCMIType.Sound,
-                    'sound' => RDF::DCMIType.Sound,
-                    'oral history recording' => RDF::DCMIType.Sound,
-                    'finding aid' => RDF::DCMIType.Collection,
-                    'online collection' => RDF::DCMIType.Collection,
-                    'electronic resource' => RDF::DCMIType.InteractiveResource,
-                    'video game' => RDF::DCMIType.InteractiveResource,
-                    'online exhibit' => RDF::DCMIType.InteractiveResource,
-                    'moving image' => RDF::DCMIType.MovingImage,
-                    'movingimage' => RDF::DCMIType.MovingImage,
-                    'motion picture' => RDF::DCMIType.MovingImage,
-                    'film' => RDF::DCMIType.MovingImage,
-                    'video' => RDF::DCMIType.MovingImage,
-                    'object' => RDF::DCMIType.PhysicalObject,
+    DEFAULT_MAP = { 'image' => RDF::DCMITYPE.Image,
+                    'photograph' => RDF::DCMITYPE.Image,
+                    'sample book' => RDF::DCMITYPE.Image,
+                    'specimen' => RDF::DCMITYPE.Image,
+                    'textile' => RDF::DCMITYPE.Image,
+                    'frame' => RDF::DCMITYPE.Image,
+                    'costume' => RDF::DCMITYPE.Image,
+                    'statue' => RDF::DCMITYPE.Image,
+                    'sculpture' => RDF::DCMITYPE.Image,
+                    'container' => RDF::DCMITYPE.Image,
+                    'jewelry' => RDF::DCMITYPE.Image,
+                    'furnishing' => RDF::DCMITYPE.Image,
+                    'furniture' => RDF::DCMITYPE.Image,
+                    'drawing' => RDF::DCMITYPE.Image,
+                    'print' => RDF::DCMITYPE.Image,
+                    'paniting' => RDF::DCMITYPE.Image,
+                    'illumination' => RDF::DCMITYPE.Image,
+                    'poster' => RDF::DCMITYPE.Image,
+                    'appliance' => RDF::DCMITYPE.Image,
+                    'tool' => RDF::DCMITYPE.Image,
+                    'electronic component' => RDF::DCMITYPE.Image,
+                    'postcard' => RDF::DCMITYPE.Image,
+                    'equipment' => RDF::DCMITYPE.Image,
+                    'cartographic' => RDF::DCMITYPE.Image,
+                    'notated music' => RDF::DCMITYPE.Image,
+                    'mixed material' => RDF::DCMITYPE.Image,
+                    'text' => RDF::DCMITYPE.Text,
+                    'book' => RDF::DCMITYPE.Text,
+                    'publication' => RDF::DCMITYPE.Text,
+                    'magazine' => RDF::DCMITYPE.Text,
+                    'journal' => RDF::DCMITYPE.Text,
+                    'correspondence' => RDF::DCMITYPE.Text,
+                    'writing' => RDF::DCMITYPE.Text,
+                    'written' => RDF::DCMITYPE.Text,
+                    'manuscript' => RDF::DCMITYPE.Text,
+                    'audio' => RDF::DCMITYPE.Sound,
+                    'sound' => RDF::DCMITYPE.Sound,
+                    'oral history recording' => RDF::DCMITYPE.Sound,
+                    'finding aid' => RDF::DCMITYPE.Collection,
+                    'online collection' => RDF::DCMITYPE.Collection,
+                    'electronic resource' => RDF::DCMITYPE.InteractiveResource,
+                    'video game' => RDF::DCMITYPE.InteractiveResource,
+                    'online exhibit' => RDF::DCMITYPE.InteractiveResource,
+                    'moving image' => RDF::DCMITYPE.MovingImage,
+                    'movingimage' => RDF::DCMITYPE.MovingImage,
+                    'motion picture' => RDF::DCMITYPE.MovingImage,
+                    'film' => RDF::DCMITYPE.MovingImage,
+                    'video' => RDF::DCMITYPE.MovingImage,
+                    'object' => RDF::DCMITYPE.PhysicalObject
                   }
 
+    ##
+    # @param map [Hash<String, RDF::Vocabulary::Term>]
     def initialize(map = nil)
       @map = map || DEFAULT_MAP
     end
 
+    ##
+    # @param value [Object]
+    #
+    # @return [DPLA::MAP::Controlled::DCMIType, nil] the matching DCMI Type
+    #   term. `nil` if no matches are found.
     def enrich_value(value)
       return value unless value.is_a? String
-      @map.fetch(value.downcase
+
+      match = @map.fetch(value.downcase) { most_similar(value) }
+      return nil if match.nil?
+      dcmi = DPLA::MAP::Controlled::DCMIType.new(match)
+      dcmi.prefLabel = match.label
+      dcmi
+    end
+
+
+    private
+
+    ##
+    # Performs White Similarity comparison against the keys, and gives the
+    # value of the closest match.
+    #
+    # @param value [String] a string value to compare to the hash map keys.
+    # @param threshold [Float] the value at which a string is considered to
+    #   be a match
+    #
+    # @return [RDF::Vocabulary::Term, nil] the closest DCMI type match, or `nil`
+    #   if none is sufficiently close
+    def most_similar(value, threshold = 0.5)
+      @white ||= Text::WhiteSimilarity.new
+      result = @map.max_by { |str, _| @white.similarity(value, str) }
+
+      return result[1] if @white.similarity(value, result.first) > threshold
+      nil
     end
   end
 end
