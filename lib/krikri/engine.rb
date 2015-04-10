@@ -8,6 +8,7 @@ require 'rdf/marmotta'
 require 'oai/client'
 require 'rest-client'
 require 'edtf'
+require 'text'
 require 'csv'
 
 require 'resque'
