@@ -1,3 +1,4 @@
+require 'rdf/isomorphic'
 require 'active_support'
 require 'rails_config'
 require 'krikri/ldp'
