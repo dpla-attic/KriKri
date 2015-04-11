@@ -160,6 +160,29 @@ describe Krikri::Parser::ValueArray do
     end
   end
 
+  describe '#last_value' do
+    it 'returns a single item ValueArray without an argument' do
+      expect(subject.last_value).to contain_exactly values.last
+    end
+
+    it 'returns only requested items when called with an argument' do
+      expect(subject.last_value(2)).to contain_exactly(*values[-2..-1])
+      expect(subject.last_value(2).count).to eq(2)
+    end
+
+    it 'returns an instance of its class' do
+      expect(subject.last_value).to be_a described_class
+    end
+
+    context 'with empty field' do
+      let(:values) { [] }
+
+      it 'returns an empty ValueArray' do
+        expect(subject.last_value).to be_empty
+      end
+    end
+  end
+
   describe '#concat' do
     it 'gives union of two arrays' do
       vals = subject.to_a.dup

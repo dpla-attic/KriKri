@@ -210,6 +210,18 @@ module Krikri
       end
 
       ##
+      # Retrieves the last element of a ValueArray. Uses an optional argument
+      # to specify how many items to return. By design, it behaves similarly
+      # to Array#last, but it intentionally doesn't override it.
+      #
+      # @return [ValueArray] a Krikri::Parser::ValueArray for last n elements
+      def last_value(*args)
+        return self.class.new(@array.last(*args)) unless args.empty?
+        self.class.new([@array.last].compact)
+      end
+
+
+      ##
       # @see Array#concat
       # @return [ValueArray]
       def flatten(*args, &block)
