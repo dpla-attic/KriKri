@@ -1,3 +1,15 @@
+0.5.5 (12 April 2015)
+---
+* Add a variety of enrichments
+  * Bnode Deduplication enrichment
+  * "DCMI Enforcer" enrichment
+  * DCMIType mapping enrichment
+  * Split coordinates (when given in a single field as lat, long or long, lat)
+  * `ConvertToSentenceCase` enrichment
+  * Enrichment to copy non-DCMI type values
+  * Enrichment to truncate string at 1000 characters
+* `#last_value` method to get the last parsed value in the Mapping DSL
+
 0.5.4 (9 April 2015)
 ---
 * QA interface bug fixes

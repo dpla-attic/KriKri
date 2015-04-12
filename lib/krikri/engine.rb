@@ -1,3 +1,4 @@
+require 'rdf/isomorphic'
 require 'active_support'
 require 'rails_config'
 require 'krikri/ldp'
@@ -8,6 +9,7 @@ require 'rdf/marmotta'
 require 'oai/client'
 require 'rest-client'
 require 'edtf'
+require 'text'
 require 'csv'
 
 require 'resque'
