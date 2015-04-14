@@ -75,6 +75,11 @@ module Krikri
     initializer :rdf_repository do
       Krikri::Repository =
         RDF::Marmotta.new(Krikri::Settings['marmotta']['base'])
+
+      Krikri::Repository.query_client.instance_eval do
+        @http.keep_alive = 360
+        @http.read_timeout = 360
+      end
     end
 
     initializer :blacklight_settings do
