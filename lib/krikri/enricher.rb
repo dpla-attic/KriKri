@@ -83,7 +83,7 @@ module Krikri
     #
     def chain_enrichments!(agg)
       chain.keys.each do |e|
-        enrichment = e.to_s.constantize.new
+        enrichment = enrichment_cache(e)
         if enrichment.is_a? Krikri::FieldEnrichment
           agg = do_field_enrichment(agg, enrichment, chain[e])
         else
@@ -105,9 +105,9 @@ module Krikri
     # @see Krikri::Enrichment
     #
     def do_basic_enrichment(agg, enrichment, options)
-      enrichment.enrich(
-        agg, options[:input_fields], options[:output_fields]
-      )
+      enrichment.enrich(agg,
+                        options[:input_fields],
+                        options[:output_fields])
     end
 
     ##
@@ -150,6 +150,15 @@ module Krikri
       else
         return nil
       end
+    end
+
+    ##
+    # A cache of enrichment objects for the current instance. This allows
+    # individual enrichment instances to maintain their own caches for the life
+    # of a `#run`.
+    def enrichment_cache(name)
+      @enrichment_cache ||= {}
+      @enrichment_cache[name] ||= name.to_s.constantize.new
     end
   end
 end
