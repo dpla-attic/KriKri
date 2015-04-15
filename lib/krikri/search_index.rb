@@ -118,7 +118,6 @@ module Krikri
     end
   end
 
-
   ##
   # Generates flattened Solr documents and manages indexing of DPLA MAP models.
   #
@@ -317,10 +316,7 @@ module Krikri
     ##
     # @see Krikri::SearchIndex#hash_for_index_schema
     def hash_for_index_schema(aggregation)
-      graph = aggregation.to_jsonld['@graph'][0]
-      # TODO: munge graph to MAPv3
-      #       update search_index_spec.rb when that's done.
-      graph
+      aggregation.to_3_1_json
     end
   end
 end
