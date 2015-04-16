@@ -1,3 +1,7 @@
+0.5.7 (16 April 2015)
+---
+* Update MAPv3.1 mapping with edm:object fix
+
 0.5.6 (16 April 2015)
 ---
 * Add Enrichment instance caching to Enricher
