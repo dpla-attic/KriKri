@@ -131,6 +131,14 @@ EOS
         expect(aggregation.sourceResource.first.title)
           .to eq(['nice and clean'])
       end
+
+      it 'caches enrichments' do
+        subject.chain_enrichments!(aggregation)
+        chain.keys.each do |name|
+          expect(subject.send(:enrichment_cache, name))
+            .to be_a Krikri::Enrichment
+        end
+      end
     end
 
     context 'with a basic enrichment' do

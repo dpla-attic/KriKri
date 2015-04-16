@@ -83,6 +83,7 @@ module Krikri
 
     initializer :aggregation do
       DPLA::MAP::Aggregation.class_eval do
+        include Krikri::MapCrosswalk
         include Krikri::LDP::RdfSource
         configure :base_uri => Krikri::Settings['marmotta']['item_container']
 
