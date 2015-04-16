@@ -85,7 +85,7 @@ module Krikri
           view.respond_to?(:rdf_subject) ? view.rdf_subject.to_s : nil
         end
 
-        set_value(hash, :object, @parent.object, true) do |view|
+        set_value(hash, :object, @parent.preview, true) do |view|
           view.respond_to?(:rdf_subject) ? view.rdf_subject.to_s : nil
         end
 
