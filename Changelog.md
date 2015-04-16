@@ -1,3 +1,9 @@
+0.5.6 (16 April 2015)
+---
+* Add Enrichment instance caching to Enricher
+* Create enrichment to split a resource by its providedLabel
+* Format Aggregations to MAP 3.1 for indexing
+
 0.5.5 (12 April 2015)
 ---
 * Add a variety of enrichments
