@@ -89,30 +89,30 @@
        -->
 
        <str name="qf">
-         dataProvider_name 
+         dataProvider_providedLabel
          sourceResource_collection_title
-         sourceResource_creator_name
+         sourceResource_creator_providedLabel
          sourceResource_date_providedLabel
          sourceResource_description
          sourceResource_format
          sourceResource_rights
-         sourceResource_spatial_name
-         sourceResource_subject_name
+         sourceResource_spatial_providedLabel
+         sourceResource_subject_providedLabel
          sourceResource_title
          sourceResource_type_id
          text
        </str>
 
        <str name="pf">
-         dataProvider_name 
+         dataProvider_providedLabel
          sourceResource_collection_title
-         sourceResource_creator_name
+         sourceResource_creator_providedLabel
          sourceResource_date_providedLabel
          sourceResource_description
          sourceResource_format
          sourceResource_rights
-         sourceResource_spatial_name
-         sourceResource_subject_name
+         sourceResource_spatial_providedLabel
+         sourceResource_subject_providedLabel
          sourceResource_title
          sourceResource_type_id
          text
@@ -123,16 +123,16 @@
 
        <str name="fl">
          id,
-         dataProvider_name, 
+         dataProvider_providedLabel,
          preview_id,
          sourceResource_collection_title,
-         sourceResource_creator_name,
+         sourceResource_creator_providedLabel,
          sourceResource_date_providedLabel,
          sourceResource_description,
          sourceResource_format,
          sourceResource_rights,
-         sourceResource_spatial_name,
-         sourceResource_subject_name,
+         sourceResource_spatial_providedLabel,
+         sourceResource_subject_providedLabel,
          sourceResource_title,
          sourceResource_type_id
        </str>
@@ -140,7 +140,7 @@
        <str name="facet">true</str>
        <str name="facet.mincount">1</str>
        <str name="facet.limit">10</str>
-       <str name="facet.field">dataProvider_name</str>
+       <str name="facet.field">dataProvider_providedLabel</str>
 
      </lst>
       
