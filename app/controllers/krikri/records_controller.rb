@@ -51,7 +51,7 @@ module Krikri
       # :show may be set to false if you don't want the facet to be drawn in the
       # facet bar
 
-      config.add_facet_field 'sourceResource_type_providedLabel',
+      config.add_facet_field 'sourceResource_type_name',
                              label: 'Type',
                              limit: 20
       config.add_facet_field 'sourceResource_format',
@@ -83,13 +83,26 @@ module Krikri
 
       # solr fields to be displayed in the index (search results) view
       #   The ordering of the field names is the order of the display
-      config.add_index_field 'sourceResource_title', label: 'Title'
-      config.add_index_field 'sourceResource_description', label: 'Description'
-      config.add_index_field 'sourceResource_date_providedLabel', label: 'Date'
-      config.add_index_field 'sourceResource_type_providedLabel', label: 'Type'
-      config.add_index_field 'sourceResource_format', label: 'Format'
-      config.add_index_field 'sourceResource_rights', label: 'Rights'
-      config.add_index_field 'dataProvider_providedLabel', label: 'Data Provider'
+      config.add_index_field 'sourceResource_title', 
+                             label: 'Title'
+      config.add_index_field 'sourceResource_creator_providedLabel', 
+                             label: 'Creator'
+      config.add_index_field 'sourceResource_date_providedLabel', 
+                             label: 'Date'
+      config.add_index_field 'sourceResource_description', 
+                             label: 'Description'
+      config.add_index_field 'sourceResource_type_name', 
+                             label: 'Type'
+      config.add_index_field 'sourceResource_format', 
+                             label: 'Format'
+      config.add_index_field 'sourceResource_subject_providedLabel',
+                             label: 'Subject'
+      config.add_index_field 'sourceResource_rights', 
+                             label: 'Rights'
+      config.add_index_field 'sourceResource_collection_title',
+                             label: 'Collection'
+      config.add_index_field 'dataProvider_providedLabel', 
+                             label: 'Data Provider'
 
       config.index.thumbnail_field = :preview_id
 

@@ -631,6 +631,7 @@ v         currently supported on types that are sorted internally as strings
    <field name="sourceResource_type_id" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_type_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="sourceResource_type_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="sourceResource_type_name" type="string" indexed="true" stored="true" multiValued="true" />
 
    <!-- Dynamic field definitions.  If a field name is not found, dynamicFields
         will be used if the name matches any of the patterns.
@@ -735,6 +736,7 @@ v         currently supported on types that are sorted internally as strings
   <copyField source="sourceResource_subject_providedLabel" dest="text" />
   <copyField source="sourceResource_temporal" dest="text" />
   <copyField source="sourceResource_title" dest="text" />
+  <copyField source="sourceResource_type_name" dest="text" />
 
    <!-- Above, multiple source fields are copied to the [text] field.
 	  Another way to map multiple source fields to the same
