@@ -99,7 +99,7 @@
          sourceResource_spatial_providedLabel
          sourceResource_subject_providedLabel
          sourceResource_title
-         sourceResource_type_id
+         sourceResource_type_name
          text
        </str>
 
@@ -114,7 +114,7 @@
          sourceResource_spatial_providedLabel
          sourceResource_subject_providedLabel
          sourceResource_title
-         sourceResource_type_id
+         sourceResource_type_name
          text
        </str>
        
@@ -134,7 +134,7 @@
          sourceResource_spatial_providedLabel,
          sourceResource_subject_providedLabel,
          sourceResource_title,
-         sourceResource_type_id
+         sourceResource_type_name
        </str>
 
        <str name="facet">true</str>
