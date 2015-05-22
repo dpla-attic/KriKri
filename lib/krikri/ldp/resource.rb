@@ -25,12 +25,20 @@ module Krikri::LDP
     end
 
     ##
+    # Returns the current etag if the resource exists. If no etag is cached,
+    # this will trigger an HTTP HEAD request to retrieve the current one from
+    # the server.
+    #
     # @return [String] the current cached HTTP ETag for the resource
     def etag
       http_head['etag'] if exists?
     end
 
     ##
+    # Returns the current last-modified header if the resource exists. If none
+    # is cached, this will trigger an HTTP HEAD request to retrieve the current
+    # one from the server.
+    #
     # @return [String] the current cached Last-Modified date for the resource
     def modified_date
       http_head['last-modified'] if exists?
@@ -68,8 +76,11 @@ module Krikri::LDP
     end
 
     ##
-    # @return [Boolean] true if the LDP server already knows about the resource,
-    #   otherwise false.
+    # @return [Boolean] true if the LDP server already knows about the resource;
+    #   false if the resource is not found (404) or is deleted (HTTP 410).
+    #
+    # @see Faraday::ResourceNotFound, Faraday::ClientError#status
+    # @see #http_head
     def exists?
       return true if http_head
       false
