@@ -74,16 +74,22 @@ module Krikri
               "Got a #{content.class}") unless
           content.is_a?(String) || content.respond_to?(:read)
         record = new(identifier)
-        record.reload if record.exists?
+        record.etag
         record.content = content
         record.content_type = content_type
         record
       end
 
+      ##
+      # @return [String] the base URI/container for original records
+      #
+      # @see Krikri::Settings
       def base_uri
         Krikri::Settings['marmotta']['record_container']
       end
 
+      ##
+      # Constructs a uri from `#base_uri` and the given local name
       def build_uri(local_name)
         RDF::URI(base_uri) / local_name
       end
@@ -104,6 +110,9 @@ module Krikri
       end
     end
 
+    ##
+    # @param other
+    # @return [Boolean]
     def ==(other)
       return false unless other.is_a? OriginalRecord
       return false unless local_name == other.local_name
@@ -113,10 +122,18 @@ module Krikri
       true
     end
 
+    ##
+    # @return [String] a string containing the content of the record
     def to_s
       content
     end
 
+    ##
+    # @return [String] the mime type of this LDP-NR.
+    #
+    # @note Defaults to 'text/xml' due to Marmotta, which assumes that
+    #   resources created with type 'application/xml' have interaction model
+    #   LDP-RS.
     def content_type
       @content_type || 'text/xml'
     end

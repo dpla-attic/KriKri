@@ -77,6 +77,11 @@ describe Krikri::OriginalRecord do
         .to raise_error ArgumentError
     end
 
+    it 'gets the current etag' do
+      require 'pry'
+      binding.pry
+    end
+
     it 'accepts a content_type' do
       ctype = 'application/xml'
       expect(described_class.build(identifier, record, ctype).content_type)
