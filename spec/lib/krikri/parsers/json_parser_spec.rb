@@ -27,4 +27,13 @@ describe Krikri::JsonParser::Value do
   let(:record) { build(:json_record) }
 
   it_behaves_like 'a parser value'
+
+  it 'allows boolean "or" with "|" in the field name' do
+    expect(subject['notdefined|subject'].values).to eq ["Moomin Papa"]
+  end
+
+  it 'returns the value from the first defined name, given a "|"' do
+    # "subject" comes last in the document, but first in the "|" expression:
+    expect(subject['subject|title'].values).to eq ["Moomin Papa"]
+  end
 end

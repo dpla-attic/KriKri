@@ -61,9 +61,16 @@ module Krikri
 
       private
 
+      ##
+      # @see Krikri::Parser#get_child_nodes
+      #
+      # @param name_exp [String]  Element name
+      # @return [Krikri::Parser::ValueArray]
       def get_child_nodes(name)
-        Krikri::Parser::ValueArray.new(@node.xpath("#{@node.path}/#{name}", @namespaces)
-          .map { |node| self.class.new(node, @namespaces) })
+        Krikri::Parser::ValueArray.new(
+          @node.xpath("#{@node.path}/#{name}", @namespaces)
+            .map { |node| self.class.new(node, @namespaces) }
+        )
       end
 
       def attribute(name)
