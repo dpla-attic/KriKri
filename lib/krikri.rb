@@ -4,7 +4,8 @@
 require 'rails'
 require 'devise'
 require 'blacklight'
-require "krikri/engine"
+require 'audumbla'
+require 'krikri/engine'
 
 module Krikri
   autoload :XmlParser,        'krikri/parsers/xml_parser'

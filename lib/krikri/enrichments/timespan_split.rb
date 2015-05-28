@@ -26,7 +26,7 @@ module Krikri::Enrichments
   #
   # @see Krikri::Util::ExtendedDateParser
   class TimespanSplit
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     ##
     # Enrich a `DPLA::MAP::TimeSpan` object or string value with `begin` and

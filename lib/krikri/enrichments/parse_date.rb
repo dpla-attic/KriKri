@@ -17,7 +17,7 @@ module Krikri::Enrichments
   # @see https://github.com/inukshuk/edtf-ruby/blob/master/README.md Ruby EDTF
   # @see http://www.loc.gov/standards/datetime/pre-submission.html EDTF Draft
   class ParseDate
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     def enrich_value(value)
       return value unless value.is_a? String

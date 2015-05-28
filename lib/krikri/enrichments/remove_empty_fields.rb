@@ -8,7 +8,7 @@ module Krikri::Enrichments
   #   empty.enrich_value('')
   #   # => nil
   class RemoveEmptyFields
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     def enrich_value(value)
       (value.is_a?(String) && empty?(value)) ? nil : value

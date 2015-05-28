@@ -16,6 +16,7 @@ require 'webmock/rspec'
 require 'factory_girl_rails'
 
 require 'dpla/map/factories'
+require 'audumbla/spec/enrichment'
 require 'rdf/marmotta'
 
 require 'devise'

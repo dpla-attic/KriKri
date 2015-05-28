@@ -136,7 +136,7 @@ EOS
         subject.chain_enrichments!(aggregation)
         chain.keys.each do |name|
           expect(subject.send(:enrichment_cache, name))
-            .to be_a Krikri::Enrichment
+            .to be_a Audumbla::Enrichment
         end
       end
     end
@@ -156,16 +156,18 @@ EOS
         described_class.new generator_uri: mapping_activity_uri, chain: chain
       end
 
-      before do
+      before(:all) do
         module Krikri::Enrichments
           class BasicEnrichment
-            include Krikri::Enrichment
+            include Audumbla::Enrichment
             def enrich_value(value)
               value
             end
           end
         end
       end
+
+      after(:all) { Krikri::Enrichments.send(:remove_const, :BasicEnrichment) }
 
       it 'chains enrichments on basic fields' do
         expect { subject.chain_enrichments!(aggregation) }.to_not raise_error

@@ -9,7 +9,7 @@ module Krikri::Enrichments
   # Leaves quotation marks and closing parentheses & brackets. Also
   # leaves periods when they follow a one or two letter abbreviation.
   class StripEndingPunctuation
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     def enrich_value(value)
       return value unless value.is_a? String
