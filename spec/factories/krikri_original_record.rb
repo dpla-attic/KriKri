@@ -158,4 +158,112 @@ EOS
 </OAI-PMH>
 EOS
   end
+
+  factory :marcxml_record, parent: :krikri_original_record do
+    content <<-EOS
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="oai2.xsl" ?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+<responseDate>2015-06-01T20:18:44Z</responseDate>
+<request metadataPrefix="marc21" set="esbnd" verb="ListRecords">http://ufdc.ufl.edu/</request>
+<ListRecords>
+<record><header><identifier>oai:ufdc:UF00075496_00001</identifier><datestamp>2015-01-21</datestamp><setSpec>oai:ufdc:esbnd</setSpec></header><metadata><marc:record xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd" type="Bibliographic">
+<marc:leader>01414nkm  22003493a 4500</marc:leader>
+<marc:controlfield tag="001">UF00075496_00001</marc:controlfield>
+<marc:controlfield tag="005">20080904225003.0</marc:controlfield>
+<marc:controlfield tag="006">m     o  c        </marc:controlfield>
+<marc:controlfield tag="007">cr  n ---ma mp</marc:controlfield>
+<marc:controlfield tag="008">070614n        xx nnn        o    neng d</marc:controlfield>
+<marc:datafield tag="040" ind1=" " ind2=" ">
+<marc:subfield code="a">FUG</marc:subfield>
+<marc:subfield code="c">FUG</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="245" ind1="0" ind2="0">
+<marc:subfield code="a">The Everglades, Exploitation and Conservation</marc:subfield>
+<marc:subfield code="h">[electronic resource].</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="506" ind1=" " ind2=" ">
+<marc:subfield code="a">Board of Trustees of the University of Florida on behalf of authors and contributors.  All rights reserved.</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="533" ind1=" " ind2=" ">
+<marc:subfield code="a">Electronic reproduction.</marc:subfield>
+<marc:subfield code="b">Gainesville, Fla. :</marc:subfield>
+<marc:subfield code="c">University of Florida, George A. Smathers Libraries,</marc:subfield>
+<marc:subfield code="d">2007.</marc:subfield>
+<marc:subfield code="f">(University of Florida Digital Collections)</marc:subfield>
+<marc:subfield code="n">Mode of access: World Wide Web.</marc:subfield>
+<marc:subfield code="n">System requirements: Internet connectivity; Web browser software.</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="535" ind1="1" ind2=" ">
+<marc:subfield code="a">University of Florida.</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="536" ind1=" " ind2=" ">
+<marc:subfield code="a">Funded by a grant from the Florida Humanities Council</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="648" ind1=" " ind2=" ">
+<marc:subfield code="a">1594-1920</marc:subfield>
+<marc:subfield code="y">Spanish Colonial Period.</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="648" ind1=" " ind2=" ">
+<marc:subfield code="a">1594-1920</marc:subfield>
+<marc:subfield code="y">Colonial Period.</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="650" ind1=" " ind2="0">
+<marc:subfield code="a">Saint Augustine (Fla.).</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="650" ind1=" " ind2="0">
+<marc:subfield code="a">Florida.</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="651" ind1=" " ind2=" ">
+<marc:subfield code="a">Spain</marc:subfield>
+<marc:subfield code="z">America</marc:subfield>
+<marc:subfield code="x">Colonies.</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="700" ind1=" " ind2=" ">
+<marc:subfield code="a">Florida Humanities Council.</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="752" ind1=" " ind2=" ">
+<marc:subfield code="a">United States of America</marc:subfield>
+<marc:subfield code="b">Florida</marc:subfield>
+<marc:subfield code="c">Saint Johns County</marc:subfield>
+<marc:subfield code="d">Saint Augustine</marc:subfield>
+<marc:subfield code="g">Historic city.</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="752" ind1=" " ind2=" ">
+<marc:subfield code="a">United States of America</marc:subfield>
+<marc:subfield code="b">Florida.</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="830" ind1=" " ind2="0">
+<marc:subfield code="a">University of Florida Digital Collections.</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="830" ind1=" " ind2="0">
+<marc:subfield code="a">World Studies Collections.</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="830" ind1=" " ind2="0">
+<marc:subfield code="a">Spanish Borderlands Collections.</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="830" ind1=" " ind2="0">
+<marc:subfield code="a">Spanish Colonial St. Augustine.</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="852" ind1=" " ind2=" ">
+<marc:subfield code="a">SUS01:;:;:</marc:subfield>
+<marc:subfield code="b">UFDC</marc:subfield>
+<marc:subfield code="c">World Studies Collections</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="856" ind1="4" ind2="0">
+<marc:subfield code="u">http://ufdc.ufl.edu/UF00075496/00001</marc:subfield>
+<marc:subfield code="y">Electronic Resource</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="992" ind1="0" ind2="4">
+<marc:subfield code="a">http://ufdcimages.uflib.ufl.edu/UF/00/07/54/96/00001/UF00075496_01thm.jpg</marc:subfield>
+</marc:datafield>
+<marc:datafield tag="997" ind1=" " ind2=" ">
+<marc:subfield code="a">World Studies Collections</marc:subfield>
+</marc:datafield>
+</marc:record>
+</metadata></record>
+</ListRecords>
+</OAI-PMH>
+EOS
+  end
 end
