@@ -44,6 +44,11 @@ module Krikri
 
       private
 
+      ##
+      # @see Krikri::Parser#get_child_nodes
+      #
+      # @param name_exp [String]  Object property name
+      # @return [Krikri::Parser::ValueArray]
       def get_child_nodes(name)
         if @node[name].is_a?(Array)
           vals = @node[name].map { |node| self.class.new(node) }
