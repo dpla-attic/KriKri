@@ -72,8 +72,10 @@ module Krikri
     end
 
     ##
-    # Return a string that describes the object encountered by the exception
-    # handler in #map
+    # @param [#content] rec
+    #
+    # @return [String] description of the object encountered by the exception
+    #   handler in #map
     def mapping_exception_desc(rec)
       if defined? rec.content
         "content:\n#{rec.content || '[no content]'}"
