@@ -33,7 +33,7 @@ describe Krikri::QASearchIndex do
   let(:solr) { RSolr.connect }
 
   describe '#initialize' do
-    context 'with args' do
+    context 'with overridden properties' do
       subject { described_class.new(opts) }
       let(:opts) { { url: 'http://my-client-uri/' } }
 
@@ -47,6 +47,20 @@ describe Krikri::QASearchIndex do
       allow(Krikri::Settings)
         .to receive(:solr).and_return(url: uri)
       expect(subject.solr.uri.to_s).to eq uri
+    end
+
+    context 'with extra properties not covered by defaults' do
+      # see https://www.pivotaltracker.com/n/projects/1172184/stories/91822774
+      # Note that `url` is not specified in `opts`:
+      let(:opts) { { extra_prop: 'not covered by defaults' } }
+      subject { described_class.new(opts) }
+
+      it 'preserves defaults by merging extra properties' do
+        uri = 'http://moomin.org/'
+        allow(Krikri::Settings)
+          .to receive(:solr).and_return(url: uri)
+        expect(subject.solr.uri.to_s).to eq uri
+      end
     end
   end
 
