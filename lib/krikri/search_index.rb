@@ -136,8 +136,10 @@ module Krikri
     ##
     # @param opts [Hash] options to pass to RSolr
     # @see RSolr.connect
-    def initialize(opts = Krikri::Settings.solr.to_h)
-      @solr = RSolr.connect(opts)
+    def initialize(opts = {})
+      # Override or append to default Solr options
+      solr_opts = Krikri::Settings.solr.to_h.merge(opts)
+      @solr = RSolr.connect(solr_opts)
       super(opts)
     end
 
