@@ -36,12 +36,28 @@ module Krikri
     # child nodes and attributes.
     class Value
       ##
-      # Property accessor interface. Passes `name` to the local implementation
-      # of #get_child_nodes.
+      # Property accessor interface. Passes a name expression (`name_exp`) to
+      # the local implementation of #get_child_nodes.
       #
-      # @param name [#to_sym] a named property to access
-      def [](name)
-        get_child_nodes(name)
+      # The given name expression must follow the pattern:
+      #     name [| name ...]
+      #
+      # The optional "|" is a short-circuit operator that will return the
+      # property or element in the document for the first matching part of the
+      # phrase.
+      #
+      # @example
+      #   va = value['title']
+      #   va = value['this|that']  # gives value for "this" if both defined
+      #
+      # @param name [String] An expression of named properties to access
+      # @return [Krikri::Parser::ValueArray]
+      def [](name_exp)
+        name_exp.strip.split(/\s*\|\s*/).each do |n|
+          result = get_child_nodes(n)
+          return result unless result.empty?
+        end
+        Krikri::Parser::ValueArray.new([])
       end
 
       ##
@@ -112,9 +128,10 @@ module Krikri
       end
 
       ##
-      # @abstract Provide an accessor for properties
-      # @param name [#to_sym] a named property to access
-      # @return [Krikri::Parser::Value] the value of the child node
+      # @abstract Return a Krikri::Parser::ValueArray of child nodes
+      #
+      # @param name [String] Element or property name
+      # @return [Krikri::Parser::ValueArray] The child nodes
       def get_child_nodes(name)
         raise NotImplementedError, "Can't access property #{name}"
       end

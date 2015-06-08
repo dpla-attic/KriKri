@@ -12,6 +12,7 @@ module Krikri
   autoload :JsonParser,       'krikri/parsers/json_parser'
   autoload :ModsParser,       'krikri/parsers/mods_parser'
   autoload :QdcParser,        'krikri/parsers/qdc_parser'
+  autoload :MARCXMLParser,    'krikri/parsers/marcxml_parser'
   autoload :OaiParserHeaders, 'krikri/parsers/oai_parser_headers'
   autoload :AggregationEntityBehavior,
            'krikri/entity_behaviors/aggregation_entity_behavior'

@@ -1,3 +1,15 @@
+0.6.0 (8 June, 2015)
+---
+* Modify solrconfig.xml to use correct field names
+* Change facet configuration and routing
+* Remove scroll from side-by-side records, QA interface
+* Change index fields for records in Solr
+* Add VM usage note to README
+* Add Krikri::MARCXMLParser
+* Add "or" expressions, Krikri::Parser::Value
+* Add ISO enrichment
+* Fix: Do not obliterate defaults, QASearchIndex constructor
+
 0.5.7 (16 April 2015)
 ---
 * Update MAPv3.1 mapping with edm:object fix

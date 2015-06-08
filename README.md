@@ -154,6 +154,8 @@ clean and re-create the Jetty installation.  (So don't do it if you want to
 preserve your Marmotta or Solr.)  A future update will include more
 specific configuration and update tasks.
 
+Please see [the notes in our automation project README](https://github.com/dpla/automation/blob/develop/README-ingestion2.md#when-to-use-this-and-other-dpla-project-vms)
+regarding the use of this VM.
 
 Using Guard for tests
 ---------------------
