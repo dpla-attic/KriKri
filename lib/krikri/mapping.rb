@@ -2,10 +2,11 @@ module Krikri
   ##
   # Handles transformation of OriginalRecords into a target class.
   #
-  #   map = Mapping.new(MyModelClass)
-  #   map.dsl_method args
-  #   map.process_record(my_original_record)
-  #   # => #<MyModelClass:0x3ff8b7459210()>
+  # @example 
+  #    map = Mapping.new(MyModelClass)
+  #    map.dsl_method args
+  #    map.process_record(my_original_record)
+  #    # => #<MyModelClass:0x3ff8b7459210()>
   #
   class Mapping
     include MappingDSL
@@ -27,6 +28,7 @@ module Krikri
 
     ##
     # @param record [OriginalRecord] An original record to process.
+    #
     # @return [Object] A model object of type @klass, processed through the
     #   mapping DSL
     def process_record(record)
