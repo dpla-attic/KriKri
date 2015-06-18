@@ -20,7 +20,7 @@ module Krikri::Enrichments
   #
   # @see Krikri::FieldEnrichment
   class SplitProvidedLabelAtDelimiter
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     ##
     # @param delimiter [String] a substring on which to split `#providedLabel`

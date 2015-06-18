@@ -5,7 +5,7 @@ module Krikri::Enrichments
   #   StripWhitespace.new.enrich_value("\tmoominpapa  \t  \nmoominmama  ")
   #   # => ['moominpapa', 'moominmama']
   class StripWhitespace
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     def enrich_value(value)
       return value unless value.is_a? String

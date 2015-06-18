@@ -8,7 +8,7 @@ module Krikri::Enrichments
   #
   # Leaves quotation marks.
   class StripLeadingPunctuation
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     def enrich_value(value)
       return value unless value.is_a? String

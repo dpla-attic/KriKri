@@ -6,7 +6,7 @@ module Krikri::Enrichments
   #   splitter.enrich_value('moominpapa, moominmama')
   #   # => ['moominpapa', 'moominmama']
   class SplitAtDelimiter
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     attr_accessor :delimiter
 

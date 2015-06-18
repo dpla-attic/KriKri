@@ -5,7 +5,7 @@ module Krikri::Enrichments
   #   StripPunctuation.new.enrich_value("\tmo!ominpa)(pa  \n .$%^ moominmama  ")
   #   # => "\tmoominpapa  \n  moominmama  "
   class StripPunctuation
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     def enrich_value(value)
       return value unless value.is_a? String

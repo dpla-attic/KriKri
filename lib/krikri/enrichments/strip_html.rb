@@ -6,7 +6,7 @@ module Krikri::Enrichments
   #   => 'Moomin Valley'
   #
   class StripHtml
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     def enrich_value(value)
       return value unless value.is_a? String
