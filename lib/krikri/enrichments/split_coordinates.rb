@@ -13,7 +13,7 @@ module Krikri::Enrichments
   #   reverse order, with lat taking '74.0059' and long taking '40.7127'.
   #
   class SplitCoordinates
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     ##
     # Enrich a `DPLA::MAP::Place' object by splitting the string given

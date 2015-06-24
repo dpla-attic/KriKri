@@ -5,7 +5,7 @@ module Krikri::Enrichments
   #   StripLeadingColons.new.enrich_value(";:\tmoominpa()pa;;;")
   #   # => "\tmoominpa()pa;;;"
   class StripLeadingColons
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     def enrich_value(value)
       return value unless value.is_a? String

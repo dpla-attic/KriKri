@@ -7,7 +7,7 @@ module Krikri::Enrichments
   #   => truncated string ending in '...'
   #
   class LimitCharacters
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     def enrich_value(value)
       return value unless value.is_a? String

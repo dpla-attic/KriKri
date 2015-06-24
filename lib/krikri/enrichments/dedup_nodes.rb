@@ -30,7 +30,7 @@ module Krikri::Enrichments
   #         #<RDF::URI:0x3fa882942748 URI:http://example.org/moomin>]
   #
   class DedupNodes
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     ##
     # @param value [Object]

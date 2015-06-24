@@ -23,7 +23,7 @@ module Krikri::Enrichments
   #   type_mapper.enrich_value('poloroid.') # finds RDF::DCMITYPE.Image
   #
   class DcmiTypeMap
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     DEFAULT_MAP = { 'image' => RDF::DCMITYPE.Image,
                     'photograph' => RDF::DCMITYPE.Image,

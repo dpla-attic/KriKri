@@ -20,7 +20,7 @@ module Krikri::Enrichments
   #
   # Removes all non-string values
   class GenreFilter
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     TERMS = ['Book',
              'Film/Video',

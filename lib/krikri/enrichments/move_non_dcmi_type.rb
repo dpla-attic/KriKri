@@ -3,7 +3,7 @@ module Krikri::Enrichments
   # Copies non-DCMI Type values from the input fields to the output fields.
   # If
   class MoveNonDcmiType
-    include Krikri::Enrichment
+    include Audumbla::Enrichment
 
     ##
     # @param value [Object] the value to enrich

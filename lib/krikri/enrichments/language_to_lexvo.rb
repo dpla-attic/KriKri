@@ -46,7 +46,7 @@ module Krikri::Enrichments
   # @see DPLA::MAP::Controlled::Language
   # @see http://www.lexvo.org/
   class LanguageToLexvo
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     TERMS = DPLA::MAP::Controlled::Language.list_terms.freeze
     QNAMES = TERMS.map { |t| t.qname[1] }.freeze

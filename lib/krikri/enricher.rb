@@ -21,7 +21,7 @@ module Krikri
   #   })
   #
   # @see Krikri::SoftwareAgent#enqueue
-  # @see Krikri::Enrichment
+  # @see Audumbla::Enrichment
   #
   class Enricher
     include SoftwareAgent
@@ -48,7 +48,7 @@ module Krikri
     #   chain:  a hash specifying the input_fields and output_fields, as
     #      illustrated above, which will be passed to the Enrichment.
     #
-    # @see Krikri::Enrichment
+    # @see Audumbla::Enrichment
     # @param opts [Hash] a hash of options
     def initialize(opts = {})
       @generator_uri = RDF::URI(opts.fetch(:generator_uri))
@@ -84,7 +84,7 @@ module Krikri
     def chain_enrichments!(agg)
       chain.keys.each do |e|
         enrichment = enrichment_cache(e)
-        if enrichment.is_a? Krikri::FieldEnrichment
+        if enrichment.is_a? Audumbla::FieldEnrichment
           agg = do_field_enrichment(agg, enrichment, chain[e])
         else
           agg = do_basic_enrichment(agg, enrichment, chain[e])
@@ -99,10 +99,10 @@ module Krikri
     # class that expects the same arguments.
     #
     # @param agg [DPLA::MAP::Aggregation]
-    # @param enrichment [Krikri::Enrichment]
+    # @param enrichment [Audumbla::Enrichment]
     # @param options [Hash]
     #
-    # @see Krikri::Enrichment
+    # @see Audumbla::Enrichment
     #
     def do_basic_enrichment(agg, enrichment, options)
       enrichment.enrich(agg,
@@ -117,11 +117,11 @@ module Krikri
     # as a variable arguments list
     #
     # @param agg [DPLA::MAP::Aggregation]
-    # @param enrichment [Krikri::FieldEnrichment]
+    # @param enrichment [Audumbla::FieldEnrichment]
     # @param options [Hash]  Hash with :input_fields containing variable
     #                        arguments list
     #
-    # @see Krikri::FieldEnrichment
+    # @see Audumbla::FieldEnrichment
     #
     def do_field_enrichment(agg, enrichment, options)
       enrichment.enrich(agg, *options[:input_fields])

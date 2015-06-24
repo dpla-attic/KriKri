@@ -8,7 +8,7 @@ module Krikri::Enrichments
   #   Krikri::Enrichments::ConvertToSentenceCase.enrich_value(string)
   #   # => 'This is a sentence about moomins. This is another about snorks.'
   class ConvertToSentenceCase
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     def enrich_value(value)
       return value unless value.is_a? String

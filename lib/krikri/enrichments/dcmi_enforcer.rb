@@ -2,7 +2,7 @@ module Krikri::Enrichments
   ##
   # Removes non-DCMI Type values from a field
   class DcmiEnforcer
-    include Krikri::FieldEnrichment
+    include Audumbla::FieldEnrichment
 
     ##
     # @param value [Object] the value to enrich
