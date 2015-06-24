@@ -20,6 +20,10 @@ require 'rspec/core'
 require 'rspec/core/rake_task'
 
 require 'engine_cart/rake_task'
+# Skip Sprockets-related dependencies since we need to manually install
+# sass-rails ~> 5.0.0
+EngineCart.rails_options = '--skip-sprockets'
+
 require 'jettywrapper'
 
 import 'lib/tasks/jetty.rake'

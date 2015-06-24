@@ -12,7 +12,9 @@ A Rails engine for metadata aggregation, enhancement, and quality control.
 Installation
 -------------
 
-1. Add the `krikri` gem to your Gemfile.
+1. Add the `krikri` gem to your Gemfile. If you're using Rails 4.1, you will
+   manually need to set the gem version for `sass-rails` as follows:
+   `gem 'sass-rails', '~> 5.0.0'`
 
 2. Run `bundle exec rails g krikri:install`
 

@@ -37,10 +37,11 @@ Gem::Specification.new do |s|
   s.add_dependency "analysand", "4.0.0"
   s.add_dependency "yajl-ruby"
   s.add_dependency "elasticsearch", "~>0.4.0"
+  s.add_dependency "sass-rails", "~> 5.0.0"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "jettywrapper", '~> 2.0'
-  s.add_development_dependency "rspec-rails"
+  s.add_development_dependency "rspec-rails", '~> 3.2.0'
   s.add_development_dependency 'webmock'
   s.add_development_dependency 'factory_girl_rails', '~>4.4.0'
   s.add_development_dependency 'pry-rails'

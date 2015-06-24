@@ -18,7 +18,7 @@ module Krikri::Enrichments
   #   results.map(&:exactMatch)
   #   # => [[#<ActiveTriple::Resource:...>], []]
   #
-  # @see Krikri::FieldEnrichment
+  # @see Audumbla::FieldEnrichment
   class SplitProvidedLabelAtDelimiter
     include Audumbla::FieldEnrichment
 
@@ -30,7 +30,7 @@ module Krikri::Enrichments
 
     ##
     # @param value [Object] the value to split
-    # @see Krikri::FieldEnrichment
+    # @see Audumbla::FieldEnrichment
     def enrich_value(value)
       return value unless value.is_a?(ActiveTriples::Resource) &&
                           value.respond_to?(:providedLabel)
