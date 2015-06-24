@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
   s.add_dependency "analysand", "4.0.0"
   s.add_dependency "yajl-ruby"
   s.add_dependency "elasticsearch", "~>0.4.0"
+  s.add_dependency "sass-rails", "~> 5.0.0"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "jettywrapper", '~> 2.0'

@@ -35,6 +35,6 @@ else
     gem 'sass-rails', '~> 5.0.0'
     gem 'responders', '~> 2.0'
   else
-    gem 'sass-rails', '~> 4.0.3'
+    gem 'sass-rails', '~> 5.0.0'
   end
 end

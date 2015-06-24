@@ -19,6 +19,17 @@ module Krikri
     end
 
     ##
+    # Explicitly add sass-rails and uglifier, since the new app generated
+    # by engine_cart skips the sprockets-related dependencies. This is because
+    # Rails 4.1 uses sass-rails ~> 4.0.3, which for some reason surfaced
+    # this bug suddenly: https://github.com/sass/sass/issues/1656
+    def reenable_sprockets
+      gem 'sass-rails', '~> 5.0.0'
+      gem 'uglifier', '>= 1.3.0'
+      gsub_file 'config/application.rb', /^\# require ['"]sprockets\/railtie['"]$/, 'require "sprockets/railtie"'
+    end
+
+    ##
     # Add solr configuration
     def configure_solr
       copy_file 'schema.xml', 'solr_conf/schema.xml', :force => true
