@@ -1,3 +1,9 @@
+0.7.0 (24 June 2015)
+---
+* Extract Enrichment/FieldEnrichment to [Audumbla](https://github.com/dpla/audumbla) gem
+* Update documentation for mapping related modules
+* Pin bootstrap-sass to 3.3.4.1 and rspec-rails to ~> 3.2.0
+
 0.6.0 (8 June, 2015)
 ---
 * Modify solrconfig.xml to use correct field names
