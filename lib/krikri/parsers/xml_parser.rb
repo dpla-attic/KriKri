@@ -14,7 +14,9 @@ module Krikri
     def initialize(record, root_path = '/', ns = {})
       xml = Nokogiri::XML(record.to_s)
       ns = namespaces_from_xml(xml).merge(ns)
-      @root = Value.new(xml.at_xpath(root_path, ns), ns)
+      root_node = xml.at_xpath(root_path, ns) 
+      raise EmptyRootNodeError if root_node.nil?
+      @root = Value.new(root_node, ns)
       super(record)
     end
 
@@ -81,5 +83,11 @@ module Krikri
         Krikri::Parser::ValueArray.new(@node.children.select(&:text?))
       end
     end
+    
+    ##
+    # An error class for empty Value nodes.
+    #
+    # This is raised if a root value does not exist.
+    class EmptyRootNodeError < ArgumentError; end
   end
 end
