@@ -15,7 +15,7 @@ module Krikri
     # @return [String]
     def provider_name(provider)
       provider = Krikri::Provider.find(provider) if provider.is_a? String
-      provider.present? ? provider.provider_name : "All Providers"
+      provider.present? ? provider.name : 'All Providers'
     end
 
     ##

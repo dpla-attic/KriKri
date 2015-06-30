@@ -63,9 +63,11 @@ module Krikri
 
     private
 
+    ##
+    # Get the full URI identifier for the provider
     def provider_uri
       return unless provider_id.present?
-      Krikri::Provider.new(provider_id).rdf_subject
+      Krikri::Provider.base_uri + provider_id
     end
   end
 end

@@ -4,9 +4,11 @@ describe Krikri::QAReport do
 
   subject { described_class.new(:provider => provider.id.to_s) }
 
+  let(:provider_base) { Krikri::Provider.base_uri }
+
   let(:provider) do
     agent = build(:agent)
-    agent.set_subject! 'http://example.org/moomin'
+    agent.set_subject!(provider_base + 'moomin')
     agent
   end
 
@@ -50,8 +52,8 @@ describe Krikri::QAReport do
   end
 
   describe '#build_provider' do
-    it 'gives a provider' do
-      expect(subject.build_provider).to be_a Krikri::Provider
+    it 'gives a DPLA::MAP::Agent' do
+      expect(subject.build_provider).to be_a DPLA::MAP::Agent
     end
 
     it 'gives provider with correct uri' do

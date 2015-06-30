@@ -117,6 +117,7 @@ describe Krikri::QASearchIndex do
         subject.commit
         aggregation.set_subject!('http://api.dp.la/item/123')
         aggregation.provider << build(:krikri_provider, rdf_subject: 'snork')
+          .agent
         subject.add aggregation.to_jsonld['@graph'][0]
         subject.commit
       end

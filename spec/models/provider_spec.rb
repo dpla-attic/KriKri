@@ -1,32 +1,41 @@
 require 'spec_helper'
-require 'rdf/isomorphic'
-
-module RDF
-  module Isomorphic
-    alias_method :==, :isomorphic_with?
-  end
-end
 
 describe Krikri::Provider do
-  let(:local_name) { '123' }
+  it_behaves_like 'ActiveModel'
 
-  let(:provider) do
-    provider = Krikri::Provider.new(local_name)
-    provider.providedLabel = "moomin"
-    provider
-  end
+  let(:provider_base) { Krikri::Settings.prov.provider_base }
+  let(:id) { '123' }
+  let(:rdf_subject) { provider_base + id }
+  let(:name) { 'Snork Maiden Archives' }
 
   let(:agg) do
-    a = build(:aggregation, :provider => provider)
-    a.set_subject! 'moomin'
-    a
+    p = DPLA::MAP::Agent.new(RDF::URI(provider_base) / id)
+    p.label = name
+    build(:aggregation, :provider => p)
   end
 
-  shared_context 'with indexed item' do
+  let(:bnode) do
+    p = DPLA::MAP::Agent.new
+    build(:aggregation, :provider => p)
+  end
+
+  shared_context 'indexed in Solr' do
     before do
-      agg.save
+      clear_search_index
       indexer = Krikri::QASearchIndex.new
-      indexer.add(agg.to_jsonld['@graph'].first)
+      indexer.add agg.to_jsonld['@graph'].first
+      indexer.commit
+    end
+
+    after do
+      clear_search_index
+    end
+  end
+
+  shared_context 'bnode indexed in Solr' do
+    before do
+      indexer = Krikri::QASearchIndex.new
+      indexer.add bnode.to_jsonld['@graph'].first
       indexer.commit
     end
 
@@ -37,90 +46,120 @@ describe Krikri::Provider do
     end
   end
 
-  describe '.all' do
+  describe '#initialize' do
+
+    it 'sets given attributes' do
+      expect(described_class.new({ rdf_subject: rdf_subject }).rdf_subject)
+        .to eq rdf_subject
+    end
+  end
+
+  describe '#all' do
     it 'with no items is empty' do
       expect(described_class.all).to be_empty
     end
 
-    context 'with item' do
-      include_context 'with indexed item'
+    context 'with valid item' do
+      include_context 'indexed in Solr'
 
-      it 'returns all items' do
-        # todo: ActiveTriples::Resource equality needs work
+      it 'returns valid item' do
         expect(described_class.all.map(&:rdf_subject))
-          .to contain_exactly provider.rdf_subject
+          .to contain_exactly rdf_subject
+      end
+
+      it 'assigns :name Providers' do
+        expect(described_class.all.map(&:name))
+          .to include name
       end
     end
 
-    context 'with bnode provider' do
-      include_context 'with indexed item'
+    context 'with bnode' do
+      include_context 'bnode indexed in Solr'
 
-      let(:provider) { DPLA::MAP::Agent.new }
-
-      it 'ignores bnodes' do
+      it 'ingnores bnode' do
         expect(described_class.all).to be_empty
       end
     end
   end
 
-  describe '.find' do
-    include_context 'with indexed item'
+  describe '#find' do
 
-    it 'finds the provider' do
-      expect(described_class.find(local_name)).to eq provider
+    it 'returns nil if item not found' do
+      expect(described_class.find(id)).to eq nil
     end
 
-    it 'populates graph' do
-      expect(described_class.find(local_name).count)
-        .to eq provider.count
-    end
+    context 'with item' do
+      include_context 'indexed in Solr'
 
-    it 'returns property values' do
-      expect(described_class.find(local_name).providedLabel)
-        .to eq provider.providedLabel
+      it 'finds the provider with a given :id' do
+        expect(described_class.find(id).name).to eq name
+      end
+
+      it 'finds the provider with a given :rdf_subject' do
+        expect(described_class.find(rdf_subject).name).to eq name
+      end
     end
   end
 
-  describe '#records' do
-    include_context 'with indexed item'
+  describe '#base_uri' do
 
-    it 'gives the record' do
-      # @todo fix once {ActiveTriples::RDFSource} equality is figured out
-      expect(provider.records.map(&:rdf_subject))
-        .to contain_exactly agg.rdf_subject
+    it 'adds trailing "/" to provider_base if missing' do
+      allow(Krikri::Settings).to receive_message_chain('prov.provider_base')
+        .and_return 'http://example.com/abc'
+      expect(described_class.base_uri).to eq('http://example.com/abc/')
     end
   end
 
   describe '#id' do
-    it 'gives a valid id for initializing resource' do
-      expect(Krikri::Provider.new(provider.id).rdf_subject)
-        .to eq provider.rdf_subject
+
+    it 'returns an :id parsed from :rdf_subject' do
+      expect(described_class.new({ rdf_subject: rdf_subject }).id).to eq id
     end
 
-    it 'does not include the base uri' do
-      expect(provider.id).not_to include provider.base_uri
+    it 'returns nil without valid :rdf_subject' do
+      expect(described_class.new.id).to eq nil
     end
   end
 
-  describe '#provider_name' do
-    it 'gives prefLabel if present' do
-      provider.label = 'littly my'
-      expect(provider.provider_name).to eq provider.label.first
+  describe '#name' do
+    include_context 'indexed in Solr'
+
+    it 'returns an :name corresponding to the indexed :rdf_subject' do
+      expect(described_class.new({ rdf_subject: rdf_subject }).name).to eq name
     end
 
-    it 'with multiple labels gives just one' do
-      provider.label = ['little my', 'snork']
-      expect(provider.provider_name).to eq provider.label.first
+    it 'returns nil without valid :rdf_subject' do
+      expect(described_class.new.name).to eq nil
+    end
+  end
+
+  describe '#agent' do
+    include_context 'indexed in Solr'
+
+    it 'returns a DPLA::MAP::Agent object' do
+      expect(described_class.find(rdf_subject).agent)
+        .to be_a DPLA::MAP::Agent
     end
 
-    it 'gives providedLabel if no prefLabel present' do
-      expect(provider.provider_name).to eq provider.providedLabel.first
+    it 'assigns :rdf_subject to agent' do
+      agent = (described_class.find(rdf_subject).agent)
+      expect(agent.rdf_subject.to_s).to eq rdf_subject
     end
 
-    it 'gives `#id` with with no labels' do
-      provider.label = nil
-      provider.providedLabel = nil
-      expect(provider.provider_name).to eq provider.id
+    it 'assigns :name to agent' do
+      agent = (described_class.find(rdf_subject).agent)
+      expect(agent.label.first).to eq name
+    end
+
+    it 'returns nil without valid :rdf_subject' do
+      expect(described_class.new.agent).to eq nil
+    end
+  end
+
+  describe '#valid_rdf_subject?' do
+    it 'recognizes bnodes' do
+      provider = Krikri::Provider.new({ rdf_subject: '_:b1' })
+      expect(provider.valid_rdf_subject?).to eq false
     end
   end
 end

@@ -27,12 +27,13 @@ namespace :krikri do
       original_record = build(:oai_dc_record)
       original_record.save unless original_record.exists?
 
-      provider = Krikri::Provider.new('123')
-      provider.label = 'Moomin valley Historical Society'
+      provider_uri = Krikri::Provider.base_uri + '123'
+      provider = Krikri::Provider.new(:rdf_subject => provider_uri).agent
+      provider.label = 'Moomin Valley Historical Society'
 
-      agg = build(:aggregation)
-      agg.originalRecord = original_record.rdf_source
-      agg.provider = provider
+      agg = build(:aggregation,
+                  :originalRecord => original_record.rdf_source,
+                  :provider => provider)
 
       agg.mint_id!('krikri_sample')
 
@@ -47,11 +48,15 @@ namespace :krikri do
       original_record = build(:json_record)
       original_record.save unless original_record.exists?
 
+      provider_uri = Krikri::Provider.base_uri + '456'
+      provider = Krikri::Provider.new(:rdf_subject => provider_uri).agent
+      provider.label = 'Snork Maiden Archives'
+
       agg = build(:aggregation,
                   :originalRecord => ActiveTriples::Resource
                                       .new(original_record.rdf_subject),
-                  :sourceResource => build(:source_resource, title: nil)
-            )
+                  :sourceResource => build(:source_resource, title: nil),
+                  :provider => provider)
 
       agg.mint_id!('krikri_sample_invalid')
 

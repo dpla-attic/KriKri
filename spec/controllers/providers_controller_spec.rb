@@ -5,10 +5,11 @@ describe Krikri::ProvidersController, :type => :controller do
   routes { Krikri::Engine.routes }
 
   describe 'GET #show' do
+    include_context 'with indexed item'
     login_user
 
     it 'sets provider variable' do
-      expect { get :show, id: 'moomin' }
+      expect { get :show, id: provider.id }
         .to change { assigns[:current_provider] }
              .to an_instance_of(Krikri::Provider)
     end
