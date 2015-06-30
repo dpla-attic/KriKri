@@ -108,11 +108,6 @@ describe Krikri::OriginalRecord do
       include_examples 'is false'
     end
 
-    context 'when one object is saved' do
-      before { other.save }
-      include_examples 'is false'
-    end
-
     context 'when local name is different' do
       before { other.local_name = 'new_mummi' }
       include_examples 'is false'
@@ -136,7 +131,7 @@ describe Krikri::OriginalRecord do
   end
 
   describe '#save' do
-    let(:result) { subject.save }
+    let(:result) { subject.save(nil, true) }
 
     it 'updates' do
       result
