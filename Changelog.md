@@ -1,3 +1,14 @@
+0.7.1 (01 July 2015)
+---
+* Reduce post-save HEAD/GET requests making `#save` calls cheaper.
+  * This exposes LDP PUT requests to HTTP 409 (conflict) and HTTP 412
+    (precondition failed) in some save-edit-save scenarios. You can fix 
+    these cases by using `RdfSource#save_and_reload` for RDF records and
+    `OriginalRecord#http_head(true)` after the initial save for Original 
+    Records.
+* Graceful error handling empty/non-existent root nodes in XmlParser
+  * Records with no root node are passed over and logged.
+
 0.7.0 (24 June 2015)
 ---
 * Extract Enrichment/FieldEnrichment to [Audumbla](https://github.com/dpla/audumbla) gem
