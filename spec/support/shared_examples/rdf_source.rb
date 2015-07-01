@@ -46,6 +46,19 @@ shared_examples 'an LDP RDFSource' do
     end
   end
 
+  describe '#save_and_reload' do
+    context 'with subject' do
+      include_context 'with RDF subject'
+      include_context 'with RDF statements'
+
+      it 'fetches the management triples' do
+        subject.save_and_reload
+        expect(subject.type)
+          .to include RDF::URI('http://www.w3.org/ns/ldp#RDFSource')
+      end
+    end
+  end
+
   describe '#save_with_provenance' do
     include_context 'with RDF subject'
 

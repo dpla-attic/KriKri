@@ -135,7 +135,7 @@ module Krikri
             rec.mint_id! if rec.node?
             activity_uri ? rec.save_with_provenance(activity_uri) : rec.save
           rescue => e
-            Rails.logger.error("Error saving record: #{rec.rdf_subject}\n" \
+            Rails.logger.error("Error saving record: #{rec.try(:rdf_subject)}\n" \
                                "#{e.message}\n#{e.backtrace}")
           end
         end

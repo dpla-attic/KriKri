@@ -73,7 +73,6 @@ shared_examples 'a harvester' do
       it 'builds same record' do
         r = subject.records.first
         r.save
-        expect(subject.records.first.local_name).to eq r.local_name
         expect(subject.records.first).to be == r
       end
 
