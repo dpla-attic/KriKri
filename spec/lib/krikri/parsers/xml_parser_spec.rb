@@ -11,6 +11,14 @@ describe Krikri::XmlParser do
 
     it_behaves_like 'a parser'
   end
+
+  context 'with no root path' do
+    subject { Krikri::XmlParser.new(record, '//oai_dc:fake_root') }
+
+    it 'raises an error' do
+      expect { subject }.to raise_error described_class::EmptyRootNodeError
+    end
+  end
 end
 
 describe Krikri::XmlParser::Value do

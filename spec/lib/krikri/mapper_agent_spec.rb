@@ -63,13 +63,19 @@ describe Krikri::Mapper::Agent do
     end
 
     context 'with errors thrown' do
-      before do
+      it 'logs errors' do
+        allow(agg_record_double).to receive(:node?).and_raise(StandardError.new)
+        allow(Krikri::Mapper).to receive(:map).and_return(generated_records)
+
+        expect(Rails.logger).to receive(:error).exactly(3).times
+        subject.run(activity_uri)
+      end
+
+      it 'logs errors with #rdf_subject' do
         allow(agg_record_double).to receive(:node?).and_raise(StandardError.new)
         allow(agg_record_double).to receive(:rdf_subject).and_return('123')
         allow(Krikri::Mapper).to receive(:map).and_return(generated_records)
-      end
 
-      it 'logs errors' do
         expect(Rails.logger).to receive(:error)
                                  .with(start_with('Error saving record: 123'))
                                  .exactly(3).times
