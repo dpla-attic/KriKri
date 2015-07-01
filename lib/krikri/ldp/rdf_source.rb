@@ -13,12 +13,22 @@ module Krikri::LDP
     # (graph) from the object's RDF::Graph.
     #
     # @see Krikri::LDP::Resource#save
-    # @note this forces a (GET/#get) reload of the resource after save
-    #   since the LDP endpoint may add management triples in the response.
+    # @note this may leave the resource's graph out of sync with the LDP 
+    #   endpoint since the endpoint may add management triples when saving.
     def save(*)
       result = super(dump(:ttl))
-      get({}, true)
       result
+    end
+
+    ##
+    # Saves and forces reload. This updates the graph with any management 
+    # triples added by the LDP endpoint.
+    #
+    # @see #save
+    def save_and_reload(*args)
+      result = save(*args)
+      get({}, true)
+      result 
     end
 
     ##

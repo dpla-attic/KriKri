@@ -109,7 +109,6 @@ module Krikri
       return false unless local_name == other.local_name
       return false unless content == other.content
       return false unless content_type == other.content_type
-      return false unless etag == other.etag
       true
     end
 
@@ -134,14 +133,15 @@ module Krikri
     # Saves over LDP, passing #content and #headers to the request.
     #
     # @param activity_uri  the activity responsible for generation
+    # @param update_etag  forces an http_head request to update of the etag
     # @raise (see Krikri::LDP::Resource#save)
     # @return [Boolean] true for success; else false
     #
     # @see Krikri::LDP::Resource#save
-    def save(activity_uri = nil)
+    def save(activity_uri = nil, update_etag = false)
       response = super(@content, headers)
       @rdf_subject ||= response.env.response_headers['location']
-      http_head(true)
+      http_head(true) if update_etag
       return response unless activity_uri
       rdf_source.wasGeneratedBy = activity_uri
       rdf_source.save
