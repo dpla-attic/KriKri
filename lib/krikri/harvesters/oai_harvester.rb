@@ -42,6 +42,7 @@ module Krikri::Harvesters
       http_conn = Faraday.new do |conn|
         conn.request :retry, :max => 3
         conn.response :follow_redirects, :limit => 5
+        conn.response :logger, Rails.logger
         conn.adapter :net_http
       end
 
