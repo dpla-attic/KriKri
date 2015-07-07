@@ -273,17 +273,54 @@ module Krikri
       end
 
       ##
+      # @example selecting by presence of an attribute; returns all nodes where
+      #   `#attribute?(:type)` is true
+      #
+      #   match_attribute(:type) 
+      #
+      # @example selecting by the value of an attribute; returns all nodes with
+      #   `#attribute(:type) == other`
+      #
+      #   match_attribute(:type, other)
+      #
+      # @example selecting by block against an attribute; returns all nodes with
+      #   `block.call(attribute(:type))` is true
+      #
+      #   match_attribute(:type) { |value| value.starts_with? 'blah' }
+      #
+      # @example selecting by block against an attribute; returns all nodes with
+      #   `block.call(attribute(:type)) == other` is true
+      #
+      #   match_attribute(:type, 'moomin') { |value| value.downcase }
+      #   
       # @param name [#to_sym] an attribute name
-      # @param other [Object] an object to for equality with the
+      # @param other [Object] an object to check for equality with the
       #   values from the given attribute.
       #
+      # @yield [value] yields each value with the attribute in name to the block
+      #
       # @return [ValueArray] an array containing nodes for which the specified
-      #   attribute has a value matching the given object.
-      def match_attribute(name, other)
-        select do |v|
-          next unless v.attribute?(name.to_sym)
-          v.send(name).downcase == other.downcase
-        end
+      #   attribute has a value matching the given attribute name, object, and 
+      #   block.
+      def match_attribute(name, other = nil, &block)
+        select(&compare_to_attribute(name, other, &block))
+      end
+
+      ##
+      # @param name [#to_sym] an attribute name
+      # @param other [Object] an object to check for equality with the
+      #   values from the given attribute.
+      #
+      # @yield [value] yields each value with the attribute in name to the block
+      #
+      # @return [ValueArray] an array containing nodes for which the specified
+      #   attribute does not have a value matching the given attribute name, 
+      #   object, and block.
+      #
+      # @see #match_attribute  for examples; this calls #reject, where it calls
+      #   #select.
+      def reject_attribute(name, other = nil, &block)
+        reject(&compare_to_attribute(name, other, &block))
       end
 
       ##
@@ -299,6 +336,20 @@ module Krikri
 
       def get_field(name)
         self.class.new(flat_map { |val| val[name] })
+      end
+
+      private
+      
+      ##
+      # @see #match_attribute, #reject_attribute
+      def compare_to_attribute(name, other, &block)
+        lambda do |v|
+          next unless v.attribute?(name.to_sym)
+          result = v.send(name)
+          result = yield(result) if block_given?
+          return result == other if other
+          result
+        end
       end
 
       public

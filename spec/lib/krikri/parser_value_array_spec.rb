@@ -238,18 +238,61 @@ describe Krikri::Parser::ValueArray do
     end
   end
 
-  describe '#match_attribute' do
+  shared_context 'with attributes' do
     before do
       values.each { |val| allow(val).to receive(:attribute?).and_return(false) }
-    end
 
-    it 'selects values by their attributes' do
       allow(values[0]).to receive(:attribute?).with(:type).and_return(true)
       allow(values[0]).to receive(:type).and_return('Moomin')
       allow(values[1]).to receive(:attribute?).with(:type).and_return(true)
       allow(values[1]).to receive(:type).and_return('mummi')
-      expect(subject.match_attribute(:type, 'moomin'))
+    end
+  end
+
+  describe '#match_attribute' do
+    include_context 'with attributes'
+
+    it 'selects values by presence of attributes' do
+      expect(subject.match_attribute(:type))
+        .to contain_exactly(values[0], values[1])
+    end
+
+    it 'selects values by attribute values matching other' do
+      expect(subject.match_attribute(:type, 'Moomin'))
         .to contain_exactly(values[0])
+    end
+
+    it 'selects according to a given block' do
+      expect(subject.match_attribute(:type) { |v| v.starts_with?('mu') })
+        .to contain_exactly(values[1])
+    end
+
+    it 'selects according to a given block and comparison to other' do
+      expect(subject.match_attribute(:type, 'moomin') { |v| v.downcase })
+        .to contain_exactly(values[0])
+    end
+  end
+
+  describe '#reject_attribute' do
+    include_context 'with attributes'
+
+    it 'rejects values by presence of attributes' do
+      expect(subject.reject_attribute(:type)).to contain_exactly(values[2])
+    end
+
+    it 'selects values by attribute values matching other' do
+      expect(subject.reject_attribute(:type, 'Moomin'))
+        .to contain_exactly(values[1], values[2])
+    end
+
+    it 'selects according to a given block' do
+      expect(subject.reject_attribute(:type) { |v| v.starts_with?('mu') })
+        .to contain_exactly(values[0], values[2])
+    end
+
+    it 'selects according to a given block and comparison to other' do
+      expect(subject.reject_attribute(:type, 'moomin') { |v| v.downcase })
+        .to contain_exactly(values[1], values[2])
     end
   end
 end
