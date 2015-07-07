@@ -158,10 +158,14 @@ describe Krikri::QASearchIndex do
     # See provenance_query_client.rb ('provenance queries' shared context)
     let(:generator_uri) { 'http://localhost:8983/marmotta/ldp/activity/3' }
 
-    it 'updates records affected by an activity' do
-      expect do
-        subject.update_from_activity(activity)
-      end.to_not raise_error
+    it 'sends bulk add requests' do
+      expect(subject).to receive(:bulk_add).at_least(1).times
+      subject.update_from_activity(activity)
+    end
+
+    it 'calls commit' do
+      expect(subject.solr).to receive(:commit)
+      subject.update_from_activity(activity)
     end
   end
 end

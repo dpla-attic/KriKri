@@ -156,9 +156,11 @@ module Krikri
     ##
     # @see Krikri::SearchIndex#update_from_activity
     def update_from_activity(activity)
-      fail "#{activity} is not an Activity" \
-        unless activity.class == Krikri::Activity
-      bulk_update_from_activity(activity)
+      fail "#{activity} is not an Activity" unless 
+        activity.class == Krikri::Activity
+      result = bulk_update_from_activity(activity)
+      solr.commit
+      result
     end
 
     ##
