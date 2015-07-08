@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency "therubyracer"
   s.add_dependency "edtf"
   s.add_dependency "text"
-  s.add_dependency "oai"
+  s.add_dependency "oai", '~>0.4.0'
   s.add_dependency "jsonpath"
   s.add_dependency "devise", "~>3.4.1"
   s.add_dependency "resque", "~>1.0"

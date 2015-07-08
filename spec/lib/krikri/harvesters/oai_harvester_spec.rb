@@ -188,6 +188,20 @@ EOM
                    :headers => {})
     end
 
+    it 'produces valid xml' do
+      expect do
+        Nokogiri::XML(subject.records.first.content) do |config|
+          config.options = Nokogiri::XML::ParseOptions::STRICT
+        end
+      end.not_to raise_error
+    end
+
+    it 'produces has oai namespace and header' do
+      expect(Nokogiri::XML(subject.records.first.content)
+              .xpath('//xmlns:header'))
+        .not_to be_empty
+    end
+
     it 'retries timed out requests' do
       expect_any_instance_of(Faraday::Adapter::NetHttp)
         .to receive(:perform_request).at_least(4).times
@@ -400,25 +414,6 @@ EOM
         activity = Krikri::Activity.first
         opts = JSON.parse(activity.opts, symbolize_names: true)
         expect(opts).to eq(args)
-      end
-    end
-
-    describe '#record_xml' do
-      let(:oai_record) { OAI::Record.new('') }
-
-      it 'produces valid xml' do
-        expect do
-          Nokogiri::XML(subject.send(:record_xml, oai_record)) do |config|
-            config.options = Nokogiri::XML::ParseOptions::STRICT
-          end
-        end.not_to raise_error
-      end
-
-      it 'sets header status' do
-        allow(oai_record.header).to receive(:status).and_return('deleted')
-        node = Nokogiri::XML(subject.send(:record_xml, oai_record))
-               .at_css('header')
-        expect(node['status']).to eq 'deleted'
       end
     end
 

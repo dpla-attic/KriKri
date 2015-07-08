@@ -183,26 +183,16 @@ module Krikri::Harvesters
 
     ##
     # Transforms an OAI::Record to xml suitable for saving with the
-    # OriginalRecord
+    # OriginalRecord. It's necessary to build a new document and add the 
+    # namespace manually to normalize record output between `ListRecords` and
+    # `GetRecord` requests.
     #
     # @param rec [OAI::Record]
     # @return [String] an xml string
     def record_xml(rec)
-      doc = Nokogiri::XML::Builder.new do |xml|
-        xml.record('xmlns' => 'http://www.openarchives.org/OAI/2.0/') {
-          xml.header {
-            xml.identifier rec.header.identifier
-            xml.datestamp  rec.header.datestamp
-            rec.header.set_spec.each do |set|
-              xml.set_spec set.text
-            end
-          }
-          xml << rec.metadata.to_s unless rec.metadata.nil?
-          xml << rec.about.to_s unless rec.about.nil?
-        }
-      end
-      doc.doc.at_css('header')['status'] = rec.header.status if
-        rec.header.status
+      doc = Nokogiri.XML(rec._source.to_s)
+      doc.root
+        .add_namespace_definition(nil, 'http://www.openarchives.org/OAI/2.0/')
       doc.to_xml
     end
   end
