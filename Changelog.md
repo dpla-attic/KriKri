@@ -1,3 +1,9 @@
+0.7.2 (15 July 2015)
+---
+* Adds enrichment to copy `providedLabel` to `prefLabel`
+* Commits to SOLR when running bulk adds to a QA index
+* Introduces HTTP request logging (via Faraday) for OAI harvests
+
 0.7.1 (01 July 2015)
 ---
 * Reduce post-save HEAD/GET requests making `#save` calls cheaper.
