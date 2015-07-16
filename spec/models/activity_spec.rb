@@ -32,6 +32,12 @@ describe Krikri::Activity, type: :model do
     end
   end
 
+  describe '#to_term' do
+    it 'gives the subject' do
+      expect(subject.to_term).to eq subject.rdf_subject
+    end
+  end
+
   describe '#to_s' do
     it 'outputs the object properties' do
       expect(subject.to_s).to eq subject.inspect.to_s

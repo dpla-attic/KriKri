@@ -85,6 +85,8 @@ module Krikri
       RDF::URI(Krikri::Settings['marmotta']['ldp']) /
         Krikri::Settings['prov']['activity'] / id.to_s
     end
+    alias_method :to_term, :rdf_subject
+    
 
     ##
     # @return [String] a string reprerestation of the activity
