@@ -11,7 +11,7 @@ describe 'krikri/reports/index.html.erb', type: :view do
 
   it 'displays provider name' do
     render
-    expect(rendered).to include provider.label.first
+    expect(rendered).to include provider.name
   end
 
   it 'renders validation reports' do

@@ -1,8 +1,6 @@
 FactoryGirl.define do
   factory :krikri_provider, class: Krikri::Provider do
-    label 'Moomin Valley Historical Society'
-    rdf_subject 'MoominValleyHistoricalSociety'
-
-    initialize_with { new(rdf_subject) }
+    name 'Moomin Valley Historical Society'
+    rdf_subject "#{Krikri::Provider.base_uri}123"
   end
 end

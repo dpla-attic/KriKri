@@ -15,17 +15,15 @@ shared_context 'with indexed item' do
   let(:records) { [agg] }
 
   let(:agg) do
-    a = build(:aggregation)
-    a.provider = provider
-    a.set_subject! 'moomin'
-    a
+    provider_agent = provider.agent
+    provider_agent.label = provider.name
+
+    aggregation = build(:aggregation, provider: provider_agent)
+    aggregation.set_subject! 'moomin'
+    aggregation
   end
 
-  let(:provider) do
-    build(:krikri_provider,
-          rdf_subject: 'moomin_valley',
-          label: 'moomin valley')
-  end
+  let(:provider) { build(:krikri_provider) }
 end
 
 shared_context 'with missing values' do
@@ -33,14 +31,22 @@ shared_context 'with missing values' do
     let(:records) { [agg, empty, empty_new_provider] }
 
     let(:empty) do
-      aggregation = build(:aggregation, provider: provider, sourceResource: nil)
+      provider_agent = provider.agent
+      provider_agent.label = provider.name
+
+      aggregation = build(:aggregation, 
+                          provider: provider_agent, 
+                          sourceResource: nil)
       aggregation.set_subject! 'empty'
       aggregation
     end
 
     let(:empty_new_provider) do
+      provider_agent = build(:krikri_provider, 
+                             rdf_subject: 'http://example.com/fake').agent
+
       aggregation = build(:aggregation,
-                          provider: RDF::URI('http://example.com/fake'),
+                          provider: provider_agent,
                           sourceResource: nil)
       aggregation.set_subject! 'empty_new_provider'
       aggregation

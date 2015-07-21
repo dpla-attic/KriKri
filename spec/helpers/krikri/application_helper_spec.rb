@@ -28,13 +28,13 @@ describe Krikri::ApplicationHelper, :type => :helper do
     let(:name) { double('name') }
 
     it 'finds provider for id if string is given' do
-      allow(provider).to receive(:provider_name).and_return(name)
+      allow(provider).to receive(:name).and_return(name)
       expect(Krikri::Provider).to receive(:find).and_return(provider)
       expect(helper.provider_name('provider')).to eq name
     end
 
     it 'gives provider name' do
-      allow(provider).to receive(:provider_name).and_return(name)
+      allow(provider).to receive(:name).and_return(name)
       expect(helper.provider_name(provider)).to eq name
     end
 

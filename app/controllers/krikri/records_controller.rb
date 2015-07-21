@@ -134,9 +134,9 @@ module Krikri
     # @param [Hash] user_parameters a hash of user-supplied parameters.
     def records_by_provider(solr_params, user_params)
       if @provider_id.present?
-        provider = Krikri::Provider.find(@provider_id)
+        rdf_subject = Krikri::Provider.base_uri + @provider_id
         solr_params[:fq] ||= []
-        solr_params[:fq] << "provider_id:\"#{provider.rdf_subject}\""
+        solr_params[:fq] << "provider_id:\"#{rdf_subject}\""
       end
     end
 
