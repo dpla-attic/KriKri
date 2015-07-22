@@ -1,3 +1,11 @@
+0.7.3 (22 July 2015)
+---
+* Adds `#reject_attribute` as a DSL method
+  * Extends both `#select_attribute` and `#reject_attribute` with block handling
+* Builds Providers from the search index for a SPARQL-free frontend
+* Upgrades to Ruby OAI 0.4.0;
+  * uses the new `#_source` method to access XML for OriginalRecord bodies
+
 0.7.2 (15 July 2015)
 ---
 * Adds enrichment to copy `providedLabel` to `prefLabel`
