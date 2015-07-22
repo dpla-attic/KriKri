@@ -7,7 +7,7 @@ describe 'krikri/providers/show.html.erb', type: :view do
 
   it 'displays provider name' do
     render
-    expect(rendered).to include provider.label.first.to_s
+    expect(rendered).to include provider.name
   end
 
   it 'links to records' do

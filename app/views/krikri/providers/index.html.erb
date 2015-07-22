@@ -9,7 +9,7 @@
   <ul>
   <% @providers.each do |provider| %>
     <li>
-      <%= link_to provider_name(provider), { controller: 'providers',
+      <%= link_to provider.name, { controller: 'providers',
         action: 'show', id: provider.id } %>
     </li>
   <% end %>

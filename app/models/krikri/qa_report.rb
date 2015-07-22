@@ -136,7 +136,7 @@ module Krikri
     # @todo figure out a better relations pattern between {ActiveRecord} objects
     #   and {ActiveTriples}
     def build_provider
-      Krikri::Provider.find(provider)
+      Krikri::Provider.new(:rdf_subject => provider).agent
     end
 
     private

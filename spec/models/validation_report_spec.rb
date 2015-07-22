@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Krikri::ValidationReport do
-  describe `#all` do
+  describe '#all' do
     it 'returns facet for each required field' do
       count = described_class::REQUIRED_FIELDS.count
       facet_field_const = Blacklight::SolrResponse::Facets::FacetField
@@ -23,7 +23,7 @@ describe Krikri::ValidationReport do
     end
   end
 
-  describe `#find` do
+  describe '#find' do
     it 'gives a blacklight solr response' do
       expect(subject.find('sourceResource_title'))
         .to be_a Blacklight::SolrResponse

@@ -8,10 +8,10 @@ describe 'krikri/providers/index.html.erb', type: :view do
   end
 
   let(:providers) do
-    [build(:krikri_provider, rdf_subject: 123),
+    [build(:krikri_provider, rdf_subject: '123'),
      build(:krikri_provider,
            rdf_subject: 'TooTickyLibrary',
-           label: 'Too-Ticky')]
+           name: 'Too-Ticky')]
   end
 
   it 'renders each provider' do
