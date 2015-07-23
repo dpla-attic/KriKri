@@ -154,10 +154,11 @@ module Krikri
       query_params = { :rows => 1,
                        :q => rdf_subject,
                        :qf => 'provider_id',
-                       :fl => 'provider_name' }
+                       :fl => 'provider_name provider_id' }
       response = Krikri::SolrResponseBuilder.new(query_params).response
       return nil unless response.docs.count > 0
-      response.docs.first['provider_name'].first
+      response.docs.first['provider_name'].respond_to?(:first) ?
+        response.docs.first['provider_name'].first : rdf_subject
     end
 
     ##
