@@ -122,14 +122,24 @@ describe Krikri::Provider do
   end
 
   describe '#name' do
-    include_context 'indexed in Solr'
 
-    it 'returns an :name corresponding to the indexed :rdf_subject' do
-      expect(described_class.new({ rdf_subject: rdf_subject }).name).to eq name
+    context 'with item' do
+      include_context 'indexed in Solr'
+
+      it 'returns an :name corresponding to the indexed :rdf_subject' do
+        expect(described_class.new({ rdf_subject: rdf_subject }).name).to eq name
+      end
+
+      it 'returns nil without valid :rdf_subject' do
+        expect(described_class.new.name).to eq nil
+      end
     end
 
-    it 'returns nil without valid :rdf_subject' do
-      expect(described_class.new.name).to eq nil
+    it 'returns :rdf_subject without indexed :provider_name' do
+      allow_any_instance_of(Blacklight::SolrResponse).to receive(:docs)
+        .and_return([{ 'provider_id' => [rdf_subject] }])
+      expect(described_class.new({ rdf_subject: rdf_subject }).name)
+        .to eq rdf_subject
     end
   end
 

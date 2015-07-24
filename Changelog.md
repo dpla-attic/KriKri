@@ -1,3 +1,7 @@
+0.7.4 (23 July 2015)
+---
+* Check for existence of provider_name when building navigation
+
 0.7.3 (22 July 2015)
 ---
 * Adds `#reject_attribute` as a DSL method
