@@ -22,7 +22,9 @@ Krikri::Engine.routes.draw do
     resources :harvest_sources, shallow: true
   end
 
-  resources :providers, only: [:index, :show]
+  resources :providers, only: [:index, :show] do
+    resources :field_value_reports, only: [:show]
+  end
 
   mount Resque::Server.new, at: '/resque'
 end

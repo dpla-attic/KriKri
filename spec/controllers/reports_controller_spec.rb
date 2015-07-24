@@ -43,6 +43,14 @@ describe Krikri::ReportsController, :type => :controller do
         .to change { assigns(:validation_reports) }.to(validation_reports)
     end
 
+    it 'sets @provider' do
+      provider = double('provider')
+      allow(Krikri::Provider).to receive(:find).with(provider_id)
+        .and_return(provider)
+      expect { get :index, provider: provider_id }
+        .to change { assigns(:provider) }.to(provider)
+    end
+
     # @todo: this specifies implementation, due to limitations of the
     #   Krikri::ValidationReport interface (see above). Refactor me!
     it 'sets the provider' do

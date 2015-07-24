@@ -1,0 +1,14 @@
+<h3>Field Value Reports</h3>
+<% if @provider.present? %>
+  <p>Available as CSV downloads</p>
+  <ul>
+    <% @provider.field_value_reports.each do |report| %>
+      <li>
+        <%= link_to report.field, 
+                    provider_field_value_report_path(id: report.field,
+                                                     provider_id: @provider.id,
+                                                     format: :csv) %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
