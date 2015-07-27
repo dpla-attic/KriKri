@@ -25,7 +25,7 @@ module Krikri
     def render_enriched_record(document)
       agg = document.aggregation
       return error_msg('Aggregation not found.') unless agg.present?
-      JSON.pretty_generate(agg.to_jsonld)
+      JSON.pretty_generate(agg.to_jsonld['@graph'])
     end
 
     # Render original record for view
