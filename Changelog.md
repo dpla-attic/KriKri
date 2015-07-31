@@ -1,3 +1,8 @@
+0.7.5 (31 July 2015)
+---
+* Add prefLabels to languages
+* Display only the `@graph` in JSON-LD displays
+
 0.7.4 (23 July 2015)
 ---
 * Check for existence of provider_name when building navigation

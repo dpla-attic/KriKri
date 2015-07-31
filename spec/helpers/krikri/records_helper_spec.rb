@@ -30,6 +30,11 @@ describe Krikri::RecordsHelper, :type => :helper do
         result = helper.render_enriched_record(document)
         expect { JSON.parse(result) }.not_to raise_error
       end
+
+      it 'does not include context' do
+        expect(helper.render_enriched_record(document))
+          .not_to include '@context'
+      end
     end
 
     context 'without existing aggregation' do
