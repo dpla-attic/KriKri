@@ -35,6 +35,11 @@ describe Krikri::Enrichments::LanguageToLexvo do
       expect(subject.enrich_value('finnish')).to be_node
     end
 
+    it 'adds a prefLabel' do
+      expect(subject.enrich_value('finnish').prefLabel)
+        .to contain_exactly 'Finnish'
+    end
+
     context 'and no match' do
       it 'gives a language' do
         expect(subject.enrich_value('INVALID'))

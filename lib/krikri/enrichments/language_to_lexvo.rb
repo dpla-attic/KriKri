@@ -110,8 +110,11 @@ module Krikri::Enrichments
       match = match_iso(label.to_s)
       match = match_label(label.to_s) if match.node?
 
-      node.exactMatch = match unless match.node?
+      # if match is still a node, we didn't find anything
+      return node if match.node?
 
+      node.exactMatch = match 
+      node.prefLabel = RDF::ISO_639_3[match.rdf_subject.qname[1]].label.last
       node
     end
 
