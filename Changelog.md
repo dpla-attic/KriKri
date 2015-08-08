@@ -1,3 +1,7 @@
+0.7.6 (8 August 2015)
+---
+* Pin rails_config to version 0.4.0
+
 0.7.5 (31 July 2015)
 ---
 * Add prefLabels to languages
