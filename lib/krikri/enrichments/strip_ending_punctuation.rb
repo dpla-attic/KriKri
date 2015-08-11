@@ -14,7 +14,7 @@ module Krikri::Enrichments
     def enrich_value(value)
       return value unless value.is_a? String
       value.gsub!(/[^\p{Alnum}\'\"\)\]\}]*$/, '') unless
-        value.match /\s*[a-z]{1,2}\.$/i
+        value.match /\s+[a-z]{1,2}\.$/i
       value
     end
   end
