@@ -127,7 +127,8 @@ describe Krikri::Provider do
       include_context 'indexed in Solr'
 
       it 'returns an :name corresponding to the indexed :rdf_subject' do
-        expect(described_class.new({ rdf_subject: rdf_subject }).name).to eq name
+        expect(described_class.new({ rdf_subject: rdf_subject }).name)
+          .to eq name
       end
 
       it 'returns nil without valid :rdf_subject' do
@@ -163,6 +164,31 @@ describe Krikri::Provider do
 
     it 'returns nil without valid :rdf_subject' do
       expect(described_class.new.agent).to eq nil
+    end
+  end
+
+  describe '#field_value_reports' do
+
+    before(:each) do
+      allow(Krikri::FieldValueReport).to receive(:fields).and_return(['abc'])
+    end
+
+    it 'returns an Array' do
+      expect(described_class.new.field_value_reports).to be_a Array
+    end
+
+    it 'returns FieldValueReports' do
+      expect(described_class.new.field_value_reports.first)
+        .to be_a Krikri::FieldValueReport
+    end
+
+    it 'assigns provider to FieldValueReports' do
+      provider = described_class.new({ rdf_subject: rdf_subject })
+      expect(provider.field_value_reports.first.provider).to eq provider
+    end
+
+    it 'assigns field name to FieldValueReports' do
+      expect(described_class.new.field_value_reports.first.field).to eq 'abc'
     end
   end
 

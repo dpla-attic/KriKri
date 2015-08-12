@@ -15,6 +15,7 @@ module Krikri
       @validation_reports = report.all
 
       if @current_provider
+        @provider = Krikri::Provider.find(@current_provider)
         @qa_reports = Array(Krikri::QAReport.find_by(provider: @current_provider))
       else
         @qa_reports = Krikri::QAReport.all

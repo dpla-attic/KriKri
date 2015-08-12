@@ -1,0 +1,1 @@
+<%= @field_value_report.headers.to_csv %><% @field_value_report.enumerate_rows.each do |row| %><%= row.to_csv %><% end %>

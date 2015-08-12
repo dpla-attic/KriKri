@@ -6,18 +6,17 @@ module Krikri
   # This is a read-only object. It does not write new providers to Solr, nor
   # does it update or delete providers.
   #
+  # If Provider is initialized with a valid value for :rdf_subject, the model
+  # can extrapolate all other attributes.
+  #
   # A DPLA::MAP::Agent object can be constructed from an instance of this
   # ActiveModel object using the :agent method. The DPLA::MAP::Agent object
   # interacts with Marmotta, rather than Solr.
   #
-  #   @example Krikri::Provider.find(rdf_subject: 'http://blah.com/123').agent
+  #   @example Krikri::Provider.new(rdf_subject: 'http://blah.com/123').agent
   #     => [DPLA::MAP::Agent]
   #
-  class Provider
-    include ActiveModel::Validations
-    include ActiveModel::Conversion
-    extend ActiveModel::Naming
-
+  class Provider < Krikri::ActiveModelBase
     ##
     # @!attribute :rdf_subject [String] the URI identifying the provider
     #   @example: "http://blah.com/contributor/123"
@@ -29,29 +28,10 @@ module Krikri
     #
     # @!attribute :agent [DPLA::MAP::Agent] an ActiveTriples representation of
     # the provider, read from Marmotta.
-    attr_accessor :rdf_subject, :name
+    #
+    # @!attribute :field_value_reports [Array<Krikri::FieldValueReport>]
+    attr_accessor :rdf_subject, :name, :field_value_reports
     attr_reader :agent, :id
-
-    ##
-    # Initializes a Provider object.
-    #
-    # @param attributes [Hash]
-    # If the params Hash contains a valid value for :rdf_subject, the model can
-    # extrapolate all other attributes.
-    #
-    # @example
-    #   Krikri::Provider.new({ rdf_subject: 'http:://blah.com/contributor/123',
-    #                          name: 'Moomin Valley Historical Society' })
-    #
-    # @raise [NoMethodError] if the params Hash includes a key that does not
-    # match listed attr_accessors
-    #
-    # @return [<Krikri::Provider>]
-    def initialize(attributes = {})
-      attributes.each do |name, value|
-        send("#{name}=", value)
-      end
-    end
 
     ##
     # Gives a list of all providers, ignoring those with no URI (bnodes).
@@ -69,7 +49,8 @@ module Krikri
 
       response.facet_pivot['provider_id,provider_name'].map do |facet|
         rdf_subject = facet['value']
-        name = facet['pivot'].present? ? facet['pivot'].first['value'] : nil
+        name = facet['pivot'].present? ? facet['pivot'].first['value'] :
+          rdf_subject
         provider = new({ :rdf_subject => rdf_subject, :name => name })
         provider.valid_rdf_subject? ? provider : nil
       end.compact
@@ -89,8 +70,10 @@ module Krikri
                        :fl => 'provider_id provider_name' }
       response = Krikri::SolrResponseBuilder.new(query_params).response
       return nil unless response.docs.count > 0
+      name = response.docs.first['provider_name'].respond_to?(:first) ?
+        response.docs.first['provider_name'].first : rdf_subject
       new({ :rdf_subject => rdf_subject,
-            :name => response.docs.first['provider_name'].first })
+            :name => name })
     end
 
     ##
@@ -113,6 +96,10 @@ module Krikri
       @agent ||= initialize_agent
     end
 
+    def field_value_reports
+      @field_value_reports ||= initialize_field_value_reports
+    end
+
     ##
     # Tests for providers that have valid a :rdf_subject (not a bnode).
     # A valid :rdf_subject does not necessarily match and :rdf_subject in the
@@ -120,12 +107,6 @@ module Krikri
     def valid_rdf_subject?
       return false unless rdf_subject.present?
       rdf_subject.start_with?(self.class.base_uri) ? true : false
-    end
-
-    ##
-    # Required ActiveModel method.
-    def persisted?
-      false
     end
 
     private
@@ -169,6 +150,12 @@ module Krikri
     def initialize_agent
       return nil unless valid_rdf_subject?
       DPLA::MAP::Agent.new(rdf_subject).tap { |agent| agent.label = name }
+    end
+
+    def initialize_field_value_reports
+      Krikri::FieldValueReport.fields.map do |field|
+        Krikri::FieldValueReport.new({ field: field, provider: self })
+      end
     end
   end
 end
