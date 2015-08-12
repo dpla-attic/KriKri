@@ -18,7 +18,7 @@ module Krikri::Enrichments
 
     def empty?(value)
       return true if value.empty?
-      return true if value =~ /^\s*$/
+      return true if value =~ /\A\s*\z/
       false
     end
   end
