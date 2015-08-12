@@ -19,6 +19,14 @@ describe Krikri::Enrichments::StripEndingPunctuation do
               :start => "66 cm.",
               :end => "66 cm."
             },
+            { :string => 'removes period from longer words',
+              :start => "Regents Examinations.",
+              :end => "Regents Examinations"
+            },
+            { :string => 'removes period from longer words with parens',
+              :start => "Budget - New York (State).",
+              :end => "Budget - New York (State)"
+            },
             { :string => 'leaves other fields unaltered',
               :start => "moominpapa;:;:; moominmama",
               :end => "moominpapa;:;:; moominmama"

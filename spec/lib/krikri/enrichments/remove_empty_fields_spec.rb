@@ -15,6 +15,11 @@ describe Krikri::Enrichments::RemoveEmptyFields do
               :start => "\n\t  \t\n",
               :end => nil
             },
+
+            { :string => 'keeps whitespace heavy fields with newlines',
+              :start => "\n\t value \t\n",
+              :end => "\n\t value \t\n"
+            },
             { :string => 'leaves non-empty fields unaltered',
               :start => 'moomin',
               :end => 'moomin'

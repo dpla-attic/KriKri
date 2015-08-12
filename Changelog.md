@@ -1,3 +1,18 @@
+0.8.0 (12 August 2015)
+---
+* Adds field value report 
+  * Add downloadable CSV reports for field values.
+  * Add new ActiveModelBase class, which is extended by FieldValueReport
+  and Provider.
+* Updates DPLA::MAP dependency, fixing an issue with
+`SourceResource#language` accessors.
+* Fixes two bugs on string enrichments:
+  * Ending punctuation enrichment left some ending periods that were
+  intended to be removed.
+  * Remove empty fields enrichment treated fields beginning with
+  whitespace followed by a newline as "whitespace-only" regardless of
+  other content.
+
 0.7.6 (8 August 2015)
 ---
 * Pin rails_config to version 0.4.0

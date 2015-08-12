@@ -19,6 +19,11 @@ describe 'krikri/reports/index.html.erb', type: :view do
     expect(rendered).to include 'Validation Reports'
   end
 
+  it 'renders field value reports' do
+    render
+    expect(rendered).to include 'Field Value Reports'
+  end
+
   it 'renders qa reports' do
     render
     expect(rendered).to include 'QA Reports'
