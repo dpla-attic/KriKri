@@ -23,7 +23,10 @@ module Krikri::MappingDSL
           each_val.call(record).each do |value|
             map = ::Krikri::Mapping.new(target_class)
             map.define_singleton_method(as_sym) do
-              each_val.dup.select { |v| v.value == value }
+              each_val.dup.select do |v|
+                v = v.value if v.respond_to? :value
+                v == value 
+              end
             end
             map.instance_eval(&block)
             target.send(name) << map.process_record(record)
