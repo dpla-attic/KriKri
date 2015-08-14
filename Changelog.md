@@ -1,3 +1,7 @@
+0.8.1 (14 August 2015)
+---
+* Fix FieldValueReport error where nil can't be coerced into Fixnum 
+
 0.8.0 (12 August 2015)
 ---
 * Adds field value report 
