@@ -73,7 +73,7 @@ module Krikri
             yielder <<  headers.map { |header| row[header] }
           end
 
-          opts[:start] += opts[:batch_size]
+          opts[:start] += opts[:rows]
           break if opts[:start] >= response.total
         end
       end
@@ -87,7 +87,7 @@ module Krikri
     def query_opts(opts = {})
       { :fq => "provider_id:\"#{provider.rdf_subject}\"",
         :fl => headers,
-        :rows => opts.fetch(:batch_size, 1000).to_i,
+        :rows => opts.fetch(:rows, 1000).to_i,
         :start => opts.fetch(:start, 0).to_i }
     end
 
