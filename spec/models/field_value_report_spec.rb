@@ -74,11 +74,9 @@ describe Krikri::FieldValueReport do
     end
 
     context 'with opts' do
-      it 'sets Solr :rows from :batch_size' do
-        enumerate_rows_opts = { batch_size: 50 }
-        expected_query_opts = { rows: 50 }
-        expect(report.instance_eval{ query_opts(enumerate_rows_opts) })
-          .to include expected_query_opts
+      it 'sets :rows' do
+        opts = { rows: 50 }
+        expect(report.instance_eval{ query_opts(opts) }).to include opts
       end
     end
   end
