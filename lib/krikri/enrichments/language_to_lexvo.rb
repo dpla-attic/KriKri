@@ -48,7 +48,7 @@ module Krikri::Enrichments
   class LanguageToLexvo
     include Audumbla::FieldEnrichment
 
-    TERMS = DPLA::MAP::Controlled::Language.list_terms.freeze
+    TERMS = RDF::ISO_639_3.to_a
     QNAMES = TERMS.map { |t| t.qname[1] }.freeze
 
     ##
