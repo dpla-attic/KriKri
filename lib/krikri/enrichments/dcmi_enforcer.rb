@@ -4,13 +4,15 @@ module Krikri::Enrichments
   class DcmiEnforcer
     include Audumbla::FieldEnrichment
 
+    TERMS = RDF::DCMITYPE.to_a
+
     ##
     # @param value [Object] the value to enrich
     #
     # @return [DPLA::MAP::Controlled::DCMIType, nil] the original value or `nil`
     def enrich_value(value)
       return nil unless value.is_a? DPLA::MAP::Controlled::DCMIType
-      return nil unless value.valid?
+      return nil unless TERMS.include? value.rdf_subject
       value
     end
   end

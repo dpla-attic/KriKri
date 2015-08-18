@@ -1,4 +1,5 @@
 require 'rdf/isomorphic'
+require 'linkeddata'
 require 'active_support'
 require 'rails_config'
 require 'krikri/ldp'
