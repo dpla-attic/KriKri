@@ -1,3 +1,8 @@
+0.8.2 (18 August 2015)
+---
+* Upgrades DPLA::MAP to remove LinkedVocab dependency
+  * Fixes a bug with blank node identity in language and genre 
+
 0.8.1 (14 August 2015)
 ---
 * Fix FieldValueReport error where nil can't be coerced into Fixnum 
