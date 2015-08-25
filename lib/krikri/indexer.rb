@@ -21,7 +21,7 @@ module Krikri
     include SoftwareAgent
     include EntityConsumer
 
-    attr_reader :index_class, :index_opts
+    attr_reader :index, :index_class, :index_opts
 
     def self.queue_name
       :indexing
@@ -33,14 +33,21 @@ module Krikri
       @index_opts = opts
     end
 
+    def index
+      @index ||= index_class.constantize.new(index_opts)
+    end
+
     def run
       log :info, 'indexer is running'
-      search_index = index_class.constantize.new(index_opts)
-      search_index.update_from_activity(generator_activity)
-    rescue => e
-      Rails.logger.error("Indexing error: #{e.message}\n#{e.backtrace}")
-    ensure
-      log :info, 'indexer is done'
+      
+      begin
+        index.update_from_activity(generator_activity)
+      rescue => e
+        log :error, "INDEXER FAILED\n#{e.message}"
+        raise e
+      ensure  
+        log :info, 'indexer is done'
+      end
     end
   end
 end

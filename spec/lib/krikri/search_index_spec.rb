@@ -11,9 +11,11 @@ if ENV['CI'] == 'yes'
 end
 
 describe Krikri::SearchIndex do
+  subject { described_class.new bulk_update_size: 2 }
+
   describe '#bulk_update_batches' do
-    subject { described_class.new bulk_update_size: 2 }
     let(:aggs) { ["JSON string"] * 3 }
+
     it 'returns the right number of documents' do
       all = subject.send(:bulk_update_batches, aggs)
       doc_count = 0
@@ -24,6 +26,24 @@ describe Krikri::SearchIndex do
       end
       expect(doc_count).to eq 3
       expect(batch_count).to eq 2
+    end
+  end
+
+  describe '#update_from_activity' do
+    before { allow(activity).to receive(:entities).and_return(aggs) }
+
+    let(:aggs) { [build(:aggregation), build(:aggregation)] }
+    let(:activity) { double('activity') }
+    
+    it 'adds each record' do
+      expect(subject).to receive(:add).exactly(aggs.count).times
+      subject.update_from_activity(activity)
+    end
+
+    it 'logs errors' do
+      allow(subject).to receive(:add).and_raise(RuntimeError)
+      expect(Rails.logger).to receive(:error).exactly(2).times
+      subject.update_from_activity(activity)
     end
   end
 end
