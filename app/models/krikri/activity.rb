@@ -79,9 +79,19 @@ module Krikri
       JSON.parse(opts, symbolize_names: true)
     end
 
+    ##
+    # @return [RDF::URI] the uri for this activity
     def rdf_subject
       RDF::URI(Krikri::Settings['marmotta']['ldp']) /
         Krikri::Settings['prov']['activity'] / id.to_s
+    end
+    alias_method :to_term, :rdf_subject
+    
+
+    ##
+    # @return [String] a string reprerestation of the activity
+    def to_s
+      inspect.to_s
     end
 
     ##
@@ -109,6 +119,5 @@ module Krikri
     def entities
       agent_instance.entity_behavior.entities(self)
     end
-
   end
 end

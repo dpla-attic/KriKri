@@ -32,6 +32,18 @@ describe Krikri::Activity, type: :model do
     end
   end
 
+  describe '#to_term' do
+    it 'gives the subject' do
+      expect(subject.to_term).to eq subject.rdf_subject
+    end
+  end
+
+  describe '#to_s' do
+    it 'outputs the object properties' do
+      expect(subject.to_s).to eq subject.inspect.to_s
+    end
+  end
+
   describe '#start_time' do
     before do
       subject.set_start_time
@@ -148,7 +160,6 @@ describe Krikri::Activity, type: :model do
     end
   end
 
-
   describe '#entity_uris' do
     include_context 'provenance queries'
     include_context 'entities query'
@@ -163,7 +174,5 @@ describe Krikri::Activity, type: :model do
       # 'result uri' is what the mocked query solution's record should contain.
       expect(subject.entity_uris.first).to match 'result uri'
     end
-
   end
-
 end
