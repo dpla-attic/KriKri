@@ -130,17 +130,16 @@ module Krikri
     # @return [Boolean]
     # @see Krirki::Harvesters:HarvestBehavior
     def run(activity_uri = nil)
-      log :info, 'harvest is running'
       records.each do |rec|
         begin
           process_record(rec, activity_uri)
         rescue => e
-          log :error, "Error harvesting record:\n#{rec.content}\n\t" \
-                      "with message:\n#{e.message}"
+          Krikri::Logger.log :error, "Error harvesting record:\n" \
+                                     "#{rec.content}\n\twith message:\n"\
+                                     "#{e.message}"
           next
         end
       end
-      log :info, 'harvest is done'
       true
     end
 

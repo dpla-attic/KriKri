@@ -64,5 +64,10 @@ shared_examples 'a software agent' do |args|
       expect { agent_class.enqueue(args) }
         .to change { Krikri::Activity.count }.by(1)
     end
+
+    it 'logs queue creation' do
+      expect(Rails.logger).to receive(:info).exactly(2).times
+      agent_class.enqueue(args)
+    end
   end
 end

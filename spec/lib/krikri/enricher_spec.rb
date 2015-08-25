@@ -82,7 +82,7 @@ EOS
       end
 
       it 'logs errors' do
-        expect(Krikri::SoftwareAgent::Logger)
+        expect(Rails.logger)
           .to receive(:error)
           .with(start_with('Enrichment error'))
           .exactly(3).times

@@ -38,16 +38,7 @@ module Krikri
     end
 
     def run
-      log :info, 'indexer is running'
-      
-      begin
-        index.update_from_activity(generator_activity)
-      rescue => e
-        log :error, "INDEXER FAILED\n#{e.message}"
-        raise e
-      ensure  
-        log :info, 'indexer is done'
-      end
+      index.update_from_activity(generator_activity)
     end
   end
 end

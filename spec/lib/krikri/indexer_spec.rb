@@ -40,23 +40,5 @@ describe Krikri::Indexer do
                                 .with(subject.generator_activity)
       subject.run
     end
-
-    it 'logs to info for start and finish' do
-      expect(Rails.logger).to receive(:info).exactly(2).times
-      subject.run
-    end
-
-    context 'with errors' do
-      before do
-        allow(agg).to receive(:to_jsonld).and_raise(RuntimeError, 'any err')
-      end
-
-      let(:agg) { double('bad agg') }
-
-      it 'logs errors, once for each batch' do
-        expect(Rails.logger).to receive(:error).exactly(1).times
-        expect { subject.run }.to raise_error RuntimeError
-      end
-    end
   end
 end
