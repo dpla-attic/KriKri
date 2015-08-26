@@ -33,11 +33,10 @@ module Krikri
     # Shim that determines, for a particular type of index, which strategy
     # to use, adding a single document, or adding them in bulk.  Intended
     # to be overridden as necessary.
+    #
     # @see #add
     # @see #bulk_add
     def update_from_activity(activity)
-      fail "#{activity} is not an Activity" \
-        unless activity.class == Krikri::Activity
       incremental_update_from_activity(activity)
     end
 
@@ -47,12 +46,14 @@ module Krikri
     # Given an activity, use the bulk-update method to load its revised
     # entities into the search index.
     #
+    # Any errors on bulk adds are caught and logged, and the batch is skipped.
+    #
     # @param activity [Krikri::Activity]
     def bulk_update_from_activity(activity)
       all_aggs = entities_as_json_hashes(activity)
       agg_batches = bulk_update_batches(all_aggs)
       agg_batches.each do |batch|
-        bulk_add(batch)
+        index_with_error_handling(activity) { bulk_add(batch) }
       end
     end
 
@@ -83,10 +84,13 @@ module Krikri
     # Given an activity, load its revised entities into the search index one
     # at a time.
     #
+    # Any errors on individual record adds are caught and logged, and the 
+    # record is skipped.
+    #
     # @param activity [Krikri::Activity]
     def incremental_update_from_activity(activity)
       entities_as_json_hashes(activity).each do |h|
-        add(h)
+        index_with_error_handling(activity) { add(h) }
       end
     end
 
@@ -115,6 +119,20 @@ module Krikri
     # @return [Hash] Hash that can respond to #to_json for serialization
     def hash_for_index_schema(aggregation)
       aggregation.to_jsonld['@graph'][0]
+    end
+
+    private
+    
+    ##
+    # Runs a block, catching any errors and logging them with the given 
+    # activity id.
+    def index_with_error_handling(activity, &block)
+      begin
+        yield if block_given?
+      rescue => e
+        Krikri::Logger
+          .log(:error, "indexer error for Activity #{activity}:\n#{e.message}")
+      end
     end
   end
 

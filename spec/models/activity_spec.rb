@@ -100,6 +100,11 @@ describe Krikri::Activity, type: :model do
       expect(subject).to have_duration_of(duration)
     end
 
+    it 'logs start and finish' do
+      expect(Rails.logger).to receive(:info).exactly(2).times
+      subject.run { }
+    end
+
     context 'after first run' do
       before do
         subject.run { }
