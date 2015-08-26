@@ -1,16 +1,19 @@
 module Krikri
   ##
   # SoftwareAgent is a mixin for logic common to code that generates a
-  # Krikri::Activity.
+  # `Krikri::Activity`.
   #
+  # Software Agents should handle internal errors that do not result in full
+  # activity failure, and raise a `RuntimeError` when the job fails. `Activity`
+  # handles logging of activity start/stop, and failure status.
+  #
+  # @see Krikri::Activity
   module SoftwareAgent
     extend ActiveSupport::Concern
 
     included do
       attr_writer :entity_behavior
     end
-
-    Logger = ActiveSupport::TaggedLogging.new(Rails.logger)
 
     ##
     # Return the EntityBehavior associated with the SoftwareAgent.
@@ -41,6 +44,8 @@ module Krikri
     #
     # @return [Boolean] `true` if the run has succeeded; otherwise `false`
     #
+    # @raise [RuntimeError] when the software agent's activity fails
+    #
     # @see Krirkri::Activity
     # @see Krikri::Job.run
     def run
@@ -48,26 +53,8 @@ module Krikri
     end
 
     ##
-    # @see Krikri::SoftwareAgent#log
-    def log(priority, msg)
-      self.class.log(priority, msg)
-    end
-
-    ##
     # Class methods for extension by ActiveSupport::Concern
     module ClassMethods
-
-      ##
-      # Log a message, tagged in a way suitable for software agents.
-      # @see Krikri::SoftwareAgent::method_missing
-      def log(priority, msg)
-        Krikri::SoftwareAgent::Logger.tagged(
-          Time.now.to_s, Process.pid, to_s
-        ) do
-          Krikri::SoftwareAgent::Logger.send(priority, msg)
-        end
-      end
-
       ##
       # @return a string representation of this SoftwareAgent class
       def agent_name
@@ -126,13 +113,11 @@ module Krikri
           a.opts = JSON.generate(opts)
         end
 
-        log :info, "created activity #{activity.id}"
+        Krikri::Logger.log :info, "created activity #{activity.id}"
         Resque.enqueue_to(queue, Krikri::Job, activity.id)
-        log :info, "enqueued to #{queue}"
+        Krikri::Logger.log :info, "enqueued to #{queue}"
         true
       end
-
     end
-
   end
 end

@@ -63,17 +63,16 @@ module Krikri
     # instantiation, and apply each enrichment from the enrichment chain.
     #
     def run(activity_uri = nil)
-      log :info, 'enricher is running'
       mapped_records = generator_activity.entities
       mapped_records.each do |rec|
         begin
           chain_enrichments!(rec)
           activity_uri ? rec.save_with_provenance(activity_uri) : rec.save
         rescue => e
-          log :error, "Enrichment error: #{e.message}\n#{e.backtrace}"
+          Krikri::Logger.log(:error, 
+                             "Enrichment error: #{e.message}\n#{e.backtrace}")
         end
       end
-      log :info, 'enricher is done'
     end
 
     ##

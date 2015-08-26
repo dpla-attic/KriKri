@@ -18,7 +18,6 @@ module Krikri
     #                   the activity
     # @!attribute start_time
     #    @return [DateTime] a datestamp marking the activity's start
-
     validate :agent_must_be_a_software_agent
 
     def agent_must_be_a_software_agent
@@ -40,18 +39,26 @@ module Krikri
     ##
     # Runs the block, setting the start and end time of the run. The given block
     # is passed an instance of the agent, and a URI representing this Activity.
+    # 
+    # Handles logging of activity start/stop and failure states.
+    #
+    # @raise [RuntimeError] re-raises logged errors on Activity failure
     def run
       if block_given?
         update_attribute(:end_time, nil) if ended?
+        Krikri::Logger
+          .log(:info, "Activity #{agent.constantize}-#{id} is running")
         set_start_time
         begin
           yield agent_instance, rdf_subject
         rescue => e
-          Rails.logger.error("Error performing Activity: #{id}\n" \
-                             "#{e.message}\n#{e.backtrace}")
+          Krikri::Logger.log(:error, "Error performing Activity: #{id}\n" \
+                                     "#{e.message}\n#{e.backtrace}")
           raise e
         ensure
           set_end_time
+          Krikri::Logger
+            .log(:info, "Activity #{agent.constantize}-#{id} is done")
         end
       end
     end
@@ -79,9 +86,19 @@ module Krikri
       JSON.parse(opts, symbolize_names: true)
     end
 
+    ##
+    # @return [RDF::URI] the uri for this activity
     def rdf_subject
       RDF::URI(Krikri::Settings['marmotta']['ldp']) /
         Krikri::Settings['prov']['activity'] / id.to_s
+    end
+    alias_method :to_term, :rdf_subject
+    
+
+    ##
+    # @return [String] a string reprerestation of the activity
+    def to_s
+      inspect.to_s
     end
 
     ##
@@ -109,6 +126,5 @@ module Krikri
     def entities
       agent_instance.entity_behavior.entities(self)
     end
-
   end
 end

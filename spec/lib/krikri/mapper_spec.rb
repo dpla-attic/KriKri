@@ -12,6 +12,14 @@ describe Krikri::Mapper do
           creator :class => DPLA::MAP::Agent do
             providedLabel record.field('dc:creator')
           end
+
+          contributor :class => DPLA::MAP::Agent, :each => record.field('dc:creator').map { |v| v.value }, :as => :ident do
+            providedLabel ident
+          end
+
+          spatial :class => DPLA::MAP::Place, :each => ['nyc', 'bos', 'pdx'], :as => :place do
+            providedLabel place
+          end
         end
 
         provider :class => DPLA::MAP::Agent, :each => header.field('xmlns:identifier'), :as => :ident do
@@ -27,6 +35,14 @@ describe Krikri::Mapper do
 
       expect(mapped.sourceResource.first.creator.first.providedLabel)
         .to eq record.root['dc:creator'].to_a.map(&:value)
+
+      expect(mapped.sourceResource.first.contributor.first.providedLabel)
+        .to contain_exactly record.root['dc:creator'].first.value
+      expect(mapped.sourceResource.first.contributor.map(&:providedLabel).flatten)
+        .to eq record.root['dc:creator'].to_a.map(&:value)
+
+      expect(mapped.sourceResource.first.spatial.map(&:providedLabel).flatten)
+        .to eq ['nyc', 'bos', 'pdx']
 
       expect(mapped.sourceResource.first.identifier)
         .to eq Array(record.header.first['xmlns:identifier'].first.value)
