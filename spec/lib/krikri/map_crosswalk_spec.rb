@@ -53,6 +53,24 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
           .to eq 'http://dp.la/api/items/moomin#sourceResource'
       end
 
+      it 'has prefLabels' do
+        expect(subject.hash[:sourceResource][:@id])
+          .to eq 'http://dp.la/api/items/moomin#sourceResource'
+      end
+
+      context 'with prefLabel' do
+        before do
+          aggregation.sourceResource.first.language.first.prefLabel = label
+          subject.build
+        end
+        
+        let(:label) { 'en' }
+        
+        it 'uses prefLabel' do
+          expect(subject.hash[:sourceResource][:language]).to contain_exactly label
+        end
+      end
+
       context 'with mistyped values' do
         before do
           aggregation.hasView = 'NOT REAL'

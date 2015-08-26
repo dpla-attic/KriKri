@@ -232,7 +232,7 @@ module Krikri
 
       def get_label(resource)
         return resource if resource.is_a? String
-        return resource.preflabel if resource.respond_to?(:prefLabel) &&
+        return resource.prefLabel if resource.respond_to?(:prefLabel) &&
                                  resource.prefLabel.any?
         return resource.label if resource.respond_to?(:label) &&
                                  resource.label.any?
