@@ -1,3 +1,13 @@
+0.8.3 (25 August 2015)
+---
+* Add application wide tagged logging
+* Handle errors in indexer
+* Indexer: Fix prefLabel issue in map_crosswalk
+* Make Activity respond to #to_term
+* Add `Activity#to_s` for easier activity display
+* Mapper: allow static values on `:each`
+* Mapper: handle literal values from `record` in :each
+
 0.8.2 (18 August 2015)
 ---
 * Upgrades DPLA::MAP to remove LinkedVocab dependency
