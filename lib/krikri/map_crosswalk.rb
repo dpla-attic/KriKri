@@ -120,7 +120,7 @@ module Krikri
         set_value(sr, :identifier, parent_sr.identifier)
 
         set_value(sr, :language, parent_sr.language) do |lang|
-          get_label(lang)
+          build_language(lang)
         end
 
         set_value(sr, :publisher, parent_sr.publisher) do |pub|
@@ -197,6 +197,22 @@ module Krikri
         RDF::DCMITYPE[vocab_sym].label.downcase
       end
 
+      def build_language(source)
+        return unless source.is_a? DPLA::MAP::Controlled::Language
+        lang = {}
+
+        lang[:name] = source.prefLabel.first if source.prefLabel.any?
+        return if lang[:name].nil?
+
+        if source.exactMatch.any?
+          lexvo = source.exactMatch.first
+          lang[:iso639_3] = lexvo.rdf_subject.to_s.split('/').last unless 
+            lexvo.node?
+        end
+
+        lang
+      end
+
       def build_place(source)
         return unless source.is_a? DPLA::MAP::Place
         place = {}
@@ -212,7 +228,7 @@ module Krikri
         subject = {}
         subject[:name] = source.prefLabel.first if
           source.prefLabel.any?
-        subject[:name] = source.providedLabel.first if
+        subject[:name] ||= source.providedLabel.first if
           source.providedLabel.any?
 
         subject.any? ? subject : nil

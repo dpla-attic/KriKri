@@ -60,17 +60,38 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
 
       context 'with prefLabel' do
         before do
-          aggregation.sourceResource.first.language.first.prefLabel = label
+          aggregation.dataProvider.first.label = label
           subject.build
         end
         
-        let(:label) { 'en' }
+        let(:label) { 'nypl' }
         
         it 'uses prefLabel' do
-          expect(subject.hash[:sourceResource][:language]).to contain_exactly label
+          expect(subject.hash[:dataProvider]).to eq label
         end
       end
 
+      context 'with language' do
+        before do
+          aggregation.sourceResource.first.language.first.prefLabel = label
+          aggregation.sourceResource.first.language.first.exactMatch = match
+          subject.build
+        end
+
+        let(:label) { 'English' }
+        let(:match) { RDF::ISO_639_3.eng }
+
+        it 'has a name' do 
+          expect(subject.hash[:sourceResource][:language].first[:name])
+            .to eq label
+        end
+
+        it 'has a match' do 
+          expect(subject.hash[:sourceResource][:language].first[:iso639_3])
+            .to eq 'eng'
+        end
+      end
+      
       context 'with mistyped values' do
         before do
           aggregation.hasView = 'NOT REAL'
