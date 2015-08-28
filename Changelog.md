@@ -1,3 +1,7 @@
+0.8.4 (28 August 2015)
+---
+* Update DPLA MAP 3.1 Crosswalk
+
 0.8.3 (25 August 2015)
 ---
 * Add application wide tagged logging
