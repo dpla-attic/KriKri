@@ -304,10 +304,11 @@ module Krikri
     #   - index_name [String]  The name of the ElasticSearch index
     # Other options are passed along to Elasticsearch::Client.
     #
-    def initialize(opts = Krikri::Settings.elasticsearch.to_h)
-      super(opts)
-      @index_name = opts.delete(:index_name) { 'dpla_alias' }
-      @elasticsearch = Elasticsearch::Client.new(opts)
+    def initialize(opts = {})
+      options = Krikri::Settings.elasticsearch.to_h.merge(opts)
+      super(options)
+      @index_name = options.delete(:index_name) { 'dpla_alias' }
+      @elasticsearch = Elasticsearch::Client.new(options)
     end
 
     ##
