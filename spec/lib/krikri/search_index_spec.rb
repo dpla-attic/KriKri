@@ -193,18 +193,47 @@ end
 
 
 describe Krikri::ProdSearchIndex do
-  let(:opts) { Krikri::Settings.elasticsearch.to_h }
-  subject { described_class.new(opts) }
+  before { allow(Krikri::Settings).to receive(:elasticsearch).and_return(opts) }
+
+  let(:opts) do
+    { host: 'http://example.org/moomin-index', 
+      index_name: 'moomin' }
+  end
 
   context 'with arguments to #initialize' do
     describe '#initialize' do
-      context 'with arguments' do
+      context 'with default options' do
         it 'passes options to the ElasticSearch client' do
           expect(subject.elasticsearch.transport.options[:host])
-            .to eq 'localhost:9200'  # per config/settings/test.yml
+            .to eq opts[:host]  
         end
+
         it 'sets its index name' do
-          expect(subject.index_name).to eq 'dpla_test'  # as above
+          expect(subject.index_name).to eq opts[:index_name]
+        end
+      end
+
+      context 'with arguments' do
+        subject { described_class.new(args) }
+        let(:args) { { host: 'http://ex.org/snork', index_name: 'snork' } }
+
+        it 'passes options to the ElasticSearch client' do
+          expect(subject.elasticsearch.transport.options[:host])
+            .to eq args[:host]
+        end
+
+        it 'sets its index name' do
+          expect(subject.index_name).to eq args[:index_name]
+        end
+        
+        context 'partial arguments' do
+          let(:args) { { host: 'http://ex.org/snork' } }
+          
+          it 'merges with defaults' do
+            expect(subject.elasticsearch.transport.options[:host])
+              .to eq args[:host]
+            expect(subject.index_name).to eq opts[:index_name]
+          end
         end
       end
     end
@@ -227,6 +256,7 @@ describe Krikri::ProdSearchIndex do
                           mappings: ELASTICSEARCH_MAPPING
                         }
     end
+
     after(:all) do
       # tear down the index
       es.indices.delete index: index_name

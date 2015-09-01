@@ -1,3 +1,9 @@
+0.8.5 (01 September 2015)
+---
+* Add enrichment to remove Blank Node `WebResource`s
+* Improve `SearchIndex` initializer to merge passed options with
+defaults, instead of using one or the other.
+
 0.8.4 (28 August 2015)
 ---
 * Update DPLA MAP 3.1 Crosswalk
