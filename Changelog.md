@@ -1,3 +1,8 @@
+0.8.6 (04 September 2015)
+---
+* Fix a bug in the RDF::Turtle parser which effected loading graphs with
+long, multi-line literals.
+
 0.8.5 (01 September 2015)
 ---
 * Add enrichment to remove Blank Node `WebResource`s
