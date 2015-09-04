@@ -109,6 +109,19 @@ shared_examples 'an LDP RDFSource' do
           subject.get
           statements.each { |s| expect(subject.statements).to include s }
         end
+        
+        context 'with long multi-line literals' do
+          let(:statements) do
+            [RDF::Statement(subject, RDF::DC.description, "#{'0' * 10000}\n'blah'")]
+          end
+
+          it 'retrieves literals correctly' do
+            # this is a regression test for:
+            # https://github.com/gkellogg/ebnf/issues/5
+            subject.get
+            statements.each { |s| expect(subject.statements).to include s }
+          end
+        end
       end
     end
   end
