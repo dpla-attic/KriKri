@@ -16,6 +16,8 @@ Krikri::Engine.routes.draw do
     end
   end
 
+  resources :admin_dashboard, only: [:index]
+
   resources :reports, only: [:index]
   resources :qa_reports, only: [:index, :show]
   resources :institutions do
