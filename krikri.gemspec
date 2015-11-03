@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rails_config", "~>0.4.0"
   s.add_dependency "audumbla", '~> 0.1'
   s.add_dependency "rdf-turtle", "~>1.1.8"
+  s.add_dependency "rdf", "~> 1.1.13"
   s.add_dependency "dpla-map", "4.0.0.0.pre.12"
   s.add_dependency "rest-client"
   s.add_dependency "rdf-marmotta", '>= 0.0.6'
