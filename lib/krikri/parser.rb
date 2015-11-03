@@ -141,20 +141,36 @@ module Krikri
     # A specialized Array object for containing Parser::Values. Provides methods
     # for accessing and filtering values that can be chained.
     #
+    # @example chaining methods to select values
+    #
     #     my_value_array.field('dc:creator', 'foaf:name')
     #       .match_attribute('first_name').values
     #
     # Methods defined on this class should return another ValueArray, an Array
     # of literal values (retrieved from Parser::Value#value), or a single
     # literal value.
+    #
+    # Uses `@top` to track a base node for recovery via `#else`. Methods that 
+    # return a `ValueArray` should pass `@top` down to the new instance.
+    #
+    # @example conditional recovery. `#if` sets `@top`, `#else` rewinds if empty
+    #
+    #     my_value_array.field('dc:creator', 'foaf:name').if.field('empty:field')
+    #       .else { |vs| vs.field('some:otherField') }
+    #
     class ValueArray
       include Enumerable
 
       delegate :[], :each, :empty?, :to_a, :to_ary,
-      :to => :@array
+         :to => :@array
 
-      def initialize(array = [])
+      ##
+      # @param array [Array] an array of values to delegate array operations to
+      # @param top [ValueArray] an instance of this class to use as a recovery 
+      #   node in, e.g. `#else`. Defaults to `self` if none is passed.
+      def initialize(array = [], top = nil)
         @array = array
+        @top = top || self
       end
 
       ##
@@ -179,7 +195,7 @@ module Krikri
       # @see Array#concat
       # @return [ValueArray]
       def concat(*args, &block)
-        self.class.new(@array.concat(*args, &block))
+        self.class.new(@array.concat(*args, &block), @top)
       end
 
       ##
@@ -197,9 +213,8 @@ module Krikri
       #   particular field.
       def field(*args)
         result = self
-        args.each do |name|
-          result = result.get_field(name)
-        end
+        args.each { |name| result = result.get_field(name) }
+
         result
       end
 
@@ -212,7 +227,55 @@ module Krikri
         results = args.map do |f|
           field(*Array(f))
         end
-        self.class.new(results.flatten)
+        self.class.new(results.flatten, @top)
+      end
+
+      ##
+      # Sets the top of the call chain to self and returns or yields self
+      #
+      # @example with method chain syntax
+      #   value_array.if.field(:a_field).else do |arry|
+      #      arry.field(:alternate_field)
+      #   end
+      #
+      # @example with block syntax
+      #   value_array.if { |arry| arry.field(:a_field) }
+      #     .else { |arry|  arry.field(:alternate_field) }
+      #
+      # @yield gives self
+      # @yieldparam arry [ValueArray] self
+      #
+      # @return [ValueArray] the result of the block, if given; or self with @top set
+      def if(&block)
+        @top = self
+        return yield self if block_given?
+        self
+      end
+
+      ##
+      # Short circuits if `self` is not empty, else passes the top of the call
+      # chain (`@top`) to the given block.
+      #
+      # @example usage with `#if`
+      #   value_array.if { |arry| arry.field(:a_field) }
+      #     .else { |arry|  arry.field(:alternate_field) }
+      #
+      #   # use other filters at will
+      #   value_array.if.field(:a_field).reject { |v| v == 'SKIP ME' }
+      #     .else { |arry|  arry.field(:alternate_field) }
+      #
+      # @example standalone use; resetting to record root
+      #   value_array.field(:a_field).else { |arry| arry.field(:alternate_field) }
+      #
+      # @yield gives `@top` if self is empty
+      # @yieldparam arry [ValueArray] the value of `@top`
+      #
+      # @return [ValueArray] `self` unless empty; otherwise the result of the
+      #   block
+      def else(&block)
+        raise ArgumentError, 'No block given for `#else`' unless block_given?
+        return self unless self.empty?
+        yield @top
       end
 
       ##
@@ -223,7 +286,7 @@ module Krikri
       # @return [ValueArray] a Krikri::Parser::ValueArray for first n elements
       def first_value(*args)
         return self.class.new(@array.first(*args)) unless args.empty?
-        self.class.new([@array.first].compact)
+        self.class.new([@array.first].compact, @top)
       end
 
       ##
@@ -234,7 +297,7 @@ module Krikri
       # @return [ValueArray] a Krikri::Parser::ValueArray for last n elements
       def last_value(*args)
         return self.class.new(@array.last(*args)) unless args.empty?
-        self.class.new([@array.last].compact)
+        self.class.new([@array.last].compact, @top)
       end
 
 
@@ -242,7 +305,7 @@ module Krikri
       # @see Array#concat
       # @return [ValueArray]
       def flatten(*args, &block)
-        self.class.new(@array.flatten(*args, &block))
+        self.class.new(@array.flatten(*args, &block), @top)
       end
 
       ##
@@ -251,7 +314,7 @@ module Krikri
       # @see Array#map
       # @return [ValueArray]
       def map(*args, &block)
-        self.class.new(@array.map(*args, &block))
+        self.class.new(@array.map(*args, &block), @top)
       end
 
       ##
@@ -260,7 +323,7 @@ module Krikri
       # @see Array#select
       # @return [ValueArray]
       def select(*args, &block)
-        self.class.new(@array.select(*args, &block))
+        self.class.new(@array.select(*args, &block), @top)
       end
 
       ##
@@ -269,14 +332,14 @@ module Krikri
       # @see Array#reject
       # @return [ValueArray]
       def reject(*args, &block)
-        self.class.new(@array.reject(*args, &block))
+        self.class.new(@array.reject(*args, &block), @top)
       end
 
       ##
       # @example selecting by presence of an attribute; returns all nodes where
       #   `#attribute?(:type)` is true
       #
-      #   match_attribute(:type) 
+      #   match_attribute(:type)
       #
       # @example selecting by the value of an attribute; returns all nodes with
       #   `#attribute(:type) == other`
@@ -292,7 +355,7 @@ module Krikri
       #   `block.call(attribute(:type)) == other` is true
       #
       #   match_attribute(:type, 'moomin') { |value| value.downcase }
-      #   
+      #
       # @param name [#to_sym] an attribute name
       # @param other [Object] an object to check for equality with the
       #   values from the given attribute.
@@ -300,7 +363,7 @@ module Krikri
       # @yield [value] yields each value with the attribute in name to the block
       #
       # @return [ValueArray] an array containing nodes for which the specified
-      #   attribute has a value matching the given attribute name, object, and 
+      #   attribute has a value matching the given attribute name, object, and
       #   block.
       def match_attribute(name, other = nil, &block)
         select(&compare_to_attribute(name, other, &block))
@@ -314,7 +377,7 @@ module Krikri
       # @yield [value] yields each value with the attribute in name to the block
       #
       # @return [ValueArray] an array containing nodes for which the specified
-      #   attribute does not have a value matching the given attribute name, 
+      #   attribute does not have a value matching the given attribute name,
       #   object, and block.
       #
       # @see #match_attribute  for examples; this calls #reject, where it calls
@@ -335,11 +398,11 @@ module Krikri
       protected
 
       def get_field(name)
-        self.class.new(flat_map { |val| val[name] })
+        self.class.new(flat_map { |val| val[name] }, @top)
       end
 
       private
-      
+
       ##
       # @see #match_attribute, #reject_attribute
       def compare_to_attribute(name, other, &block)
