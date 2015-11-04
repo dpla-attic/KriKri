@@ -1,3 +1,8 @@
+0.8.8 (04 November 2015)
+---
+* Forces encoding to UTF-8 in LDP Turtle responses. This improves response
+handling when encoding is ambiguous to `Net::HTTP`.
+
 0.8.7 (04 November 2015)
 ---
 * Add error handling to mapping. Collects errors encountered while
