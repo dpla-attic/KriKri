@@ -147,9 +147,7 @@ describe Krikri::Mapper do
         end
 
         it 'logs errors and continues' do
-          expect(Rails.logger)
-            .to receive(:error).with(start_with('Error processing mapping'))
-                 .exactly(3).times
+          expect(Rails.logger).to receive(:error).exactly(3).times
           Krikri::Mapper.map(:my_map_2, records)
         end
 
