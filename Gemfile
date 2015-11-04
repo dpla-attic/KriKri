@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gemspec
 
 # use engine_cart instead of generic dummy app
-gem 'engine_cart'
+gem 'engine_cart', '~> 0.7.1'
 
 gem 'rubocop', require: false
 gem 'yajl-ruby', require: 'yajl'
