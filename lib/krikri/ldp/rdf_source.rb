@@ -73,11 +73,18 @@ module Krikri::LDP
     private
 
     ##
-    # Clears the RDF::Graph and repopulates it from the http body.
+    # Clears the RDF::Graph and repopulates it from the http body. Forces text
+    # encoding to UTF-8 before passing to the `RDF::Reader`.
+    # 
+    # @return [void]
+    #
+    # @see http://www.w3.org/TR/turtle/#sec-mime for info about Turtle encoding
+    # @see http://www.w3.org/TR/ldp/#h-ldprs-get-turtle for info about LDP GET
+    #   and Turtle.
     def reload_ldp
       return reload unless !node? && exists?
       clear
-      self << RDF::Reader.for(:ttl).new(@http_cache.body).statements
+      self << RDF::Reader.for(:ttl).new(@http_cache.body.force_encoding('UTF-8'))
     end
   end
 end
