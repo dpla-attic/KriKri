@@ -1,3 +1,13 @@
+0.8.7 (04 November 2015)
+---
+* Add error handling to mapping. Collects errors encountered while
+mapping an `OriginalRecord` in a `Mapping::Error` class. Errors are then
+logged as a group with information about which declarations were processing
+when the error was encountered.
+* Upgrade `RDF::Turtle` to 1.1.8; revert longlines behavior and use the
+faster Turtle parser.
+* Pin RDF.rb to version 1.1.x, avoiding an upgrade to 1.99.0.
+
 0.8.6 (04 September 2015)
 ---
 * Fix a bug in the RDF::Turtle parser which effected loading graphs with
