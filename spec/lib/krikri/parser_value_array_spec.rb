@@ -49,6 +49,8 @@ describe Krikri::Parser::ValueArray do
                        .and_return(described_class.new([]))
         allow(nested_field).to receive(:[]).with(:nested_name)
                                 .and_return(:final_value)
+        allow(nested_field).to receive(:[]).with(:nonexistent_field)
+                       .and_return(described_class.new([]))
       end
     end
   end
@@ -81,6 +83,64 @@ describe Krikri::Parser::ValueArray do
       value = Krikri::Parser::Value.new
       subject << value
       expect(subject).to include value
+    end
+  end
+
+
+  describe '#if' do
+    include_context 'with fields'
+
+    it 'returns self with top set' do
+      expect(subject.if).to eq subject
+    end
+
+    context 'with block given' do
+      it 'yields a copy of itself' do
+        expect { |b| subject.if(&b) }
+          .to yield_with_args(a_collection_containing_exactly(*subject))
+      end
+
+      it 'returns result if non-empty' do
+        expect(subject.if { |rec| rec.field(:field_name, :nested_name) })
+          .to contain_exactly(:final_value, :final_value, :final_value)
+      end
+    end
+  end
+
+  describe '#else' do
+    include_context 'with fields'
+
+    it 'raises an argument error if no block is given ' do
+      expect { subject.else }.to raise_error ArgumentError
+    end
+
+    it 'evaluates block on root for empty result ' do
+      expect(
+        subject.field(:nonexistent_field).else do |rec|
+          rec.field(:field_name, :nested_name)
+        end
+      ).to contain_exactly(:final_value, :final_value, :final_value)
+    end
+
+    it 'skips block on root for non-empty result ' do
+      expect { |b| subject.field(:field_name).else(&b) }
+        .not_to yield_control
+    end
+
+    context 'with #if' do
+      it 'recovers from @top set by #if' do
+        expect(
+          subject.field(:field_name).if.field(:nonexistent_field).else do |rec|
+            rec.field(:nested_name)
+          end
+        ).to contain_exactly(:final_value, :final_value, :final_value)
+      end
+
+      it 'skips block on root for non-empty result ' do
+        expect do |b|
+          subject.field(:field_name).if.field(:nested_name).else(&b)
+        end.not_to yield_control
+      end
     end
   end
 
