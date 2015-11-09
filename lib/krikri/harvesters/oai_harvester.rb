@@ -156,12 +156,18 @@ module Krikri::Harvesters
 
     ##
     # Runs the request in the given block against the sets specified in `opts`.
-    # Results are concatenated into a single enumerator
+    # Results are concatenated into a single enumerator.
+    # 
+    # Sets that respond with an error (`OAI::Exception`) will return empty 
+    # and be skipped.
     #
     # @param opts [Hash] the options to pass, including all sets to process.
-    # @yield [set_opts] gives options to the block once for each set. The
+    # @yield gives options to the block once for each set. The
     #   block should run the harvest action with the options and give an
     #   Enumerable.
+    # @yieldparam set_opts [Hash]
+    # @yieldreturn [Enumerable] a result set to wrap into the retured lazy 
+    #   enumerator
     #
     # @return [Enumerator::Lazy] A lazy enumerator concatenating the results
     #   of the block with each set.
@@ -177,7 +183,12 @@ module Krikri::Harvesters
       set_enums = sets.lazy.map do |set|
         set_opts = opts.dup
         set_opts[:set] = set unless set.nil?
-        yield(set_opts) if block_given?
+        begin
+          yield(set_opts) if block_given?
+        rescue OAI::Exception => e
+          Krikri::Logger.log :warn, "Skipping set #{set} with error: #{e}"
+          []
+        end
       end
       concat_enum(set_enums).lazy
     end

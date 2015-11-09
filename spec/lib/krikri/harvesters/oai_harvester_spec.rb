@@ -329,6 +329,21 @@ EOM
                                        .and_return(result)
             subject.send(method, { :skip_set => 'moomin' }).first
           end
+
+          it 'skips sets that error' do
+            args[:oai].delete(:set)
+            invalid = args[:oai].dup
+            invalid[:set] = 'invalid'
+            valid = args[:oai].dup
+            valid[:set] = 'valid'
+
+            allow(subject).to receive(:sets).and_return(['invalid', 'valid', 'moomin'])
+            expect(subject.client).to receive(request_type).with(invalid)
+                                       .and_raise(OAI::Exception, '')
+            expect(subject.client).to receive(request_type).with(valid)
+                                       .and_return(result)
+            subject.send(method, { :skip_set => 'moomin' }).first
+          end
         end
       end
 
