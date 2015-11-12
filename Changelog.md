@@ -1,3 +1,8 @@
+0.8.9 (11 November 2015)
+---
+* Allow OAI harvester to recover on errors when iterating sets, passing over
+and logging any errored sets.
+
 0.8.8 (04 November 2015)
 ---
 * Forces encoding to UTF-8 in LDP Turtle responses. This improves response
