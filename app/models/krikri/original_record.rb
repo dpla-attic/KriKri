@@ -3,6 +3,7 @@ module Krikri
   # Handles records as harvested, prior to mapping
   class OriginalRecord
     include Krikri::LDP::Resource
+    include Krikri::LDP::Invalidatable
 
     attr_accessor :content, :local_name, :rdf_subject
     attr_writer :content_type
