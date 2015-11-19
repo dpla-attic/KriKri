@@ -29,6 +29,13 @@ module Krikri
     end
 
     ##
+    # @return [String] the local_name of the OriginalRecord wrapped by this
+    #   parser
+    def local_name
+      record.local_name
+    end
+
+    ##
     # A generic parser value.
     #
     # Interface to a single value node which can access typed data values (e.g.
