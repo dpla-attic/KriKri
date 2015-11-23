@@ -1,3 +1,8 @@
+0.9.0 (23 November 2015)
+---
+* Introduce a MARC XML harvester
+* Expose local_name through the Parser interface
+
 0.8.9 (11 November 2015)
 ---
 * Allow OAI harvester to recover on errors when iterating sets, passing over
