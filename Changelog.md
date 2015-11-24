@@ -1,3 +1,7 @@
+0.10.0 (24 November 2015)
+---
+* Introduce a Primo harvester
+
 0.9.0 (23 November 2015)
 ---
 * Introduce a MARC XML harvester

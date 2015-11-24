@@ -266,4 +266,121 @@ EOS
 </OAI-PMH>
 EOS
   end
+
+  factory :primo_record, parent: :krikri_original_record do
+    content <<-EOS
+<sear:DOC xmlns:sear="http://www.exlibrisgroup.com/xsd/jaguar/search" ID="87209" RANK="1.0" NO="1" SEARCH_ENGINE="Local Search Engine" SEARCH_ENGINE_TYPE="Local Search Engine">
+  <PrimoNMBib xmlns="http://www.exlibrisgroup.com/xsd/primo/primo_nm_bib">
+    <record>
+      <control>
+        <sourcerecordid>ui_ep/26178</sourcerecordid>
+        <sourceid>digcoll_uid_36</sourceid>
+        <recordid>digcoll_uid_36ui_ep/26178</recordid>
+        <originalsourceid>26178</originalsourceid>
+        <sourcedbandrecordid>ui_ep</sourcedbandrecordid>
+        <addsrcrecordid>uid-36-289-2038</addsrcrecordid>
+        <sourceformat>Digital Entity</sourceformat>
+        <sourcesystem>Other</sourcesystem>
+      </control>
+      <display>
+        <type>Text</type>
+        <title>2011 Small Grain and Grain Legume Report</title>
+        <creator>Finkelnburg, Doug</creator>
+        <contributor>College of Agricultural and Life Sciences; University of Idaho Library</contributor>
+        <publisher>Idaho Agricultural Experiment Station</publisher>
+        <creationdate>2012</creationdate>
+        <format>application/pdf</format>
+        <identifier>http://digital.lib.uidaho.edu/cdm/ref/collection/ui_ep/id/26178</identifier>
+        <subject>legumes; small cereal grains</subject>
+        <description>From the Idaho Small Grain and Grain Legume Research and Extension Program at the University of Idaho comes this summary of the performance of winter wheat, spring wheat, spring barley, spring pea, lentil, and chickpea cultivars tested in Idaho, Lewis, Nez Perce, Latah, and Boundary counties in the 2010-11 crop season.</description>
+        <language>eng</language>
+        <relation>Is format of: Research Bulletin</relation>
+        <relation>Is referenced by: 179</relation>
+        <coverage>Idaho</coverage>
+        <rights>Digital image copyright 2010, the University of Idaho. All rights reserved. For more information contact Special Collections and Archives, University of Idaho Library, Moscow, ID 83844-2350; http://www.lib.uidaho.edu/special-collections/.</rights>
+        <lds01>University of Idaho Library</lds01>
+        <lds02>University of Idaho Digital Collections</lds02>
+        <lds03>University of Idaho Library</lds03>
+        <lds04>Agricultural and Extension Publications</lds04>
+        <lds08>Idaho</lds08>
+        <lds12>Special Collections Idaho S 53 (Between E3 - E415)</lds12>
+        <lds18>Text</lds18>
+        <lds17>text</lds17>
+      </display>
+      <links>
+        <linktorsrc>$$Tdigcoll_uid_36_linktores$$DOpen resource in a new window</linktorsrc>
+        <thumbnail>$$Tdigcoll_uid_36_linktothumb$$DSee Thumbnail</thumbnail>
+      </links>
+      <search>
+        <creatorcontrib>Finkelnburg, Doug</creatorcontrib>
+        <creatorcontrib>College of Agricultural and Life Sciences; University of Idaho Library</creatorcontrib>
+        <title>2011 Small Grain and Grain Legume Report</title>
+        <description>From the Idaho Small Grain and Grain Legume Research and Extension Program at the University of Idaho comes this summary of the performance of winter wheat, spring wheat, spring barley, spring pea, lentil, and chickpea cultivars tested in Idaho, Lewis, Nez Perce, Latah, and Boundary counties in the 2010-11 crop season.</description>
+        <subject>legumes; small cereal grains</subject>
+        <sourceid>digcoll_uid_36</sourceid>
+        <recordid>digcoll_uid_36ui_ep/26178</recordid>
+        <creationdate>2012</creationdate>
+        <addtitle>Is format of: Research Bulletin</addtitle>
+        <addtitle>Is referenced by: 179</addtitle>
+        <addsrcrecordid>uid-36-289-2038</addsrcrecordid>
+        <scope>mw</scope>
+        <lsr01>uid</lsr01>
+        <lsr02>36</lsr02>
+        <lsr03>289</lsr03>
+        <lsr04>2038</lsr04>
+        <lsr09>University of Idaho Library</lsr09>
+        <lsr10>University of Idaho Digital Collections</lsr10>
+        <lsr12>University of Idaho Library</lsr12>
+        <lsr13>Agricultural and Extension Publications</lsr13>
+        <lsr14>Idaho</lsr14>
+        <rsrctype>text</rsrctype>
+      </search>
+      <sort>
+        <title>2011 Small Grain and Grain Legume Report</title>
+        <creationdate>2012</creationdate>
+        <author>Finkelnburg, D</author>
+      </sort>
+      <facets>
+        <language>eng</language>
+        <creationdate>2012</creationdate>
+        <topic>legumes</topic>
+        <topic>small cereal grains</topic>
+        <collection>Digital Collections</collection>
+        <toplevel>online_resources</toplevel>
+        <creatorcontrib>Finkelnburg, Doug</creatorcontrib>
+        <format>application/pdf</format>
+        <genre>unknown</genre>
+        <lfc01>Agricultural and Extension Publications</lfc01>
+        <lfc02>University of Idaho Library</lfc02>
+        <lfc03>University of Idaho Library</lfc03>
+        <lfc04>University of Idaho Digital Collections</lfc04>
+        <lfc08>Idaho</lfc08>
+        <prefilter>text</prefilter>
+        <rsrctype>text</rsrctype>
+        <frbrgroupid>237607336</frbrgroupid>
+        <frbrtype>6</frbrtype>
+      </facets>
+      <delivery>
+        <institution>MWDL</institution>
+        <delcategory>Online Resource</delcategory>
+      </delivery>
+      <ranking>
+        <booster1>1</booster1>
+        <booster2>1</booster2>
+      </ranking>
+      <addata>
+        <date>2012</date>
+        <pub>Idaho Agricultural Experiment Station</pub>
+      </addata>
+    </record>
+  </PrimoNMBib>
+  <sear:GETIT deliveryCategory="Online Resource" GetIt1="http://digital.lib.uidaho.edu/u?/ui_ep,26178" GetIt2="http://sfx7.exlibrisgroup.com/uutah?ctx_ver=Z39.88-2004&amp;ctx_enc=info:ofi/enc:UTF-8&amp;ctx_tim=2015-11-19T16%3A46%3A32IST&amp;url_ver=Z39.88-2004&amp;url_ctx_fmt=infofi/fmt:kev:mtx:ctx&amp;rfr_id=info:sid/primo.exlibrisgroup.com:primo3-Journal-digcoll_uid_36&amp;rft_val_fmt=info:ofi/fmt:kev:mtx:&amp;rft.genre=&amp;rft.atitle=&amp;rft.jtitle=&amp;rft.btitle=&amp;rft.aulast=&amp;rft.auinit=&amp;rft.auinit1=&amp;rft.auinitm=&amp;rft.ausuffix=&amp;rft.au=&amp;rft.aucorp=&amp;rft.volume=&amp;rft.issue=&amp;rft.part=&amp;rft.quarter=&amp;rft.ssn=&amp;rft.spage=&amp;rft.epage=&amp;rft.pages=&amp;rft.artnum=&amp;rft.issn=&amp;rft.eissn=&amp;rft.isbn=&amp;rft.sici=&amp;rft.coden=&amp;rft_id=info:doi/&amp;rft.object_id=&amp;rft.eisbn=&amp;rft_dat=&lt;digcoll_uid_36&gt;ui_ep%2F26178&lt;/digcoll_uid_36&gt;&lt;grp_id&gt;237607336&lt;/grp_id&gt;&lt;oa&gt;&lt;/oa&gt;&amp;rft_id=info:oai/&amp;req.language=" />
+  <sear:LINKS>
+    <sear:linktorsrc>http://digital.lib.uidaho.edu/u?/ui_ep,26178</sear:linktorsrc>
+    <sear:thumbnail>http://digital.lib.uidaho.edu/utils/getthumbnail/collection/ui_ep/id/26178</sear:thumbnail>
+  </sear:LINKS>
+</sear:DOC>
+EOS
+  end
+
 end
