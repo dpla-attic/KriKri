@@ -105,12 +105,27 @@ describe Krikri::Parser::ValueArray do
     end
   end
 
+  describe '#bind' do
+    include_context 'with fields'
+
+    it 'returns self' do
+      expect(subject.bind(:moomin)).to eq subject
+    end
+
+    it 'binds the variable' do
+      expect(subject.bind(:moomin).bindings[:moomin]).to eq subject
+    end
+  end
 
   describe '#if' do
     include_context 'with fields'
 
-    it 'returns self with top set' do
+    it 'returns self' do
       expect(subject.if).to eq subject
+    end
+
+    it 'returns with top set' do
+      expect(subject.if.bindings[:top]).to eq subject
     end
 
     context 'with block given' do
@@ -147,7 +162,7 @@ describe Krikri::Parser::ValueArray do
     end
 
     context 'with #if' do
-      it 'recovers from @top set by #if' do
+      it 'recovers from `top` set by #if' do
         expect(
           subject.field(:field_name).if.field(:nonexistent_field).else do |rec|
             rec.field(:nested_name)

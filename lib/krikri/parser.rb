@@ -157,11 +157,16 @@ module Krikri
     # of literal values (retrieved from Parser::Value#value), or a single
     # literal value.
     #
-    # Uses `@bindings` to track variables for recovery via `#else`, `#from`, and
-    #`#back`. Methods that return a `ValueArray` should pass `@bindings` down to
-    # the new instance.
+    # Uses `#bindings` to track variables for recovery via `#else`, `#from`, and
+    #`#back`. Methods that return a `ValueArray` pass `#bindings` down to the 
+    # new instance.
     #
-    # @example `#if` sets `@bindings[:top]`, `#else` recoveres if empty
+    # @example
+    #   
+    #   my_value_array.field('dc:creator').bind(:creator)
+    #
+    #
+    # @example `#if` sets `bindings[:top]`, `#else` recoveres if empty
     #
     #   my_value_array.field('dc:creator', 'foaf:name').if.field('empty:field')
     #     .else { |vs| vs.field('some:otherField') }
@@ -169,9 +174,13 @@ module Krikri
     class ValueArray
       include Enumerable
 
+      # @!attribute [r] bindings
+      #   A hash containing bindings of variables to (Symbols) to ValueArrays
+      attr_reader :bindings
+
       delegate :[], :each, :empty?, :to_a, :to_ary,
          :to => :@array
-
+      
       ##
       # @param array [Array] an array of values to delegate array operations to
       # @param bindings [Hash<Symbol, ValueArray] a set of variable bindings
@@ -211,10 +220,20 @@ module Krikri
       end
 
       ##
+      # Binds the current array to the variable name given
+      #
+      # @param var [#to_sym] a symbol respresenting the variable name
+      # @return [ValueArray] self
+      def bind(var)
+        bindings[var.to_sym] = self
+        self
+      end
+
+      ##
       # @see Array#concat
       # @return [ValueArray]
       def concat(*args, &block)
-        self.class.new(@array.concat(*args, &block), @bindings)
+        self.class.new(@array.concat(*args, &block), bindings)
       end
 
       ##
@@ -254,7 +273,7 @@ module Krikri
         results = args.map do |f|
           field(*Array(f))
         end
-        self.class.new(results.flatten, @bindings)
+        self.class.new(results.flatten, bindings)
       end
 
       ##
@@ -274,7 +293,7 @@ module Krikri
       #
       # @return [ValueArray] the result of the block, if given; or self with @top set
       def if(&block)
-        @bindings[:top] = self
+        bind(:top)
         return yield self if block_given?
         self
       end
@@ -302,7 +321,7 @@ module Krikri
       def else(&block)
         raise ArgumentError, 'No block given for `#else`' unless block_given?
         return self unless self.empty?
-        yield @bindings[:top]
+        yield bindings[:top]
       end
 
       ##
@@ -313,7 +332,7 @@ module Krikri
       # @return [ValueArray] a Krikri::Parser::ValueArray for first n elements
       def first_value(*args)
         return self.class.new(@array.first(*args)) unless args.empty?
-        self.class.new([@array.first].compact, @bindings)
+        self.class.new([@array.first].compact, bindings)
       end
 
       ##
@@ -324,7 +343,7 @@ module Krikri
       # @return [ValueArray] a Krikri::Parser::ValueArray for last n elements
       def last_value(*args)
         return self.class.new(@array.last(*args)) unless args.empty?
-        self.class.new([@array.last].compact, @bindings)
+        self.class.new([@array.last].compact, bindings)
       end
 
       ##
@@ -338,7 +357,7 @@ module Krikri
       # @see Array#concat
       # @return [ValueArray]
       def flatten(*args, &block)
-        self.class.new(@array.flatten(*args, &block), @bindings)
+        self.class.new(@array.flatten(*args, &block), bindings)
       end
 
       ##
@@ -347,7 +366,7 @@ module Krikri
       # @see Array#map
       # @return [ValueArray]
       def map(*args, &block)
-        self.class.new(@array.map(*args, &block), @bindings)
+        self.class.new(@array.map(*args, &block), bindings)
       end
 
       ##
@@ -356,7 +375,7 @@ module Krikri
       # @see Array#select
       # @return [ValueArray]
       def select(*args, &block)
-        self.class.new(@array.select(*args, &block), @bindings)
+        self.class.new(@array.select(*args, &block), bindings)
       end
 
       ##
@@ -365,7 +384,7 @@ module Krikri
       # @see Array#reject
       # @return [ValueArray]
       def reject(*args, &block)
-        self.class.new(@array.reject(*args, &block), @bindings)
+        self.class.new(@array.reject(*args, &block), bindings)
       end
 
       ##
@@ -431,7 +450,7 @@ module Krikri
       protected
 
       def get_field(name)
-        self.class.new(flat_map { |val| val[name] }, @bindings)
+        self.class.new(flat_map { |val| val[name] }, bindings)
       end
 
       private
