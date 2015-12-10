@@ -25,6 +25,10 @@ module Krikri::Harvesters
   #
   # @see http://www.rubydoc.info/gems/oai/OAI/Client
   class OAIHarvester
+    def self.key
+      :oai
+    end
+
     include Krikri::Harvester
     attr_accessor :client
 
@@ -129,7 +133,7 @@ module Krikri::Harvesters
     # @see Krikri::Harvester::expected_opts
     def self.expected_opts
       {
-        key: :oai,
+        key: self.key,
         opts: {
           set: {type: :string, required: false, multiple_ok: true},
           skip_set: {type: :string, required: false, multiple_ok: true},

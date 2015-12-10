@@ -65,14 +65,6 @@ module Krikri
       end
     end
 
-    initializer :register_harvesters do
-      Krikri::Harvester::Registry
-        .register(:oai, Krikri::Harvesters::OAIHarvester)
-      Krikri::Harvester::Registry
-        .register(:couchdb, Krikri::Harvesters::CouchdbHarvester)
-
-    end
-
     initializer :rdf_repository do
       Krikri::Repository =
         RDF::Marmotta.new(Krikri::Settings['marmotta']['base'])

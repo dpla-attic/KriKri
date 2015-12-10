@@ -44,6 +44,9 @@ module Krikri
           :harvest
         end
       end
+
+      # register the harvester; missing keys will be skipped to prevent a crash
+      Registry.register!(self.key, self) if self.methods.include?(:key)
     end
 
     ##
@@ -182,6 +185,10 @@ module Krikri
     #
     def self.expected_opts
       raise NotImplementedError
+    end
+
+    def self.validate_opts!(options)
+      require 'pry'; binding.pry
     end
 
     private

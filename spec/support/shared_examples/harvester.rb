@@ -15,10 +15,19 @@ shared_examples 'a harvester' do
     expect { described_class.new }.to raise_error KeyError
   end
 
+  it 'is in registry' do
+    key = described_class.key
+    expect(Krikri::Harvester::Registry.get(key)).to eq described_class
+  end
+
   xit 'has a record count' do
     expect(harvester.count).to be_a Integer
   end
 
+  describe '.key' do
+    it { expect(described_class.key).to be_a Symbol }
+  end
+  
   describe '#record_ids' do
     it 'can get its record ids' do
       expect(harvester.record_ids).to be_a Enumerator

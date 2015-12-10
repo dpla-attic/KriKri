@@ -4,6 +4,10 @@ module Krikri::Harvesters
   ##
   # A harvester implementation for CouchDB
   class CouchdbHarvester
+    def self.key
+      :couchdb
+    end
+
     include Krikri::Harvester
     attr_accessor :client
 
@@ -137,7 +141,7 @@ module Krikri::Harvesters
     # @see Krikri::Harvester::expected_opts
     def self.expected_opts
       {
-        key: :couchdb,
+        key: self.key,
         opts: {
           view: { type: :string, required: false }
         }

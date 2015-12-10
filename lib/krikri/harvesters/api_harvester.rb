@@ -14,6 +14,10 @@ module Krikri::Harvesters
   # If the content type of the records is other than JSON, you will also want
   # to override `#content_type`.
   class ApiHarvester
+    def self.key
+      :api
+    end
+    
     include Krikri::Harvester
 
     attr_reader :opts

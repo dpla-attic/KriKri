@@ -9,6 +9,10 @@ module Krikri::Harvesters
   #   - #each_collection (yields one or more IO objects containing a MARC XML
   #   - #collection)
   class MarcXMLHarvester
+    def self.key
+      :marc_xml
+    end
+
     include Krikri::Harvester
 
     ##
