@@ -71,6 +71,29 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
         end
       end
 
+      context 'with place' do
+        before do
+          aggregation.sourceResource.first.spatial.first.label = label
+          aggregation.sourceResource.first.spatial.first.lat   = lat
+          aggregation.sourceResource.first.spatial.first.long  = long
+          subject.build
+        end
+
+        let(:lat) { '35.14953' }
+        let(:long) { '-90.04898' }
+        let(:label) { 'Memphis (Tenn.)' }
+        
+        it 'has lat & long' do
+          expect(subject.hash[:sourceResource][:spatial].first[:coordinates])
+            .to eq [lat, long].join(', ')
+        end
+
+        it 'has label' do
+          expect(subject.hash[:sourceResource][:spatial].first[:name])
+            .to eq label
+        end
+      end
+
       context 'with language' do
         before do
           aggregation.sourceResource.first.language.first.prefLabel = label

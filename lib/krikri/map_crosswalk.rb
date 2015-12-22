@@ -218,7 +218,7 @@ module Krikri
         place = {}
         place[:name] = source.label.first if source.label.any?
         place[:name] ||= source.providedLabel.first if source.providedLabel.any?
-        place[:coordinates] = "#{source.lat}, #{source.long}" if
+        place[:coordinates] = "#{source.lat.first}, #{source.long.first}" if
           source.lat.any? && source.long.any?
         place.any? ? place : nil
       end
