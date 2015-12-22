@@ -1,3 +1,7 @@
+0.10.1 (22 November 2015)
+---
+* Patch error in DPLA MAP v3.1 mapping for coordinates
+
 0.10.0 (24 November 2015)
 ---
 * Introduce a Primo harvester
