@@ -4,7 +4,8 @@ module Krikri
   # As LDP support develops, it might be possible to excract this or replace it
   # with a tool like the `ldp` gem.
   module LDP
-    autoload :Resource,     'krikri/ldp/resource'
-    autoload :RdfSource,    'krikri/ldp/rdf_source'
+    autoload :Resource,         'krikri/ldp/resource'
+    autoload :RdfSource,        'krikri/ldp/rdf_source'
+    autoload :Invalidatable,    'krikri/ldp/invalidatable'
   end
 end

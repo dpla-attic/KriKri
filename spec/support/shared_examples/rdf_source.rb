@@ -1,5 +1,6 @@
 shared_examples 'an LDP RDFSource' do
   it_behaves_like 'an LDP Resource'
+  it_behaves_like 'an invalidatable resource'
 
   include_context 'clear repository'
 
@@ -109,7 +110,7 @@ shared_examples 'an LDP RDFSource' do
           subject.get
           statements.each { |s| expect(subject.statements).to include s }
         end
-        
+
         context 'with long multi-line literals' do
           let(:statements) do
             [RDF::Statement(subject, RDF::DC.description, "#{'0' * 10000}\n'blah'")]

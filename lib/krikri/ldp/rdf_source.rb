@@ -7,13 +7,26 @@ module Krikri::LDP
   module RdfSource
     extend ActiveSupport::Concern
     include Krikri::LDP::Resource
+    include Krikri::LDP::Invalidatable
+
+    GENERATED_URI        = RDF::PROV.wasGeneratedBy
+    REVISED_URI          = RDF::DPLA.wasRevisedBy
+
+    ##
+    # @return [Boolean] false if this resource does not ex
+    # @see Krikri::LDP::Resource#exists?
+    def exists?
+      return false if node?
+      super
+    end
+    alias_method :exist?, :exists?
 
     ##
     # PUTs the LDP resource named in #rdf_subject, populating it's content
     # (graph) from the object's RDF::Graph.
     #
     # @see Krikri::LDP::Resource#save
-    # @note this may leave the resource's graph out of sync with the LDP 
+    # @note this may leave the resource's graph out of sync with the LDP
     #   endpoint since the endpoint may add management triples when saving.
     def save(*)
       result = super(dump(:ttl))
@@ -21,14 +34,14 @@ module Krikri::LDP
     end
 
     ##
-    # Saves and forces reload. This updates the graph with any management 
+    # Saves and forces reload. This updates the graph with any management
     # triples added by the LDP endpoint.
     #
     # @see #save
     def save_and_reload(*args)
       result = save(*args)
       get({}, true)
-      result 
+      result
     end
 
     ##
@@ -40,6 +53,12 @@ module Krikri::LDP
       result = super
       reload_ldp
       result
+    end
+
+    ##
+    # @return [self]
+    def rdf_source
+      self
     end
 
     ##
@@ -64,8 +83,7 @@ module Krikri::LDP
     # @see http://www.w3.org/TR/prov-primer/
     # @see http://www.w3.org/TR/2013/REC-prov-o-20130430/
     def save_with_provenance(activity_uri)
-      predicate =
-        exists? ? RDF::DPLA.wasRevisedBy : RDF::PROV.wasGeneratedBy
+      predicate = exists? ? REVISED_URI : GENERATED_URI
       self << RDF::Statement(self, predicate, activity_uri)
       save
     end
@@ -75,7 +93,7 @@ module Krikri::LDP
     ##
     # Clears the RDF::Graph and repopulates it from the http body. Forces text
     # encoding to UTF-8 before passing to the `RDF::Reader`.
-    # 
+    #
     # @return [void]
     #
     # @see http://www.w3.org/TR/turtle/#sec-mime for info about Turtle encoding
