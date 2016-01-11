@@ -114,9 +114,26 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
             .to eq 'eng'
         end
       end
+
+      context 'with timespan containing prefLabel' do
+        before do
+          aggregation.sourceResource.first.date.first.prefLabel = prefLabel
+          subject.build
+        end
+
+        let(:prefLabel) { '1969' }
+
+        it 'has a displayDate' do
+          expect(subject.hash[:sourceResource][:date].first[:displayDate])
+            .to eq prefLabel
+        end
+      end
       
       context 'with mistyped values' do
         before do
+          # Currently, the factory in dpla_map for the dpla:SourceResource
+          # creates a dcterms:temporal that has a literal value, so nothing
+          # needs to be modified here
           aggregation.hasView = 'NOT REAL'
           aggregation.sourceResource.first.genre << 'not a resource!'
           subject.build
@@ -129,6 +146,7 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
 
         it 'excludes expected objects' do
           expect(subject.hash[:hasView]).to be_nil
+          expect(subject.hash[:sourceResource][:temporal]).to be_nil
         end
       end
     end
