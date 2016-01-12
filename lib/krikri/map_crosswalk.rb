@@ -134,7 +134,6 @@ module Krikri
 
         set_value(sr, :relation, parent_sr.relation)
         set_value(sr, :rights, parent_sr.rights, true)
-        set_value(sr, :temporal, parent_sr.temporal)
         set_value(sr, :title, parent_sr.title)
 
         set_value(sr, :collection, parent_sr.collection) do |coll|
@@ -147,6 +146,10 @@ module Krikri
 
         set_value(sr, :date, parent_sr.date) do |date|
           build_time_span(date)
+        end
+
+        set_value(sr, :temporal, parent_sr.temporal) do |temporal|
+          build_time_span(temporal)
         end
 
         set_value(sr, :spatial, parent_sr.spatial) do |place|
@@ -173,7 +176,7 @@ module Krikri
       def build_time_span(source)
         return unless source.is_a? DPLA::MAP::TimeSpan
         date = {}
-        date[:displayDate]
+        set_value(date, :displayDate, source.prefLabel, true, &:as_json)
         set_value(date, :begin, source.begin, true, &:as_json)
         set_value(date, :end, source.end, true, &:as_json)
 
