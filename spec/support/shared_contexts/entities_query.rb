@@ -17,6 +17,7 @@ shared_context 'entities query' do
     allow(DPLA::MAP::Aggregation).to receive(:new)
       .with(solution.record.to_s)
       .and_return(aggregation)
+    aggregation.set_subject!('aggregation_uri')
     allow(aggregation).to receive(:get).and_return(true)
   end
 end
