@@ -83,6 +83,12 @@ module Krikri
     end
 
     initializer :aggregation do
+      class NamespaceError < RuntimeError
+        def initialize(uri)
+          super("Tried to get DPLA ID for non-DPLA URI #{uri}")
+        end
+      end
+
       DPLA::MAP::Aggregation.class_eval do
         include Krikri::MapCrosswalk
         include Krikri::LDP::RdfSource
@@ -124,6 +130,18 @@ module Krikri
             .to_s)
         end
 
+        ##
+        # @return [String, nil] returns only the final portion of the URI (the 
+        #   "local name"), with the `#base_uri` removed. `nil` if this is a node
+        #
+        # @raise NamespaceError
+        def dpla_id
+          return nil if node?
+          raise NamespaceError, rdf_subject unless id.start_with?(base_uri)
+
+          id.gsub("#{base_uri}/", '')
+        end
+          
         private
 
         def local_name_from_original_record

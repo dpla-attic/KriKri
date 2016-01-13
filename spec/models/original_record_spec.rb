@@ -2,6 +2,9 @@ require 'spec_helper'
 
 describe Krikri::OriginalRecord do
   it_behaves_like 'an LDP Resource'
+  it_behaves_like 'an invalidatable resource' do
+    subject { described_class.build(identifier, record) }
+  end
 
   include_context 'clear repository'
 

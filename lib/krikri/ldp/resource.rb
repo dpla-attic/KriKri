@@ -3,7 +3,28 @@ require 'faraday_middleware'
 
 module Krikri::LDP
   ##
-  # Implements basic LDP CRUD operations
+  # Implements basic LDP CRUD operations. Requires an implementation of 
+  # `#rdf_subject` returning an `RDF::URI`. The resource idenitified by the URI
+  # must conform to LDP Resource's interaction patterns. 
+  #
+  # @example implementing a resource
+  #   class MyResource
+  #     include Krikri::LDP::Resource
+  #
+  #     def rdf_subject
+  #       @rdf_subject ||= RDF::URI('http://example.com/ldp/a/resource/path')
+  #     end
+  #   end
+  #
+  # @note Ideally, this is a general purpose LDP resource. However some HTTP 
+  #   PUT creation behavior may be specific to Marmotta. This avoids the need to
+  #   interact directly with the owning container, but is a less generalized 
+  #   implementation.
+  #
+  # @see http://www.w3.org/TR/ldp/#h-ldpr-resource LDP Resource interaction 
+  #   patterns.
+  # @see https://wiki.apache.org/marmotta/LDPImplementationReport for 
+  #   information about Marmotta's PUT.
   module Resource
     extend ActiveSupport::Concern
 
