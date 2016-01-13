@@ -7,9 +7,9 @@ require 'uri'
 
 module Krikri
   ##
-  # Helper class for fetching multiple URLs concurrently. For example, to fetch
-  # 5 URLs in 5 threads:
+  # Helper class for fetching multiple URLs concurrently. 
   #
+  # @example to fetch 5 URLs in 5 threads
   #    urls = ['http://example.com/one',
   #            'http://example.com/two',
   #            'http://example.com/three',
@@ -20,17 +20,12 @@ module Krikri
   #    getter = Krikri::AsyncUriGetter.new
   #
   #    requests = urls.map do |url|
-  #      getter.add_request(uri: url,
-  #                         opts: {
-  #                           follow_redirects: true
-  #                         })
+  #      getter.add_request(uri: url, opts: { follow_redirects: true })
   #    end
-  #
+  #    
   # At this point, 5 threads are launched to fetch the list of URLs.  We can
   # wait for them all to finish if we want to make sure we don't continue until
-  # all threads have terminated:
-  #
-  #    requests.map(&:join)
+  # all threads have terminated: `requests.map(&:join)`
   #
   # Or simply access the responses and have our current thread block until
   # they're available:
@@ -52,13 +47,10 @@ module Krikri
     # Create a new asynchronous URL fetcher.
     #
     # @param opts [Hash] a hash of the supported options, which are:
-    #
-    #  - follow_redirects: (true or false) -- whether to follow HTTP 3xx
-    #      redirects.
-    #
-    #  - max_redirects: [N] (default: 10) -- how many redirects to follow before
-    #      giving up
-    #
+    # @option opts [Boolean] :follow_redirects  Whether to follow HTTP 3xx
+    #   redirects.
+    # @option opts [Integer] :max_redirects Number of redirects to follow before
+    #   giving up. (default: 10)
     def initialize(opts: {})
       @default_opts = { max_redirects: MAX_REDIRECTS }.merge(opts)
     end
@@ -68,16 +60,13 @@ module Krikri
     # response.
     #
     # @param uri [URI] the URI to be fetched
-    #
     # @param headers [Hash<String, String>] HTTP headers to include with the
     #   request
-    #
     # @param opts [Hash] options to override the ones provided when
-    #   AsyncUriGetter was initialized. All supported options are available here
-    #   as well.
-    #
+    #   AsyncUriGetter was initialized. All supported options from `#initialize`
+    #   are available here as well.
     def add_request(uri: nil, headers: {}, opts: {})
-      fail ArgumentError, 'uri must be a URI' unless uri.is_a?(URI)
+      fail ArgumentError, "uri must be a URI; got: #{uri}" unless uri.is_a?(URI)
       Request.new(uri, headers, @default_opts.merge(opts))
     end
 
@@ -89,38 +78,32 @@ module Krikri
 
       ##
       # Wait for the request thread to complete
-      #
       def join
         @request_thread.join
       end
 
       ##
       # @yield [Faraday::Response] the response returned for the request
-      #
       def with_response
-        yield(@request_thread.value)
+        yield @request_thread.value
       end
 
       private
 
       ##
       # Run the Faraday request in a new thread
-      #
       def start_request
         Thread.new do
           http.get(uri) do |request|
-            headers.each do |header, value|
-              request.headers[header.to_s] = value
-            end
+            headers.each { |header, val| request.headers[header.to_s] = val }
           end
         end
       end
 
       ##
       # @return [Faraday::Connection] a connection with sensible defaults
-      #
       def http
-        Faraday.new do |conn|
+        @http ||= Faraday.new do |conn|
           conn.request :retry,
                        max: 4,
                        interval: 0.025,
