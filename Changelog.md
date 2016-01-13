@@ -1,3 +1,12 @@
+0.11.0 (13 January 2016)
+---
+* Adds a utility for threaded HTTP requests for use by Harvesters.
+* Implements soft-delete via PROV Invalidation for LDP-RSs.
+* `DPLA::MAP::Aggregation#dpla_id` introduced to return the unique portion of
+an Aggregation`s URI.
+* Fixes timespan (temporal/date) consistency in crosswalk between MAP 4.0 and
+3.1.
+
 0.10.1 (22 November 2015)
 ---
 * Patch error in DPLA MAP v3.1 mapping for coordinates
