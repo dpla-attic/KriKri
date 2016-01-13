@@ -78,6 +78,27 @@ describe DPLA::MAP::Aggregation do
     end
   end
 
+  describe '#dpla_id' do
+    it 'is nil for a bnode' do
+      expect(subject.dpla_id).to be_nil
+    end
+
+    it 'matches local name in URI' do
+      ln = '123'
+      subject.set_subject!(ln)
+      
+      expect(subject.dpla_id).to eq ln
+    end
+
+    it 'raises an error when a non-dpla uri is present' do
+      bad_uri = 'http://example.org/not-dpla/moomin'
+      subject.set_subject!(bad_uri)
+      
+      expect { subject.dpla_id }
+        .to raise_error Krikri::Engine::NamespaceError
+    end
+  end
+
   describe '#original_record' do
 
     context 'with original record' do

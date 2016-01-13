@@ -193,14 +193,14 @@ end
 
 
 describe Krikri::ProdSearchIndex do
-  before { allow(Krikri::Settings).to receive(:elasticsearch).and_return(opts) }
-
-  let(:opts) do
-    { host: 'http://example.org/moomin-index', 
-      index_name: 'moomin' }
-  end
-
   context 'with arguments to #initialize' do
+    before { allow(Krikri::Settings).to receive(:elasticsearch).and_return(opts) }
+
+    let(:opts) do
+      { host: 'http://example.org/moomin-index',
+        index_name: 'moomin' }
+    end
+
     describe '#initialize' do
       context 'with default options' do
         it 'passes options to the ElasticSearch client' do
@@ -269,15 +269,23 @@ describe Krikri::ProdSearchIndex do
       let(:activity) { Krikri::Activity.find_by_id(3) }
       let(:generator_uri) { 'http://localhost:8983/marmotta/ldp/activity/3' }
 
+      define :be_es_response_with_items do |*expected|
+        expected = expected.first.to_a if expected.first.is_a? Enumerable
+
+        match do |actual|
+          actual_ids = actual['items'].map { |item| item['index']['_id'] }
+
+          expected.each { |item| expect(actual_ids).to include item.dpla_id }
+        end
+      end
+
+      it 'succeeds at connecting' do
+        expect { subject.update_from_activity(activity) }.to_not raise_error
+      end
+
       it 'updates records affected by an activity' do
-        # TODO: remove this mock when
-        # Krikri::ProdSearchIndex#hash_for_index_schema is complete.
-        allow_any_instance_of(Krikri::ProdSearchIndex)
-          .to receive(:hash_for_index_schema)
-          .and_return(MAP3_JSON_HASH)
-        expect do
-          subject.update_from_activity(activity)
-        end.to_not raise_error
+        expect(subject.update_from_activity(activity))
+          .to be_es_response_with_items(activity.entities)
       end
     end
   end
