@@ -57,6 +57,11 @@ module Krikri
       Krikri::Settings = Kernel.const_get(RailsConfig.const_name)
     end
 
+    initializer :uri_cache do
+      RDF::URI::CACHE_SIZE = 
+        (Krikri::Settings['uri_cache_size'] || 1_000_000).to_i.freeze
+    end
+
     initializer :append_migrations do |app|
       unless app.root.to_s == root.to_s
         config.paths['db/migrate'].expanded.each do |exp_path|

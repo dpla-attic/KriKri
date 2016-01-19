@@ -81,12 +81,24 @@ module Krikri
         record
       end
 
+      ##
+      # @return [String] the URI namespace/LDP container for resources of this 
+      #   class
       def base_uri
         Krikri::Settings['marmotta']['record_container']
       end
 
+      ##
+      # @param localname [#to_s] the unique portion of the URI to build; this 
+      #   will be combined with `.base_uri` to form the returned URI
+      # @return [RDF::URI] a URI built from the `.base_uri` and the `local_name` 
+      #   parameter
+      #
+      # @note we use `RDF::URI.intern` (rather than `.new`) to avoid allocating
+      #   memory for a new object for the LDP base URI, taking advantage of 
+      #   `RDF::URI.cache`.
       def build_uri(local_name)
-        RDF::URI(base_uri) / local_name
+        RDF::URI.intern(base_uri) / local_name
       end
 
       ##
