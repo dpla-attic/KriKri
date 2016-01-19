@@ -1,3 +1,9 @@
+0.11.1 (18 January 2016)
+---
+* Limit cache size for RDF::URIs; adds a configuration option
+`uri_cache_size` to control the limit. Users may consider a large cache
+size on the webserver, while using a smaller size on worker boxes.
+
 0.11.0 (13 January 2016)
 ---
 * Adds a utility for threaded HTTP requests for use by Harvesters.
