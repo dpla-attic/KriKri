@@ -18,6 +18,14 @@ describe Krikri::Engine do
       expect(Krikri::Settings.qa_test).to eq 'test!'
     end
 
+    it 'sets RDF::URI::CACHE_SIZE' do
+      expect(RDF::URI::CACHE_SIZE).not_to eq -1
+    end
+
+    it 'sets RDF::URI.cache capacity' do
+      expect(RDF::URI.cache).to have_capacity
+    end
+
     it 'allows app to override configuration' do
       app_settings_path = Rails.root.join('config', 'settings.local.yml').to_s
       allow(File).to receive(:exists?).with(app_settings_path).and_return(true)
