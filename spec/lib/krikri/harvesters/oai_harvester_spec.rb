@@ -453,6 +453,56 @@ EOM
       end
     end
 
+    describe 'identifiers' do
+      let(:id) { 'oai:oaipmh.huygens.knaw.nl:arthurianfiction:MAN0000000010' }
+
+
+      it 'uses oai header identifier by default' do
+        expect(subject).to receive(:mint_id).with(id).and_return('id')
+        subject.records.first
+      end
+
+      context 'with :id_path' do
+        let(:args) do
+          { uri: 'http://example.org/endpoint', 
+            oai: { id_path: '//dc:identifier' } }
+        end
+        
+        it 'returns the identifier from a given xpath' do
+          dcid = 'https://service.arthurianfiction.org/manuscript/MAN0000000010'
+
+          expect(subject).to receive(:mint_id).with(dcid).and_return('id')
+          subject.records.first
+        end
+
+        context 'and bad path' do
+          let(:id_path) { '//dc:not_a_path' }
+          let(:args) do
+            { uri: 'http://example.org/endpoint', 
+              oai: { id_path: id_path } }
+          end
+          
+          it 'fails and raises error' do
+            expect(Rails.logger).to receive(:error).with(include(*id_path, id))
+            subject.records.first
+          end
+        end
+
+        context 'and bad namespace' do
+          let(:id_path) { '//fkns:identifier' }
+          let(:args) do
+            { uri: 'http://example.org/endpoint', 
+              oai: { id_path: '//fkns:identifier' } }
+          end
+
+          it 'fails and raises error' do
+            expect(Rails.logger).to receive(:error).with(include(id_path, id))
+            subject.records.first
+          end
+        end
+      end
+    end
+
     it_behaves_like 'a harvester'
   end
 end

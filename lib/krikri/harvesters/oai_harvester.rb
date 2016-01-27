@@ -22,6 +22,8 @@ module Krikri::Harvesters
   #   - metadata_prefix: A string specifying the metadata prefix. e.g. 'oai_dc'.
   #   - from: The begin date for the harvest.
   #   - until: The end date for the harvest.
+  #   - id_path: An alternate xpath (e.g. '//dc:identifier') from which to load
+  #              raw identifier strings. Default:  <record><header><identifier>.
   #
   # @see http://www.rubydoc.info/gems/oai/OAI/Client
   class OAIHarvester
@@ -32,12 +34,16 @@ module Krikri::Harvesters
     # @param opts [Hash] options to pass through to client requests.
     #   Allowable options are specified in OAI::Const::Verbs. Currently :from,
     #   :until, :set, and :metadata_prefix.
+    #   Additionally, you may pass an xpath string to `:id_path` specifying the
+    #   location of the IDs.
     # @see OAI::Client
     # @see #expected_opts
     def initialize(opts = {})
       opts[:harvest_behavior] ||= OAISkipDeletedBehavior
       super
-      @opts = opts.fetch(:oai, {})
+
+      @opts    = opts.fetch(:oai, {})
+      @id_path = @opts.delete(:id_path) { false }
 
       http_conn = Faraday.new do |conn|
         conn.request :retry, :max => 3
@@ -86,8 +92,12 @@ module Krikri::Harvesters
       opts = @opts.merge(opts)
       request_with_sets(opts) do |set_opts|
         client.list_records(set_opts).full.lazy.flat_map do |rec|
-          @record_class.build(mint_id(rec.header.identifier),
-                              record_xml(rec))
+          begin
+            @record_class.build(mint_id(get_identifier(rec)),
+                                record_xml(rec))
+          rescue => e
+            Krikri::Logger.log(:error, e.message)
+          end
         end
       end
     end
@@ -131,11 +141,12 @@ module Krikri::Harvesters
       {
         key: :oai,
         opts: {
-          set: {type: :string, required: false, multiple_ok: true},
-          skip_set: {type: :string, required: false, multiple_ok: true},
-          metadata_prefix: {type: :string, required: false},
-          from: {type: :string, required: false},
-          until: {type: :string, required: false}
+          set: { type: :string, required: false, multiple_ok: true },
+          skip_set: { type: :string, required: false, multiple_ok: true },
+          metadata_prefix: { type: :string, required: false },
+          from: { type: :string, required: false },
+          until: { type: :string, required: false },
+          id_path: { type: :string, required: false }
         }
       }
     end
@@ -201,11 +212,37 @@ module Krikri::Harvesters
     #
     # @param rec [OAI::Record]
     # @return [String] an xml string
-    def record_xml(rec)
+    def record_xml(rec, as_doc: false)
       doc = Nokogiri.XML(rec._source.to_s)
       doc.root
         .add_namespace_definition(nil, 'http://www.openarchives.org/OAI/2.0/')
-      doc.to_xml
+      as_doc ? doc : doc.to_xml
+    end
+
+    private
+
+    def get_identifier(record)
+      return record.header.identifier unless @id_path
+
+      xml = record_xml(record, as_doc: true)
+      ns = xml.collect_namespaces.map do |k, v|
+        [k.gsub('xmlns:', ''), v]
+      end
+
+      begin
+        ids = xml.xpath(@id_path, ns.to_h)
+      rescue Nokogiri::XML::XPath::SyntaxError => e
+        raise Krikri::Harvester::IdentifierError, 
+              "No identifier at #{@id_path} for #{record.header.identifier}\n" \
+              "\t#{e.message}"
+      end
+      
+      if ids.empty?
+        raise Krikri::Harvester::IdentifierError, 
+              "No identifier at #{@id_path} for #{record.header.identifier}"
+      end
+      
+      ids.first.text
     end
   end
 end
