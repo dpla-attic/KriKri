@@ -33,5 +33,12 @@ describe Krikri::AggregationEntityBehavior do
       # what's coming back from Marmotta is correct.
       expect(agg).to eq(agg_record_double)
     end
+
+    it 'requests only validated entities by default' do
+      expect(activity).to receive(:entity_uris)
+        .with(false)
+        .and_return([mapped_record_uri])
+      activity.entities
+    end
   end
 end

@@ -175,6 +175,20 @@ describe Krikri::Activity, type: :model do
     # See 'provenance queries' shared context.  
     let(:generator_uri) { subject.rdf_subject }
 
+    it 'requests validated records by default' do
+      expect(Krikri::ProvenanceQueryClient)
+        .to receive(:find_by_activity)
+        .with(RDF::URI(generator_uri), false).and_return(query)
+      subject.entity_uris
+    end
+
+    it 'requests invalidated records if specifically requested' do
+      expect(Krikri::ProvenanceQueryClient)
+        .to receive(:find_by_activity)
+        .with(RDF::URI(generator_uri), true).and_return(query)
+      subject.entity_uris(true)
+    end
+
     it 'enumerates generated entity URIs' do
       # 'result uri' is what the mocked query solution's record should contain.
       expect(subject.entity_uris.first).to match 'result uri'

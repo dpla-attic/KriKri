@@ -105,10 +105,18 @@ module Krikri
     # Return an Enumerator of URI strings of entities (e.g. aggregations or
     # original records) that pertain to this activity
     #
+    # @param  include_invalidated [Boolean] Whether to include entities that
+    #   have been invalidated with prov:invalidatedAtTime. Default: false
+    #
     # @return [Enumerator] URI strings
-    def entity_uris
+    #
+    # @see Krikri::ProvenanceQueryClient#find_by_activity regarding
+    #   invalidation.
+    #
+    def entity_uris(include_invalidated = false)
       activity_uri = RDF::URI(rdf_subject)  # This activity's LDP URI
-      query = Krikri::ProvenanceQueryClient.find_by_activity(activity_uri)
+      query = Krikri::ProvenanceQueryClient
+        .find_by_activity(activity_uri, include_invalidated)
       query.each_solution.lazy.map do |s|
         s.record.to_s
       end
@@ -122,9 +130,11 @@ module Krikri
     # that is associated with the SoftwareAgent that is represented by the
     # Activity's `agent' field.
     #
+    # @param [Array<Object>] *args Arguments to pass along to
+    #                              EntityBehavior#entities
     # @return [Enumerator] Objects
-    def entities
-      agent_instance.entity_behavior.entities(self)
+    def entities(*args)
+      agent_instance.entity_behavior.entities(self, *args)
     end
   end
 end
