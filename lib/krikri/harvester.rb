@@ -131,6 +131,7 @@ module Krikri
     # @see Krirki::Harvesters:HarvestBehavior
     def run(activity_uri = nil)
       records.each do |rec|
+        next if rec.nil?
         begin
           process_record(rec, activity_uri)
         rescue => e
@@ -193,5 +194,9 @@ module Krikri
     def mint_id(seed)
       @id_minter.create(*[seed, @name].compact)
     end
+
+    public
+    
+    class IdentifierError < ArgumentError; end
   end
 end
