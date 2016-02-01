@@ -1,3 +1,7 @@
+0.11.2 (18 January 2016)
+---
+* Allow OAI Harvester to use arbitrary metadata properties for an ID source.
+
 0.11.1 (18 January 2016)
 ---
 * Limit cache size for RDF::URIs; adds a configuration option
