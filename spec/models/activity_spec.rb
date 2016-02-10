@@ -56,7 +56,9 @@ describe Krikri::Activity, type: :model do
 
   describe '#end_time' do
     it 'raises an error if not started' do
-      expect { subject.set_end_time }.to raise_error
+      expect { subject.set_end_time }
+        .to raise_error 'Start time must exist and be before now to set an ' \
+                        'end time'
     end
   end
 

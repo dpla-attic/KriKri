@@ -67,12 +67,12 @@ describe DPLA::MAP::Aggregation do
       end
 
       context 'with more than one originalRecord' do
-        before do
-          subject.originalRecord << RDF::Node.new
-        end
+        before { subject.originalRecord << RDF::Node.new }
 
         it 'raises an error' do
-          expect { subject.mint_id! }.to raise_error
+          expect { subject.mint_id! }
+            .to raise_error start_with("#{subject} has more than " \
+                                       'one OriginalRecord')
         end
       end
     end
@@ -117,7 +117,7 @@ describe DPLA::MAP::Aggregation do
 
     context 'without original record' do
       it 'raises an error' do
-        expect { subject.original_record }.to raise_error
+        expect { subject.original_record }.to raise_error NameError
       end
     end
   end

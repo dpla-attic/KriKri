@@ -42,7 +42,8 @@ module Krikri
           record = new(identifier)
         end
 
-        raise "No #{self} found with id: #{identifier}" unless record.exists?
+        raise NameError, "No #{self} found with id: #{identifier}" unless 
+          record.exists?
 
         if identifier.include?('.')
           record.rdf_subject = "#{base_uri}/#{identifier}"

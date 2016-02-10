@@ -121,7 +121,7 @@ describe Krikri::MappingDSL::RdfSubjects do
 
         it 'raises an error' do
           expect { subject.to_proc.call(mapped, '') }
-            .to raise_error
+            .to raise_error start_with('Error mapping')
         end
       end
     end

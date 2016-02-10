@@ -51,7 +51,8 @@ describe Krikri::MappingDSL::ParserMethods do
     it 'raises an error when record does not exist' do
       allow(record).to receive_message_chain(:record, :exists?)
         .and_return(false)
-      expect { subject.record_uri.call(record) }.to raise_error
+      expect { subject.record_uri.call(record) }
+        .to raise_error start_with('Tried to access subject URI')
     end
   end
 
