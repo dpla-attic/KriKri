@@ -34,3 +34,6 @@ else
 fi
 rbenv rehash
 
+if (! `grep -q DISABLE_SPRING ~/.bashrc`); then
+    echo "export DISABLE_SPRING=1" >> ~/.bashrc
+fi
