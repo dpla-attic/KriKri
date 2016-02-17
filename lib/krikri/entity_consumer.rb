@@ -1,7 +1,7 @@
 module Krikri
   ##
-  # A mixin for classes, like certain software agents, that generates entities.
-  # For example, a mapper usually generates RDF aggregations, such that
+  # A mixin for classes, like certain `SoftwareAgent`s, that generates entities.
+  # For example, a mapper usually generates `DPLA::MAP::Aggregation`s, such that
   # Mapper::Agent includes EntityConsumer, and a mapper agent is instantiated
   # with
   #   a = Krikri::Mapper::Agent.new({
@@ -32,7 +32,6 @@ module Krikri
     #
     # @see Krikri::Mapper::Agent
     # @see Krikri::Harvester
-    #
     def assign_generator_activity!(opts)
       if opts.include?(:generator_uri)
         generator_uri = opts.delete(:generator_uri)
