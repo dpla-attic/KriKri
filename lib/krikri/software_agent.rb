@@ -46,13 +46,15 @@ module Krikri
     #   If so, the implementation must be optional and handle `nil` values by
     #   declining to record provenance
     #
+    # @param activity_uri [RDF::URI] the uri for the activity associated with
+    #   this run. Defaults to `nil` when no activity is involved.
     # @return [Boolean] `true` if the run has succeeded; otherwise `false`
     #
     # @raise [RuntimeError] when the software agent's process fails
     #
     # @see Krirkri::Activity
     # @see Krikri::Job.run
-    def run
+    def run(activity_uri = nil)
       fail NotImplementedError
     end
 
