@@ -30,8 +30,9 @@ module Krikri
       # @param identifier [#to_s] a string representing the #local_name or
       #   fully qualified URI for the resource.  Identifier may have a mime type
       #   extension, ie. '123.xml'.
+      #
       # @return [OriginalRecord] the instantiated record.
-      # @raise when no matching record is found in the LDP datastore
+      # @raise [LoadError] when no matching record is found in the LDP datastore
       def load(identifier)
         identifier = identifier.to_s.split('/').last if
           identifier.start_with? base_uri
@@ -42,8 +43,7 @@ module Krikri
           record = new(identifier)
         end
 
-        raise NameError, "No #{self} found with id: #{identifier}" unless 
-          record.exists?
+        raise LoadError.new(identifier), 'No record found' unless record.exists?
 
         if identifier.include?('.')
           record.rdf_subject = "#{base_uri}/#{identifier}"
@@ -201,6 +201,24 @@ module Krikri
     #   requests.
     def headers
       { 'Content-Type' => content_type }
+    end
+
+    ##
+    # Error class expressing failed load of an OriginalRecord 
+    class LoadError < RuntimeError
+      ##
+      # @param identifier [#to_s]
+      def initialize(identifier)
+        @identifier = identifier
+      end
+      
+      ##
+      # Augments the raised message with generic failure information
+      #
+      # @see Exception#message
+      def message
+        "Could not load OriginalRecord with `#{@identifier}: #{super}"
+      end  
     end
   end
 end
