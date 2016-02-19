@@ -35,7 +35,7 @@ describe Krikri::LDP::Resource do
         error = Net::HTTPBadResponse.new("alue\" : \"1\"")
         expect_any_instance_of(Faraday::Adapter::NetHttp)
           .to receive(:perform_request).at_least(4).times.and_raise(error)
-        expect { subject.get }.to raise_error
+        expect { subject.get }.to raise_error Faraday::ConnectionFailed
       end
     end
 

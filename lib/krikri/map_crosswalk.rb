@@ -47,7 +47,7 @@ module Krikri
       #   subsequent harvest. Figure out how to do that, or what we want to do
       #   instead.
       def build_aggregation
-        raise 'Tried to index a blank node!' if @parent.node?
+        raise NameError, 'Tried to index a blank node!' if @parent.node?
         hash.merge!({ :ingestType => 'item',
                      :ingestionSequence => 999999,
                      :ingestDate => Date.today.as_json,

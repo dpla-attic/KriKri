@@ -19,7 +19,7 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
   let(:aggregation) { build(:aggregation) }
 
   it 'raises an error with a bnode' do
-    expect { subject.build }.to raise_error
+    expect { subject.build }.to raise_error NameError
   end
 
   context 'with a uri' do

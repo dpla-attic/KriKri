@@ -7,7 +7,7 @@ end
 RSpec::Matchers.define :have_provided_label do |expected|
   match do |actual|
     pattern = [actual, RDF::DPLA.providedLabel, nil]
-    expect(actual.query(pattern).map(&:object)).to contain_exactly(expected)
+    expect(actual.query(pattern).map(&:object)).to include(expected)
     true
   end
 end
