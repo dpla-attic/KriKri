@@ -30,8 +30,8 @@ module Krikri::LDP
   #   for documentation on PROV invalidation
   module Invalidatable
     # @see RDF::PROV
-    INVALIDATED_BY_URI = RDF::PROV.wasInvalidatedBy
-    INVALIDATED_TIME_URI = RDF::PROV.invalidatedAtTime
+    INVALIDATED_BY_URI =   RDF::Vocab::PROV.wasInvalidatedBy
+    INVALIDATED_TIME_URI = RDF::Vocab::PROV.invalidatedAtTime
 
     ##
     # Invalidates the resource by marking it with a `prov:invalidatedAtTime`. If
