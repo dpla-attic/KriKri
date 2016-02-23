@@ -22,7 +22,7 @@ module Krikri
     # @return [Enumerator] DPLA::MAP::Aggregation objects
     #
     def entities(load = true, include_invalidated = false)
-      @activity.entity_uris(include_invalidated).lazy.map do |uri|
+      activity_uris(include_invalidated) do |uri|
         agg = DPLA::MAP::Aggregation.new(uri)
         agg.get if load
         agg
