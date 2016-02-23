@@ -35,12 +35,7 @@ module Krikri
     def assign_generator_activity!(opts)
       if opts.include?(:generator_uri)
         generator_uri = opts.delete(:generator_uri)
-        # allow generator_uri to be string or RDF::URI with `to_s' ...
-        activity_id = generator_uri.to_s[/\d+$/].to_i  # 0 if no match
-        fail "Can not determine ID for #{generator_uri}" if activity_id == 0
-        @generator_activity = Krikri::Activity.find_by_id(activity_id)
-        raise "Generator activity not found for id #{activity_id}" \
-          unless @generator_activity
+        @generator_activity = Krikri::Activity.from_uri(generator_uri)
       end
     end
   end
