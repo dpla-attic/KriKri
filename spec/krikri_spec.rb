@@ -36,6 +36,11 @@ describe Krikri::Engine do
       expect(Krikri::Settings.api_test).to eq 'app!'
     end
 
+    it 'has its Marmotta read timeout correctly set' do
+      expect(Krikri::Repository.query_client.options[:read_timeout])
+        .to eq(Krikri::Settings['marmotta']['read_timeout'])
+    end
+
     describe '#configure_blacklight!' do
       before do
         @old_solr_config = Blacklight.solr_config

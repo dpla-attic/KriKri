@@ -4,6 +4,8 @@ marmotta:
   ldp: 'http://localhost:8983/marmotta/ldp'
   record_container: 'http://localhost:8983/marmotta/ldp/original_record'
   item_container: 'http://localhost:8983/marmotta/ldp/items'
+  # read_timeout: Seconds to wait for marmotta's HTTP response.
+  read_timeout: 360
 
 elasticsearch:
   host: 'localhost:9200'
