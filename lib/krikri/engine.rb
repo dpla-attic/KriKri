@@ -80,7 +80,10 @@ module Krikri
 
     initializer :rdf_repository do
       Krikri::Repository =
-        RDF::Marmotta.new(Krikri::Settings['marmotta']['base'])
+        RDF::Marmotta.new(
+          Krikri::Settings['marmotta']['base'],
+          { read_timeout: Krikri::Settings['marmotta']['read_timeout'] }
+        )
     end
 
     initializer :blacklight_settings do
