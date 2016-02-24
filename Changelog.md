@@ -1,3 +1,13 @@
+0.12.0-rc.1 (24 February 2016)
+---
+* Update SPARQL query, Activity for invalidated records
+* Allow use of RSpec 3.4.x
+* Disable Spring (development VM)
+* Set global rbenv version (development VM)
+* Introduce OriginalRecord load failure Error class
+* Call `next` when logging errors in `#record`
+* Bump read timeout for Marmotta SPARQL client
+
 0.11.2 (18 January 2016)
 ---
 * Allow OAI Harvester to use arbitrary metadata properties for an ID source.
