@@ -56,7 +56,9 @@ describe Krikri::Activity, type: :model do
 
   describe '#end_time' do
     it 'raises an error if not started' do
-      expect { subject.set_end_time }.to raise_error
+      expect { subject.set_end_time }
+        .to raise_error 'Start time must exist and be before now to set an ' \
+                        'end time'
     end
   end
 
@@ -174,6 +176,20 @@ describe Krikri::Activity, type: :model do
     # uri, given its value of #rdf_subject, in #aggregations_as_json
     # See 'provenance queries' shared context.  
     let(:generator_uri) { subject.rdf_subject }
+
+    it 'requests validated records by default' do
+      expect(Krikri::ProvenanceQueryClient)
+        .to receive(:find_by_activity)
+        .with(RDF::URI(generator_uri), false).and_return(query)
+      subject.entity_uris
+    end
+
+    it 'requests invalidated records if specifically requested' do
+      expect(Krikri::ProvenanceQueryClient)
+        .to receive(:find_by_activity)
+        .with(RDF::URI(generator_uri), true).and_return(query)
+      subject.entity_uris(true)
+    end
 
     it 'enumerates generated entity URIs' do
       # 'result uri' is what the mocked query solution's record should contain.

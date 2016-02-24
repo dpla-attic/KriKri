@@ -25,7 +25,7 @@ module Krikri
     # @see lib/krikri/entity_behaviors
     # @see Krikri::Activity#entities
     #
-    def entities
+    def entities(*args)
       raise NotImplementedError 
     end
 
@@ -33,8 +33,8 @@ module Krikri
     # @see Krikri::Activity#entities
     # @see Krikri::EntityBehavior#entities
     #
-    def self.entities(activity)
-      new(activity).entities
+    def self.entities(activity, *args)
+      new(activity).entities(*args)
     end
   end
 end

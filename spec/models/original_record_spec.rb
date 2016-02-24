@@ -33,9 +33,14 @@ describe Krikri::OriginalRecord do
     end
   end
 
-  describe '#load' do
+  describe '.load' do
     context 'existing record' do
       before { subject.save }
+
+      it 'raises an error when a bad id is passed' do
+        expect { described_class.load('fake') }
+          .to raise_error Krikri::OriginalRecord::LoadError, include("fake")
+      end
 
       it 'loads resource with correct content' do
         expect(described_class.load(identifier).content).to eq subject.content

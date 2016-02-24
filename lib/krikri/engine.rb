@@ -80,7 +80,10 @@ module Krikri
 
     initializer :rdf_repository do
       Krikri::Repository =
-        RDF::Marmotta.new(Krikri::Settings['marmotta']['base'])
+        RDF::Marmotta.new(
+          Krikri::Settings['marmotta']['base'],
+          { read_timeout: Krikri::Settings['marmotta']['read_timeout'] }
+        )
     end
 
     initializer :blacklight_settings do
@@ -126,11 +129,14 @@ module Krikri
         # Get the persisted original record for this Aggregation.
         # @return [Krikri::OriginalRecord, nil]
         #
-        # An Exception will be raised if:
-        #   the original record id is invalid.
+        # @raise [NameError] when the original record id is not a URI or the
         #   the original record has not been persisted to Marmotta.
-        #   there is a connection problem with  Marmotta.
+        #
+        # @raise [Faraday::ConnectionError] when there is a connection problem
+        #   with Marmotta.
         def original_record
+          raise NameError, "#{originalRecord.first} is not an OriginalRecord" if
+            originalRecord.empty? || originalRecord.first.node?
           Krikri::OriginalRecord.load(originalRecord.first.rdf_subject
             .to_s)
         end

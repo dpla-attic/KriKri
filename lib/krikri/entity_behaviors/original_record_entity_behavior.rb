@@ -11,14 +11,19 @@ module Krikri
 
     ##
     # @param load [Boolean]  Whether to load the whole record from the LDP
-    #                        server.  Default: true.  OriginalRecord.load is
-    #                        slow, because it results in a network request, so
-    #                        this provides the possibility of avoiding it.
+    #   server.  OriginalRecord.load is slow, because it results in a network
+    #   request, so this provides the possibility of avoiding it.
+    #   Default: true.
+    #
+    # @param include_invalidated [Boolean] Whether to include entities that
+    #   have been invalidated with prov:invalidatedAtTime.  Default: false
+    #
     # @see Krikri::EntityBehavior::entities
+    #
     # @return [Enumerator] OriginalRecord objects
     #
-    def entities(load = true)
-      @activity.entity_uris.lazy.map do |uri|
+    def entities(load = true, include_invalidated = false)
+      @activity.entity_uris(include_invalidated).lazy.map do |uri|
         load ? OriginalRecord.load(uri) : OriginalRecord.new(uri)
       end
     end

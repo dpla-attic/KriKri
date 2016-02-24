@@ -206,7 +206,7 @@ EOM
       expect_any_instance_of(Faraday::Adapter::NetHttp)
         .to receive(:perform_request).at_least(4).times
              .and_raise(Net::ReadTimeout.new)
-      expect { subject.records.first }.to raise_error
+      expect { subject.records.first }.to raise_error Faraday::TimeoutError
     end
 
     it 'logs failed requests' do
@@ -214,7 +214,7 @@ EOM
         .to receive(:perform_request).and_raise(Net::ReadTimeout.new)
       
       expect(Rails.logger).to receive(:info).at_least(4).times
-      expect { subject.records.first }.to raise_error
+      expect { subject.records.first }.to raise_error Faraday::TimeoutError
     end
 
     describe 'resumption' do

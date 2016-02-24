@@ -97,6 +97,7 @@ module Krikri::Harvesters
                                 record_xml(rec))
           rescue => e
             Krikri::Logger.log(:error, e.message)
+            next
           end
         end
       end

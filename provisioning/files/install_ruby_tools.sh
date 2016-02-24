@@ -17,13 +17,13 @@ export PATH=$HOME/.rbenv/bin:$PATH
 eval "$(rbenv init -)"
 
 if [ -d $HOME/.rbenv/versions/$USE_VERSION ]; then
-    export RBENV_VERSION=$USE_VERSION
+    rbenv global $USE_VERSION
 else
     rbenv install $USE_VERSION
     if [ $? -ne 0 ]; then
         exit 1
     fi
-    export RBENV_VERSION=$USE_VERSION
+    rbenv global $USE_VERSION
 fi
 
 bundler=`gem list bundler | grep bundler`
@@ -34,3 +34,6 @@ else
 fi
 rbenv rehash
 
+if (! `grep -q DISABLE_SPRING ~/.bashrc`); then
+    echo "export DISABLE_SPRING=1" >> ~/.bashrc
+fi
