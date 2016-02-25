@@ -75,35 +75,46 @@ module Krikri
     ##
     # A SoftwareAgent to run mapping processes.
     #
-    # @example
-    #
-    #   To map the records harvested by the harvest activity with ID 1:
-    #
-    #   Krikri::Mapper::Agent.enqueue(
-    #     :mapping,
-    #     opts = {
-    #       name: 'scdl_qdc',
-    #       generator_uri: 'http://ldp.local.dp.la/ldp/activity/1'
-    #     }
-    #   )
+    # @example to map the records harvested by the harvest activity with ID 1:
+    #   Krikri::Mapper::Agent.enqueue(name: :scdl_qdc,
+    #     generator_uri: 'http://ldp.local.dp.la/ldp/activity/1')
     #
     # @see: Krikri::SoftwareAgent, Krikri::Activity
     class Agent
       include SoftwareAgent
       include EntityConsumer
 
+      # @!attribute [r] name
+      #   @return [Symbol]
       attr_reader :name
 
+      ##
+      # @return [Symbol] the default queue for jobs using this agent
       def self.queue_name
         :mapping
       end
 
+      ##
+      # @see Krikri::Activity#entities
+      # @see Krikri::EntityBehavior
+      # @see Krikri::SoftwareAgent#entity_behavior
+      def entity_behavior
+        @entity_behavior ||= Krikri::AggregationEntityBehavior
+      end
+
+      ##
+      # @param opts [Hash]
+      # @option opts [#to_sym] name  the symbol naming the mapping to use
       def initialize(opts = {})
         @name = opts.fetch(:name).to_sym
         @entity_behavior = self.class.entity_behavior
         assign_generator_activity!(opts)
       end
 
+      ##
+      # @param activity_uri [RDF::URI] the uri of the activity to attribute
+      #   for provenance purposes (default: nil)
+      # @see SoftwareAgent#run
       def run(activity_uri = nil)
         harvest_records = generator_activity.entities
         Krikri::Mapper.map(name, harvest_records).each do |rec|
@@ -116,7 +127,6 @@ module Krikri
           end
         end
       end
-
     end
   end
 end
