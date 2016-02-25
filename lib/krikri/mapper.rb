@@ -116,8 +116,7 @@ module Krikri
       #   for provenance purposes (default: nil)
       # @see SoftwareAgent#run
       def run(activity_uri = nil)
-        harvest_records = generator_activity.entities
-        Krikri::Mapper.map(name, harvest_records).each do |rec|
+        Krikri::Mapper.map(name, entities).each do |rec|
           begin
             rec.mint_id! if rec.node?
             activity_uri ? rec.save_with_provenance(activity_uri) : rec.save
