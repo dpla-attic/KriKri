@@ -7,11 +7,11 @@ describe Krikri::Mapper::Agent do
     create(:krikri_harvest_activity)
   end
 
-  harvest_gen_uri_str = 'http://example.org/ldp/activity/2'
-  mapping_gen_uri_str = 'http://example.org/ldp/activity/3'
+  harvest_gen_uri = Krikri::Activity.base_uri / 2
+  mapping_gen_uri = Krikri::Activity.base_uri / 3
 
   # This must be defined with `let' as a macro.  See below.
-  let(:opts) { {name: :agent_map, generator_uri: harvest_gen_uri_str} }
+  let(:opts) { { name: :agent_map, generator_uri: harvest_gen_uri } }
 
   # This can not be a macro, because it has to be passed as an argument to
   # `it_behaves_like', which is interpreted at compile time.  It should be the
@@ -25,7 +25,7 @@ describe Krikri::Mapper::Agent do
   # macro), then `subject' will not instantiate an object with the same options
   # when it's invoked repeatedly.
   # 
-  behaves_opts = {name: :agent_map, generator_uri: harvest_gen_uri_str}
+  behaves_opts = {name: :agent_map, generator_uri: harvest_gen_uri}
   it_behaves_like 'a software agent', behaves_opts
 
   subject { described_class.new(opts) }
@@ -35,10 +35,10 @@ describe Krikri::Mapper::Agent do
   # generator_uri matches what Krikri::Activity will construct as the
   # uri, given its value of #rdf_subject, in #aggregations_as_json
   # See 'provenance queries' shared context.  
-  let(:generator_uri) { harvest_gen_uri_str }
+  let(:generator_uri) { harvest_gen_uri }
 
   # activity_uri is the URI of the mapping activity
-  let(:activity_uri) { mapping_gen_uri_str }
+  let(:activity_uri) { mapping_gen_uri }
 
   let(:mapping_name) { :agent_map }
   let(:opts) { { name: mapping_name, generator_uri: generator_uri } }
@@ -85,9 +85,10 @@ describe Krikri::Mapper::Agent do
 
     context 'with mapped records returned' do
       before do
-        expect(Krikri::Mapper).to receive(:map)
-                                   .with(mapping_name, subject.generator_activity.entities)
-                                   .and_return(generated_records)
+        expect(Krikri::Mapper)
+          .to receive(:map)
+               .with(mapping_name, subject.generator_activity.entities)
+               .and_return(generated_records)
       end
 
       it 'calls mapper' do

@@ -14,6 +14,36 @@ end
 describe Krikri::Activity, type: :model do
   subject { create(:krikri_activity) }
 
+  describe `.base_uri` do
+    it 'returns an RDF::URI' do
+      expect(described_class.base_uri).to be_a RDF::URI
+    end
+  end
+
+  describe `.from_uri` do
+    it 'initializes from RDF::URI' do
+      expect(described_class.from_uri(subject.rdf_subject)).to eq subject
+    end
+
+    it 'initializes from string containing uri' do
+      expect(described_class.from_uri(subject.rdf_subject.to_s)).to eq subject
+    end
+
+    it 'raises error for inapproprate uri' do
+      bad_uri = "http://example.com/nonsense/#{subject.id}"
+
+      expect { described_class.from_uri(bad_uri) }
+        .to raise_error "Cannot find #{described_class} from URI: #{bad_uri}"
+    end
+
+    it 'raises error for wrong id' do
+      bad_uri = subject.rdf_subject.to_s.gsub(subject.id.to_s, '1001')
+
+      expect { described_class.from_uri(bad_uri) }
+        .to raise_error ActiveRecord::RecordNotFound
+    end
+  end
+
   describe '#save' do
     subject { build(:krikri_activity_with_long_opts) }
 

@@ -1,6 +1,6 @@
 
 shared_examples 'a software agent' do |args|
-  subject { described_class.new(args) }
+  subject { args.nil? ? described_class.new : described_class.new(args) }
   let(:agent_class) { described_class }
 
   it 'represents its agent name as the correct string, as a class' do
