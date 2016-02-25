@@ -33,7 +33,9 @@ describe Krikri::Activity, type: :model do
       bad_uri = "http://example.com/nonsense/#{subject.id}"
 
       expect { described_class.from_uri(bad_uri) }
-        .to raise_error "Cannot find #{described_class} from URI: #{bad_uri}"
+        .to raise_error "Cannot find #{described_class} from " \
+                        "URI: #{bad_uri}; the requested uri does not match " \
+                        "#{described_class.base_uri}"
     end
 
     it 'raises error for wrong id' do

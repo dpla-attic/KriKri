@@ -39,7 +39,8 @@ module Krikri
     # @raise [RuntimeError] if the URI form does not match the activity
     # @raise [ActiveRecord::RecordNotFound] if no activity is found
     def self.from_uri(uri)
-      raise "Cannot find #{self} from URI: #{uri}" unless 
+      raise "Cannot find #{self} from URI: #{uri}; " \
+            "the requested uri does not match #{base_uri}" unless 
         uri.start_with? base_uri
 
       find(uri.to_s.sub(base_uri.to_s, '').sub('/', ''))
