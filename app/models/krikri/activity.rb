@@ -127,14 +127,14 @@ module Krikri
     # that have been affected by this activity.
     #
     # The kind of object that is returned depends on the EntityBehavior class
-    # that is associated with the SoftwareAgent that is represented by the
+    # that is associated with the SoftwareAgent class that is represented by the
     # Activity's `agent' field.
     #
     # @param [Array<Object>] *args Arguments to pass along to
     #                              EntityBehavior#entities
     # @return [Enumerator] Objects
     def entities(*args)
-      agent_instance.entity_behavior.entities(self, *args)
+      agent.constantize.entity_behavior.entities(self, *args)
     end
   end
 end
