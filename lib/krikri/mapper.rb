@@ -98,9 +98,16 @@ module Krikri
         :mapping
       end
 
+      ##
+      # @see Krikri::Activity#entities
+      # @see Krikri::EntityBehavior
+      # @see Krikri::SoftwareAgent#entity_behavior
+      def entity_behavior
+        @entity_behavior ||= Krikri::AggregationEntityBehavior
+      end
+
       def initialize(opts = {})
         @name = opts.fetch(:name).to_sym
-        @entity_behavior = self.class.entity_behavior
         assign_generator_activity!(opts)
       end
 

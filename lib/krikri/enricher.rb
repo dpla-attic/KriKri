@@ -34,6 +34,14 @@ module Krikri
     end
 
     ##
+    # @see Krikri::Activity#entities
+    # @see Krikri::EntityBehavior
+    # @see Krikri::SoftwareAgent#entity_behavior
+    def entity_behavior
+      @entity_behavior ||= Krikri::AggregationEntityBehavior
+    end
+
+    ##
     # Create a new Enricher, given a hash of options:
     #   generator_uri:  the LDP URI of the Activity that generated the mapped
     #      records that this one will enrich.
@@ -45,7 +53,6 @@ module Krikri
     def initialize(opts = {})
       @generator_uri = RDF::URI(opts.fetch(:generator_uri))
       @chain = deep_sym(opts.fetch(:chain) { {} })
-      @entity_behavior = self.class.entity_behavior
       assign_generator_activity!(opts)
     end
 
