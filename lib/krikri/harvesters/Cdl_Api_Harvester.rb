@@ -32,10 +32,14 @@ module Krikri::Harvesters
     #
     # @see Krikri::Harvester::expected_opts
     def self.expected_opts
+      # TODO  
+      # params: {start: } currently, this is a required paramter otherwise pagnination 
+      # fails within next_options. Could be handled either by failing during init or added 
+      # with a default of start: 0 
       {
         key: :api,
         opts: {
-          params: { type: :string, required: false }
+          params: { type: :string, required: false}
         }
       }
     end
@@ -84,6 +88,10 @@ module Krikri::Harvesters
     #
     # @return [String] the provider's identifier for the document
     def get_identifier(doc)
+      # TODO
+      # the identifier field for each repo can be different so it should 
+      # be passed in as a parameter from the @opts hash 
+      # Should be a required field 
       doc['id']
     end
 
@@ -114,8 +122,7 @@ module Krikri::Harvesters
     ##
     # Send a request via `RestClient`, and parse the result as JSON
     def request(request_opts)
-      binding.pry
-      JSON.parse(RestClient::Request.execute(method: :get, url: uri ,timeout: 10, request_opts))
+      JSON.parse(RestClient.get(uri, request_opts[:headers]))
     end
 
     ##
@@ -127,8 +134,11 @@ module Krikri::Harvesters
     #
     # @return [Hash] the next request's options hash
     def next_options(opts, record_count)
-      old_start = opts['headers']['params'].fetch('start', 0)
-      opts['headers']['params']['start'] = old_start.to_i + record_count
+      # TODO 
+      # If un-nested params is allowed (but deprecated) then this needs to 
+      # handle accessing :start in two different places  
+      old_start = opts[:headers][:params].fetch('start', 0)
+      opts[:headers][:params][:start] = old_start.to_i + record_count
       opts
     end
 
@@ -139,7 +149,7 @@ module Krikri::Harvesters
         request_opts = opts.deep_dup
         loop do
           break if request_opts.nil?
-          docs = get_docs(request(request_opts.dup))
+          docs = get_docs(request(request_opts.deep_dup))
           
           break if docs.empty?
 
