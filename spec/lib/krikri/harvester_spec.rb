@@ -31,6 +31,12 @@ describe Krikri::Harvester do
     end
   end
 
+  describe '.entity_behavior' do
+    it 'knows its entity behavior' do
+      expect(klass.entity_behavior).to eq(Krikri::OriginalRecordEntityBehavior)
+    end
+  end
+
   describe '#record_ids' do
     it { expect { subject.record_ids }.to raise_error NotImplementedError }
   end
