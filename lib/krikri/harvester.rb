@@ -43,13 +43,13 @@ module Krikri
         def queue_name
           :harvest
         end
-      end
-    end
 
-    ##
-    # @see Krikri::SoftwareAgent::ClassMethods#entity_behavior
-    def self.entity_behavior
-      Krikri::OriginalRecordEntityBehavior
+        ##
+        # @see Krikri::SoftwareAgent::ClassMethods#entity_behavior
+        def entity_behavior
+          Krikri::OriginalRecordEntityBehavior
+        end
+      end
     end
 
     ##
