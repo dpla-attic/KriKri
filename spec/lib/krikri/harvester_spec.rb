@@ -4,8 +4,11 @@ describe Krikri::Harvester do
 
   # Our subject is an instance of a dummy class that mixes in
   # Krikri::Harvester.
-  let(:klass) { class DummyHarvester; end; DummyHarvester }
-  subject { klass.include(Krikri::Harvester).new(:uri => 'urn:fake_uri') }
+  before { class DummyHarvester; include(Krikri::Harvester); end }
+  after  { Object.send(:remove_const, :DummyHarvester) }
+
+  let(:klass) { DummyHarvester }
+  subject { klass.new(:uri => 'urn:fake_uri') }
 
   context 'with record_ids implemented' do
     before do
