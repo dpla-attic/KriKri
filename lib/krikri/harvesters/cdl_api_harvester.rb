@@ -14,8 +14,6 @@ module Krikri::Harvesters
     # @see .expected_opts
     def initialize(opts = {})
       super
-      # @todo should perform some validation of opts to ensure 
-      #       what is being passed in meets the required fields 
     end
 
     ##
@@ -49,8 +47,6 @@ module Krikri::Harvesters
     # Send a request via `RestClient`, and parse the result as JSON
     def request(request_opts)
       JSON.parse(RestClient.get(uri, request_opts[:headers]))
-      # Need to diable ssl verification 
-      # JSON.parse(RestClient::Request.execute(method: :get, url: uri, verify_ssl: false, timeout: 10, headers: request_opts[:headers]))
     end
 
     ##
