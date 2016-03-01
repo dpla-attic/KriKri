@@ -16,7 +16,6 @@ module Krikri::Harvesters
       super
       # @todo should perform some validation of opts to ensure 
       #       what is being passed in meets the required fields 
-      @opts = opts.fetch(:api, {})
     end
 
     ##
@@ -50,6 +49,8 @@ module Krikri::Harvesters
     # Send a request via `RestClient`, and parse the result as JSON
     def request(request_opts)
       JSON.parse(RestClient.get(uri, request_opts[:headers]))
+      # Need to diable ssl verification 
+      # JSON.parse(RestClient::Request.execute(method: :get, url: uri, verify_ssl: false, timeout: 10, headers: request_opts[:headers]))
     end
 
     ##
@@ -61,7 +62,7 @@ module Krikri::Harvesters
     #
     # @return [Hash] the next request's options hash
     def next_options(opts, record_count)
-      old_start = opts[:headers][:params].fetch('start', 0)
+      old_start = opts[:headers][:params].fetch(:start, 0)
       opts[:headers][:params][:start] = old_start.to_i + record_count
       opts
     end

@@ -1,4 +1,4 @@
-module Krikri::Harvesters
+ module Krikri::Harvesters
   ##
   # A harvester implementation for REST APIs. The default ApiHarvester expects
   # Solr-like JSON responses/records.
@@ -23,7 +23,7 @@ module Krikri::Harvesters
     # @see .expected_opts
     def initialize(opts = {})
       super
-      @opts = opts.fetch(:api, {})
+      @opts = opts.fetch(:api, {}).symbolize_keys
     end
 
     ##
@@ -126,8 +126,8 @@ module Krikri::Harvesters
     #
     # @return [Hash] the next request's options hash
     def next_options(opts, record_count)
-      old_start = opts['params'].fetch('start', 0)
-      opts['params']['start'] = old_start.to_i + record_count
+      old_start = opts[:params].fetch(:start, 0)
+      opts[:params][:start] = old_start.to_i + record_count
       opts
     end
 
@@ -138,7 +138,7 @@ module Krikri::Harvesters
         request_opts = opts.deep_dup
         loop do
           break if request_opts.nil?
-          docs = get_docs(request(request_opts.dup))
+          docs = get_docs(request(request_opts.deep_dup))
           break if docs.empty?
 
           docs.each { |r| yielder << r }
