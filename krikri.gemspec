@@ -61,4 +61,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'factory_girl_rails', '~>4.4.0'
   s.add_development_dependency 'pry-rails'
   s.add_development_dependency 'timecop'
+  s.add_development_dependency 'get_process_mem'
+  s.add_development_dependency 'memory_profiler'
 end

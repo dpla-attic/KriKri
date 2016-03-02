@@ -52,6 +52,13 @@ module Krikri
     # @raise [Krikri::Mapper::Error] when an error is thrown when handling any
     #   of the properties
     def process_record(record)
+
+      #
+      # MEMORY PROFILING
+      #
+
+      m_before = GetProcessMem.new.mb
+
       mapped_record = klass.new
       error = properties.each_with_object(Error.new(record)) do |prop, error|
         begin
@@ -61,6 +68,11 @@ module Krikri
         end
       end
       raise error unless error.errors.empty?
+
+      m_after = GetProcessMem.new.mb
+
+      Krikri::StatCounter.add(:process_record, m_after - m_before)
+
       mapped_record
     end
     

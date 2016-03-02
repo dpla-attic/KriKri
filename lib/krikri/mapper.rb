@@ -1,3 +1,6 @@
+require 'get_process_mem'
+require 'memory_profiler'
+
 module Krikri
   ##
   # Provides the public interface for defining and running metadata Mappings.
@@ -58,9 +61,30 @@ module Krikri
     # @see Mapping
     def map(name, records)
       records = Array(records) unless records.is_a? Enumerable
+
+      #
+      # MEMORY PROFILING
+      #
+
+      # i = 1
+      # tried using `each` here instead of `map`, but it took longer and used
+      # more memory...
       result = records.map do |rec|
         begin
+
+          # CALL GC: this seems to help a little, but not a lot
+          # Note that this was commented out when analyzing system calls in
+          # https://digitalpubliclibraryofamerica.atlassian.net/wiki/display/TECH/Profiling+memory+growth+and+execution+time
+          # so I don't think it's the cause of the repeated system calls
+          # related to the smaps file.
+          #
+          # if i % 10 == 0
+          #   GC.start
+          # end
+          # i += 1
+
           Registry.get(name).process_record(rec)
+
         rescue => e
           Rails.logger.error(e.message)
           nil
@@ -116,16 +140,100 @@ module Krikri
       #   for provenance purposes (default: nil)
       # @see SoftwareAgent#run
       def run(activity_uri = nil)
-        Krikri::Mapper.map(name, entities).each do |rec|
-          begin
-            rec.mint_id! if rec.node?
-            activity_uri ? rec.save_with_provenance(activity_uri) : rec.save
-          rescue => e
-            Rails.logger.error("Error saving record: #{rec.try(:rdf_subject)}\n" \
-                               "#{e.message}\n#{e.backtrace}")
+
+
+        #
+        # MEMORY PROFILING
+        #
+
+        inner_sum = 0
+        outer_sum = 0
+
+        outer_before = GetProcessMem.new.mb
+
+        outer_start_time = Time.now.to_f
+
+# UNCOMMENT MemoryProfiler for reports.  It uses a lot of memory. Try
+# just 5 records.
+#        MemoryProfiler.report(allow_files: ['query.rb', 'entity_behavior',
+#                                            'provenance_query']) do
+
+          Krikri::Mapper.map(name, entities).take(200).each do |rec|
+            begin
+              rec.mint_id! if rec.node?
+
+              inner_before = GetProcessMem.new.mb
+
+              activity_uri ? rec.save_with_provenance(activity_uri) : rec.save
+
+              inner_after = GetProcessMem.new.mb
+              inner_sum += inner_after - inner_before
+
+            rescue => e
+              Rails.logger.error("Error saving record: #{rec.try(:rdf_subject)}\n" \
+                                 "#{e.message}\n#{e.backtrace}")
+            end
           end
-        end
+
+#        end.pretty_print(to_file: '/var/tmp/memoryprofile.txt')
+
+        outer_end_time = Time.now.to_f
+        outer_duration = outer_end_time - outer_start_time
+
+        outer_after = GetProcessMem.new.mb
+        outer_sum = outer_after - outer_before
+
+
+
+        Krikri::Logger.log(:debug, "START MEM: #{outer_before} Mb")
+        Krikri::Logger.log(:debug, "FINISH MEM: #{outer_after} Mb")
+        Krikri::Logger.log(:debug, "Mapper.map took #{outer_duration} s")
+        Krikri::Logger.log(
+          :debug,
+          "Activity#entity_uris took #{Krikri::StatCounter.get(:uris_each_solution_time)} s"
+        )
+        Krikri::Logger.log(:debug, "#run: #{inner_sum} Mb inside")
+        Krikri::Logger.log(:debug, "#run: #{outer_sum} Mb outside")
+        Krikri::Logger.log(
+          :debug,
+          "Mapping#process_record: #{Krikri::StatCounter.get(:process_record)} Mb"
+        )
+        Krikri::Logger.log(
+          :debug,
+          "OriginalRecordEntityBehavior#entities: " \
+            "#{Krikri::StatCounter.get(:entities)} Mb"
+        )
+        Krikri::Logger.log(
+          :debug,
+          "Activity#entity_uris each_solution: " \
+            "#{Krikri::StatCounter.get(:uris_each_solution)} Mb"
+        )
+
       end
     end
   end
+
+  class StatCounter
+    include Singleton
+
+    attr_reader :items
+    delegate :[], :[]=, to: :items
+
+    def initialize
+      @items = {}
+    end
+
+    class << self
+      def get(k)
+        instance[k]
+      end
+      def set(k, v)
+        instance[k] = v
+      end
+      def add(k, v)
+        instance[k] = instance.items.key?(k) ? instance[k] + v : v
+      end
+    end
+  end
+
 end

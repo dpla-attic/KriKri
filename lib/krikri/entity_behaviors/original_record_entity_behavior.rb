@@ -24,7 +24,21 @@ module Krikri
     #
     def entities(load = true, include_invalidated = false)
       activity_uris(include_invalidated) do |uri|
-        load ? OriginalRecord.load(uri) : OriginalRecord.new(uri)
+
+        #
+        # MEMORY PROFILING
+        #
+
+        m_before = GetProcessMem.new.mb
+
+        #load ? OriginalRecord.load(uri) : OriginalRecord.new(uri)
+        o_r = load ? OriginalRecord.load(uri) : OriginalRecord.new(uri)
+
+        m_after = GetProcessMem.new.mb
+        Krikri::StatCounter.add(:entities, m_after - m_before)
+
+        o_r
+
       end
     end
   end

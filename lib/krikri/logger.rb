@@ -30,7 +30,7 @@ module Krikri
     # @param [Symbol] priority  a priority tag
     # @param [string] msg  the message to log
     def log(priority, msg)
-      @logger.tagged(Time.now.to_s, Process.pid, to_s) do
+      @logger.tagged(Time.now.to_s, Process.pid, 'Krikri') do
         @logger.send(priority, msg)
       end
     end

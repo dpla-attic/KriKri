@@ -141,10 +141,29 @@ module Krikri
     #
     def entity_uris(include_invalidated = false)
       activity_uri = RDF::URI(rdf_subject)  # This activity's LDP URI
+
+      #
+      # MEMORY PROFILING
+      #
+
       query = Krikri::ProvenanceQueryClient
         .find_by_activity(activity_uri, include_invalidated)
+
+      # each_solution is an enumerator of RDF::Query, which extends Array.
       query.each_solution.lazy.map do |s|
-        s.record.to_s
+
+        m_before = GetProcessMem.new.mb
+        t_before = Time.now.to_f
+
+        # s.record.to_s
+        rv = s.record.to_s
+        m_after = GetProcessMem.new.mb
+        t_after = Time.now.to_f
+
+        Krikri::StatCounter.add(:uris_each_solution, m_after - m_before)
+        Krikri::StatCounter.add(:uris_each_solution_time, t_after - t_before)
+
+        rv
       end
     end
 
