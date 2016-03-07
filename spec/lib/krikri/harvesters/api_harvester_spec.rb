@@ -7,7 +7,7 @@ describe Krikri::Harvesters::ApiHarvester do
   subject { described_class.new(args) }
 
   describe '#new' do
-    let(:query_opts) { { 'params' => { 'q' => :abc } } }
+    let(:query_opts) { { 'headers' => { 'params' => { 'q' => :abc } } } }
 
     it 'accepts api parameters' do
       expect(described_class.new(args)).to have_attributes(:opts => query_opts)
@@ -15,7 +15,7 @@ describe Krikri::Harvesters::ApiHarvester do
   end
 
   context 'with responses' do
-    let(:query_opts) { { 'params' => { 'q' => 'tags_ssim:dpla' } } }
+    let(:query_opts) { { 'headers' => { 'params' => { 'q' => 'tags_ssim:dpla' } } } }
     let(:response_string) do
       <<EOM
 { "response": {
