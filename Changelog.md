@@ -1,3 +1,14 @@
+0.12.0 (7 March 2016)
+---
+
+Changes from 0.12.0-rc.1, plus:
+
+* Force bundler version
+* Refactor SoftwareAgent's use of entity_behavior
+* Use default entity behavior for agent in Activity
+* Fix definition of Krikri::Harvester.entity_behavior
+* Add Ruby 2.3.0 to build list
+
 0.12.0-rc.1 (24 February 2016)
 ---
 * Update SPARQL query, Activity for invalidated records
