@@ -11,20 +11,12 @@ module Krikri
   module SoftwareAgent
     extend ActiveSupport::Concern
 
-    included do
-      attr_writer :entity_behavior
-    end
-
     ##
-    # Return the EntityBehavior associated with the SoftwareAgent.
-    # Meant to be overridden as necessary.
-    #
-    # @see Krikri::Activity#entities
-    # @see Krikri::EntityBehavior
-    #
-    def entity_behavior
-      @entity_behavior ||= nil
-    end
+    # @!attribute [rw] entity_behavior
+    #   @return [Krikri::EntityBehavior] the entity initialization behavior to  use with this 
+    #     SoftwareAgent.
+    #   @see Krikri::Activity#entities
+    included { attr_accessor :entity_behavior }
 
     ##
     # Return an agent name suitable for saving in an Activity.
@@ -59,6 +51,14 @@ module Krikri
       # @return a string representation of this SoftwareAgent class
       def agent_name
         to_s
+      end
+
+      ##
+      # @return [Krikri::EntityBehavior] the default entity initializiation 
+      #   behavior for this class of SoftwareAgents
+      # @see #entity_behavior
+      def entity_behavior
+        Krikri::AggregationEntityBehavior
       end
 
       ##

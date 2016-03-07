@@ -43,15 +43,13 @@ module Krikri
         def queue_name
           :harvest
         end
-      end
-    end
 
-    ##
-    # @see Krikri::Activity#entities
-    # @see Krikri::EntityBehavior
-    # @see Krikri::SoftwareAgent#entity_behavior
-    def entity_behavior
-      @entity_behavior ||= Krikri::OriginalRecordEntityBehavior
+        ##
+        # @see Krikri::SoftwareAgent::ClassMethods#entity_behavior
+        def entity_behavior
+          Krikri::OriginalRecordEntityBehavior
+        end
+      end
     end
 
     ##
@@ -79,6 +77,7 @@ module Krikri
       @harvest_behavior = opts.delete(:harvest_behavior) do
         Krikri::Harvesters::BasicSaveBehavior
       end.to_s.constantize
+      @entity_behavior = self.class.entity_behavior
     end
 
     delegate :process_record, :to => :@harvest_behavior
