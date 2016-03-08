@@ -102,6 +102,13 @@ module Krikri
     end
 
     ##
+    # @return [Integer] count of entities changed by this activity
+    def entity_count(include_invalidated = false)
+      Krikri::ProvenanceQueryClient
+        .count_by_activity(self.to_term, include_invalidated)
+    end
+
+    ##
     # Return an Enumerator of URI strings of entities (e.g. aggregations or
     # original records) that pertain to this activity
     #
@@ -114,9 +121,8 @@ module Krikri
     #   invalidation.
     #
     def entity_uris(include_invalidated = false)
-      activity_uri = RDF::URI(rdf_subject)  # This activity's LDP URI
       query = Krikri::ProvenanceQueryClient
-        .find_by_activity(activity_uri, include_invalidated)
+        .find_by_activity(self.to_term, include_invalidated)
       query.each_solution.lazy.map do |s|
         s.record.to_s
       end

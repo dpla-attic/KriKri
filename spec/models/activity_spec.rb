@@ -167,6 +167,17 @@ describe Krikri::Activity, type: :model do
     end
   end
 
+  describe '#entity_count' do
+    include_context 'provenance queries'
+    include_context 'entities query'
+
+    let(:generator_uri) { subject.to_term }
+
+    it 'gives a record count' do
+      expect(subject.entity_count).to eq 1
+    end
+  end
+
   describe '#entity_uris' do
     include_context 'provenance queries'
     include_context 'entities query'
@@ -175,7 +186,7 @@ describe Krikri::Activity, type: :model do
     # generator_uri matches what Krikri::Activity will construct as the
     # uri, given its value of #rdf_subject, in #aggregations_as_json
     # See 'provenance queries' shared context.  
-    let(:generator_uri) { subject.rdf_subject }
+    let(:generator_uri) { subject.to_term }
 
     it 'requests validated records by default' do
       expect(Krikri::ProvenanceQueryClient)
