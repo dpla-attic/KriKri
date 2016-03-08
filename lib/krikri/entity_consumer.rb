@@ -1,15 +1,21 @@
 module Krikri
   ##
-  # A mixin for classes, like certain software agents, that generates entities.
-  # For example, a mapper usually generates RDF aggregations, such that
-  # Mapper::Agent includes EntityConsumer, and a mapper agent is instantiated
-  # with
-  #   a = Krikri::Mapper::Agent.new({
-  #     generator_uri: 'http://some.org/activity/1'
-  #   })
-  # such that
-  #   a.generator_activity
-  # returns a Krikri::Activity
+  # A mixin for `Krikri::SoftwareAgent`s that use entities. Provides a
+  # mechanism for setting an `#entity_source` and consuming entities.
+  #
+  # For backwards compatability, this supports an older interface where entities
+  # are selected based on a `generator_activity`.
+  #
+  # @example the deprecated interface
+  #   class AnAgent
+  #     include Krikri::EntityConsumer
+  #   end
+  #
+  #   agent = AnAgent.new
+  #   agent.assign_generator_activity!(generator_uri:
+  #     Krikri::Activity.find(1).rdf_subject)
+  #
+  #   agent.generator_activity.entities
   #
   module EntityConsumer
     extend ActiveSupport::Concern
@@ -32,17 +38,34 @@ module Krikri
     #
     # @see Krikri::Mapper::Agent
     # @see Krikri::Harvester
-    #
     def assign_generator_activity!(opts)
       if opts.include?(:generator_uri)
         generator_uri = opts.delete(:generator_uri)
-        # allow generator_uri to be string or RDF::URI with `to_s' ...
-        activity_id = generator_uri.to_s[/\d+$/].to_i  # 0 if no match
-        fail "Can not determine ID for #{generator_uri}" if activity_id == 0
-        @generator_activity = Krikri::Activity.find_by_id(activity_id)
-        raise "Generator activity not found for id #{activity_id}" \
-          unless @generator_activity
+        @entity_source =
+          @generator_activity = Krikri::Activity.from_uri(generator_uri)
       end
+    end
+
+    ##
+    # @return [Enumerator<Krikri::LDP::Resource>] entities this agent will use
+    def entities
+      entity_source ? entity_source.entities : []
+    end
+
+    ##
+    # @return [#entities, nil]
+    def entity_source
+      @entity_source
+    end
+
+    ##
+    # Sets the entity source to a new instance of the provided class,
+    # initialized with the provided arguments and block.
+    #
+    # @param klass [Class] a class with an instance method `#entities`
+    # @return [void]
+    def set_entity_source!(klass, *args, &block)
+      @entity_source = klass.new(*args, &block)
     end
   end
 end

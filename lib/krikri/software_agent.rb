@@ -1,13 +1,17 @@
 module Krikri
   ##
-  # SoftwareAgent is a mixin for logic common to code that generates a
-  # `Krikri::Activity`.
+  # SoftwareAgent is a mixin for logic common to classes that carry out the 
+  # work involved in a `Krikri::Activity`. This corresponds to a 
+  # prov:SoftwareAgent within PROV-O & PROV-DM.
   #
   # Software Agents should handle internal errors that do not result in full
   # activity failure, and raise a `RuntimeError` when the job fails. `Activity`
   # handles logging of activity start/stop, and failure status.
   #
+  # Implementers must provide a `#run` method.
+  #
   # @see Krikri::Activity
+  # @see https://www.w3.org/TR/prov-dm/#concept-software-agent
   module SoftwareAgent
     extend ActiveSupport::Concern
 
@@ -30,13 +34,13 @@ module Krikri
 
     ##
     # @abstract Perform this agent's work. The method may accept an
-    #   `activity_uri` to record as the Activity in provenance metadata.
+    #   `activity_uri` to record as the prov:Activity in provenance metadata.
     #   If so, the implementation must be optional and handle `nil` values by
     #   declining to record provenance
     #
     # @return [Boolean] `true` if the run has succeeded; otherwise `false`
     #
-    # @raise [RuntimeError] when the software agent's activity fails
+    # @raise [RuntimeError] when the software agent's process fails
     #
     # @see Krirkri::Activity
     # @see Krikri::Job.run
