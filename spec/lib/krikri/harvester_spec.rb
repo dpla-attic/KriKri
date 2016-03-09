@@ -36,7 +36,8 @@ describe Krikri::Harvester do
 
   describe '.entity_behavior' do
     it 'knows its entity behavior' do
-      expect(klass.entity_behavior).to eq(Krikri::OriginalRecordEntityBehavior)
+      expect(subject.class.entity_behavior)
+        .to eq(Krikri::OriginalRecordEntityBehavior)
     end
   end
 
