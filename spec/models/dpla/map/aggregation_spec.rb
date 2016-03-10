@@ -3,6 +3,15 @@ require 'spec_helper'
 describe DPLA::MAP::Aggregation do
   it_behaves_like 'an LDP RDFSource'
 
+  let(:empty_or) { [] }
+  let(:blanknode_or) { [RDF::Node.new] }
+  let(:empty_msg) do
+    "#{subject.dpla_id} has an empty originalRecord"
+  end
+  let(:blanknode_msg) do
+    "#{subject.dpla_id} has a blank node for its originalRecord"
+  end
+
   include_context 'clear repository'
 
   describe '#mint_uri!' do
@@ -24,19 +33,24 @@ describe DPLA::MAP::Aggregation do
       end
     end
 
-    shared_examples 'random hash' do
-      it 'mints random hash' do
-        expect(SecureRandom).to receive(:hex).and_return('abcd1234')
-        subject.mint_id!
-        expect(subject.rdf_subject)
-          .to eq RDF::URI(subject.class.base_uri) / 'abcd1234'
+    context 'when originalRecord is empty' do
+      before do
+        allow(subject).to receive(:originalRecord).and_return(empty_or)
+      end
+
+      it 'raises a NameError' do
+        expect { subject.mint_id! }.to raise_error(NameError, empty_msg)
       end
     end
 
-    context 'without originalRecord' do
-      include_examples 'sets to seed'
-      include_examples 'random hash'
-      include_examples 'sets fragment URI for sourceResource'
+    context 'when originalRecord returns a blank node' do
+      before do
+        allow(subject).to receive(:originalRecord).and_return(blanknode_or)
+      end
+
+      it 'raises a NameError' do
+        expect { subject.mint_id! }.to raise_error(NameError, blanknode_msg)
+      end
     end
 
     context 'with originalRecord' do
@@ -56,14 +70,6 @@ describe DPLA::MAP::Aggregation do
         subject.mint_id!
         expect(subject.rdf_subject)
           .to eq RDF::URI(subject.class.base_uri) / local_name
-      end
-
-      context 'as a bnode' do
-        before do
-          subject.originalRecord = RDF::Node.new
-        end
-
-        include_examples 'random hash'
       end
 
       context 'with more than one originalRecord' do
@@ -115,9 +121,22 @@ describe DPLA::MAP::Aggregation do
       end
     end
 
-    context 'without original record' do
-      it 'raises an error' do
-        expect { subject.original_record }.to raise_error NameError
+    context 'when originalRecord is empty' do
+      before do
+        allow(subject).to receive(:originalRecord).and_return(empty_or)
+      end
+      it 'raises a NameError' do
+        expect { subject.original_record }.to raise_error(NameError, empty_msg)
+      end
+    end
+
+    context 'when originalRecord returns a blank node' do
+      before do
+        allow(subject).to receive(:originalRecord).and_return(blanknode_or)
+      end
+      it 'raises a NameError' do
+        expect { subject.original_record }
+          .to raise_error(NameError, blanknode_msg)
       end
     end
   end
