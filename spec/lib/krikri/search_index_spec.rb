@@ -133,8 +133,6 @@ describe Krikri::QASearchIndex do
       let(:aggregation) { build(:aggregation) }
 
       before do
-        subject.delete_by_query('id:*')
-        subject.commit
         aggregation.set_subject!('http://api.dp.la/item/123')
         aggregation.provider << build(:krikri_provider, rdf_subject: 'snork')
           .agent
@@ -142,10 +140,7 @@ describe Krikri::QASearchIndex do
         subject.commit
       end
 
-      after do
-        subject.delete_by_query('id:*')
-        subject.commit
-      end
+      after { clear_search_index }
 
       it 'posts DPLA MAP JSON to solr' do
         response = solr.get('select', :params => { :q => '' })['response']
@@ -165,6 +160,8 @@ describe Krikri::QASearchIndex do
   describe '#update_from_activity' do
     include_context 'provenance queries'
     include_context 'entities query'
+    
+    after { clear_search_index }
 
     # This is not totally realistic because we're indexing the records from a
     # mapping activity, instead of an enrichment activity, but we can change

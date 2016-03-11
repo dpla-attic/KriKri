@@ -21,15 +21,12 @@ describe Krikri::Provider do
 
   shared_context 'indexed in Solr' do
     before do
-      clear_search_index
       indexer = Krikri::QASearchIndex.new
       indexer.add agg.to_jsonld['@graph'].first
       indexer.commit
     end
 
-    after do
-      clear_search_index
-    end
+    after { clear_search_index }
   end
 
   shared_context 'bnode indexed in Solr' do
@@ -39,11 +36,7 @@ describe Krikri::Provider do
       indexer.commit
     end
 
-    after do
-      indexer = Krikri::QASearchIndex.new
-      indexer.delete_by_query(['*:*'])
-      indexer.commit
-    end
+    after { clear_search_index }
   end
 
   describe '#initialize' do

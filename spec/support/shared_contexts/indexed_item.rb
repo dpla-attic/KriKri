@@ -8,9 +8,7 @@ shared_context 'with indexed item' do
     indexer.commit
   end
 
-  after do
-    clear_search_index
-  end
+  after { clear_search_index }
 
   let(:records) { [agg] }
 

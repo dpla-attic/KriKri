@@ -26,7 +26,7 @@ Rails.backtrace_cleaner.remove_silencers!
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
-WebMock.disable_net_connect!(:allow_localhost => true)
+WebMock.disable_net_connect!(:allow_localhost => true, allow: 'codeclimate.com')
 
 RSpec.configure do |config|
   config.color = true
@@ -62,6 +62,5 @@ RSpec.configure do |config|
   config.after(:suite) do
     clear_repository
     clear_search_index
-    WebMock.disable_net_connect!(:allow => 'codeclimate.com')
   end
 end
