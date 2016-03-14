@@ -87,7 +87,20 @@ module Krikri::Util
       run = str.gsub!(/.*c[irca\.]*/i, '')
       run ||= str.gsub!(/.*about/i, '')
       date = parse(str) if run
-      date.nil? ? nil : date.uncertain!
+
+      return nil if date.nil?
+
+      # The EDTF grammar does not support uncertainty on masked precision dates
+      if date.respond_to? :uncertain!
+        date.uncertain!
+      elsif date.is_a? EDTF::Interval
+        # Interval uncertainty is scoped to the begin and end dates;
+        # to be safe, we mark both.
+        date.from = date.from.uncertain! if date.from.respond_to? :uncertain!
+        date.to   = date.to.uncertain!   if date.to.respond_to? :uncertain!
+      end
+
+      date
     end
 
     ##
