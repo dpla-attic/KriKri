@@ -129,13 +129,13 @@ module Krikri
         # Get the persisted original record for this Aggregation.
         # @return [Krikri::OriginalRecord, nil]
         #
-        # @raise [NameError] when the original record id is not a URI or the
-        #   the original record has not been persisted to Marmotta.
+        # @raise [NameError] when the original record is empty or is a blank
+        #   node.
         #
         # @raise [Faraday::ConnectionError] when there is a connection problem
         #   with Marmotta.
         def original_record
-          raise NameError, "#{originalRecord.first} is not an OriginalRecord" if
+          raise NameError, no_origrec_message if
             originalRecord.empty? || originalRecord.first.node?
           Krikri::OriginalRecord.load(originalRecord.first.rdf_subject
             .to_s)
@@ -164,9 +164,24 @@ module Krikri
 
         def mint_id_fragment(seed = nil)
           return seed if seed
-          return SecureRandom.hex if
+          # We rely on originalRecord for consistent ID minting, so we have to
+          # raise an exception if it's empty or is a blank node; for example,
+          # if a mapping failed to map it.
+          raise NameError, no_origrec_message if
             originalRecord.empty? || originalRecord.first.node?
           local_name_from_original_record
+        end
+
+        def no_origrec_message
+          "#{dpla_id} #{no_origrec_cond}"
+        end
+
+        def no_origrec_cond
+          if originalRecord.empty?
+            "has an empty originalRecord"
+          else
+            "has a blank node for its originalRecord"
+          end
         end
       end
     end

@@ -10,15 +10,41 @@ module Krikri
   class Activity < ActiveRecord::Base
     # @!attribute agent
     #    @return [String] a string representing the Krikri::SoftwareAgent
-    #                     responsible for the activity.
+    #      responsible for the activity.
+    # @!attribute start_time
+    #    @return [DateTime] a datestamp marking the activity's start
     # @!attribute end_time
     #    @return [DateTime] a datestamp marking the activity's competion
     # @!attribute opts
     #    @return [JSON] the options to pass to the #agent class when running
-    #                   the activity
-    # @!attribute start_time
-    #    @return [DateTime] a datestamp marking the activity's start
+    #      the activity
+    
     validate :agent_must_be_a_software_agent
+
+    ##
+    # @example building a valid URI from the base
+    #   Krikri::Activity.base_uri / 1
+    #   
+    # @return [RDF::URI] the configured base URI for this class
+    def self.base_uri
+      RDF::URI.intern(Krikri::Settings['marmotta']['ldp']) /
+        Krikri::Settings['prov']['activity']
+    end
+
+    ##
+    # @param uri [#to_s] a uri for this activity
+    #
+    # @return [Krikri::Activity] the activity with the given uri
+    #
+    # @raise [RuntimeError] if the URI form does not match the activity
+    # @raise [ActiveRecord::RecordNotFound] if no activity is found
+    def self.from_uri(uri)
+      raise "Cannot find #{self} from URI: #{uri}; " \
+            "the requested uri does not match #{base_uri}" unless 
+        uri.start_with? base_uri
+
+      find(uri.to_s.sub(base_uri.to_s, '').sub('/', ''))
+    end
 
     def agent_must_be_a_software_agent
       errors.add(:agent, 'does not represent a SoftwareAgent') unless
@@ -81,7 +107,9 @@ module Krikri
     def agent_instance
       @agent_instance ||= agent.constantize.new(parsed_opts)
     end
-
+    
+    ##
+    # @return [Hash] the options parsed as JSON
     def parsed_opts
       JSON.parse(opts, symbolize_names: true)
     end
@@ -89,11 +117,9 @@ module Krikri
     ##
     # @return [RDF::URI] the uri for this activity
     def rdf_subject
-      RDF::URI(Krikri::Settings['marmotta']['ldp']) /
-        Krikri::Settings['prov']['activity'] / id.to_s
+      self.class.base_uri / id.to_s
     end
     alias_method :to_term, :rdf_subject
-    
 
     ##
     # @return [String] a string reprerestation of the activity

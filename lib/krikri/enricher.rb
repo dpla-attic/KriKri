@@ -2,9 +2,8 @@ module Krikri
   ##
   # A SoftwareAgent that runs enrichment processes.
   #
-  # @example
-  #
-  #   To enrich records that were mapped by the mapping activity with ID 3:
+  # @example to enrich records that were mapped by the mapping activity 
+  #   with ID 3:
   #
   #   # Define which enrichments are run, and thier parameters:
   #   chain = {
@@ -43,7 +42,6 @@ module Krikri
     # @see Audumbla::Enrichment
     # @param opts [Hash] a hash of options
     def initialize(opts = {})
-      @generator_uri = RDF::URI(opts.fetch(:generator_uri))
       @chain = deep_sym(opts.fetch(:chain) { {} })
       @entity_behavior = self.class.entity_behavior
       assign_generator_activity!(opts)
@@ -56,8 +54,7 @@ module Krikri
     # instantiation, and apply each enrichment from the enrichment chain.
     #
     def run(activity_uri = nil)
-      mapped_records = generator_activity.entities
-      mapped_records.each do |rec|
+      entities.each do |rec|
         begin
           chain_enrichments!(rec)
           activity_uri ? rec.save_with_provenance(activity_uri) : rec.save

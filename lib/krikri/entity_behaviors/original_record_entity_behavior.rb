@@ -23,7 +23,7 @@ module Krikri
     # @return [Enumerator] OriginalRecord objects
     #
     def entities(load = true, include_invalidated = false)
-      @activity.entity_uris(include_invalidated).lazy.map do |uri|
+      activity_uris(include_invalidated) do |uri|
         load ? OriginalRecord.load(uri) : OriginalRecord.new(uri)
       end
     end

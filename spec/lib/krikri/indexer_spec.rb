@@ -8,15 +8,18 @@ describe Krikri::Indexer do
 
   subject { described_class.new(opts) }
 
-  enrichment_gen_uri_str = 'http://example.org/ldp/activity/5'
-  behaves_opts = { generator_uri: enrichment_gen_uri_str,
+  enrichment_gen_uri = Krikri::Activity.base_uri / 5
+
+  behaves_opts = { generator_uri: enrichment_gen_uri,
                    index_class:   'Krikri::QASearchIndex' }
 
-  it_behaves_like 'a software agent', behaves_opts
+  it_behaves_like 'a software agent', behaves_opts do
+    after { clear_search_index }
+  end
   
   # See mapper_agent_spec.rb regarding :opts and behaves_opts...
   let(:opts) do
-    { generator_uri: enrichment_gen_uri_str,
+    { generator_uri: enrichment_gen_uri,
       index_class:   index_class.to_s }
   end
 

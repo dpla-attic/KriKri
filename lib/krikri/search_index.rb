@@ -6,6 +6,10 @@ module Krikri
   ##
   # Search index base class that gets extended by QA and Production index
   # classes
+  #
+  # @todo rewrite to use generalized `EntityConsumer` interface & avoid 
+  #   `#update_from_activity`, which is tighly bound to `Activity` rather than
+  #   `Enumerator<#entities>`.
   class SearchIndex
     def initialize(opts)
       @bulk_update_size = opts.delete(:bulk_update_size) { 10 }
