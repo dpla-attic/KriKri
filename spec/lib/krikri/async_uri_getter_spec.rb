@@ -127,4 +127,15 @@ describe Krikri::AsyncUriGetter do
       end
     end
   end
+
+  context 'inline exceptions' do
+    subject { described_class.new(opts: { inline_exceptions: true }) }
+
+    it 'does not interfere with exceptions thrown by with_response' do
+      r = subject.add_request(uri: test_uri)
+      expect do
+        r.with_response { |_| raise "Programming error!" }
+      end.to raise_error
+    end
+  end
 end
