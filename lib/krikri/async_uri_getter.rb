@@ -92,22 +92,27 @@ module Krikri
       ##
       # @yield [Faraday::Response] the response returned for the request
       def with_response
-        yield @request_thread.value
-      rescue => e
-        if inline_exceptions?
-          # Deliver an error response to the caller to allow uniform access
-          msg = e.message + "\n\n" + e.backtrace.join("\n")
-          yield Faraday::Response.new(status: 500,
-                                      body: msg,
-                                      response_headers: {
-                                        'X-Exception' => e,
-                                        'X-Exception-Message' => e.message,
-                                        'X-Internal-Response' => 'true'
-                                      })
-        else
-          raise e
+        begin
+          response = @request_thread.value
+        rescue => e
+          if inline_exceptions?
+            # Deliver an error response to the caller to allow uniform access
+            msg = e.message + "\n\n" + e.backtrace.join("\n")
+            response = Faraday::Response.new(status: 500,
+                                             body: msg,
+                                             response_headers: {
+                                               'X-Exception' => e,
+                                               'X-Exception-Message' => e.message,
+                                               'X-Internal-Response' => 'true'
+                                             })
+          else
+            raise e
+          end
         end
+
+        yield response
       end
+
 
       private
 
