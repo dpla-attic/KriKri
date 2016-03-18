@@ -1,3 +1,8 @@
+0.12.2 (17 March 2016)
+---
+
+* Only inline exceptions stemming from Faraday
+
 0.12.1 (17 March 2016)
 ---
 
