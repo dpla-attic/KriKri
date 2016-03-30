@@ -21,6 +21,7 @@ describe Krikri::Util::ExtendedDateParser do
                  '1992.12',
                  '1992?',
                  'circa 1992',
+                 'circa 1992/1993',
                  'ca 1992',
                  'c 1992',
                  'ca. 1992',
@@ -44,13 +45,19 @@ describe Krikri::Util::ExtendedDateParser do
     date_forms.each do |str|
       it "parses #{str} to timespan" do
         result = subject.parse(str)
-        if result.is_a? EDTF::Decade
+        if result.is_a? EDTF::Interval
+          expect(result.from).to eq Date.edtf('1992-01-01')
+            .send("#{result.from.precision}_precision".to_sym)
+          expect(result.to).to eq Date.edtf('1993-12-01')
+            .send("#{result.to.precision}_precision".to_sym)
+        elsif result.is_a? EDTF::Decade
           expect(result).to eq Date.edtf('199x')
         elsif result.is_a? EDTF::Century
           expect(result).to eq Date.edtf('19xx')
         else
           expect(result).to eq Date.edtf('1992-12-01')
             .send("#{result.precision}_precision".to_sym)
+
         end
       end
     end
