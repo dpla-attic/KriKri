@@ -51,6 +51,8 @@ module Krikri
     #   redirects.
     # @option opts [Integer] :max_redirects Number of redirects to follow before
     #   giving up. (default: 10)
+    # @option opts [Boolean] :inline_exceptions If true, pass exceptions as a
+    #   5xx response with the exception string in the body. (default: false)
     def initialize(opts: {})
       @default_opts = { max_redirects: MAX_REDIRECTS }.merge(opts)
     end
@@ -80,15 +82,45 @@ module Krikri
       # Wait for the request thread to complete
       def join
         @request_thread.join
+      rescue => e
+        # If the join throws an exception, the thread is dead anyway.  The
+        # subsequent call to `with_response` will propagate the exception to the
+        # calling thread.
+        raise e unless inline_exceptions?
       end
 
       ##
       # @yield [Faraday::Response] the response returned for the request
       def with_response
-        yield @request_thread.value
+        begin
+          response = @request_thread.value
+        rescue => e
+          if inline_exceptions?
+            # Deliver an error response to the caller to allow uniform access
+            msg = e.message + "\n\n" + e.backtrace.join("\n")
+            response = Faraday::Response.new(status: 500,
+                                             body: msg,
+                                             response_headers: {
+                                               'X-Exception' => e,
+                                               'X-Exception-Message' => e.message,
+                                               'X-Internal-Response' => 'true'
+                                             })
+          else
+            raise e
+          end
+        end
+
+        yield response
       end
 
+
       private
+
+      ##
+      # True if we are using inline exceptions
+      def inline_exceptions?
+        opts.fetch(:inline_exceptions, false)
+      end
 
       ##
       # Run the Faraday request in a new thread

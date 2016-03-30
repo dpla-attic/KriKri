@@ -1,3 +1,16 @@
+0.12.3 (17 March 2016)
+---
+
+* Only inline exceptions stemming from Faraday
+
+0.12.1 (17 March 2016)
+---
+
+* Raise error for empty original record, minting ID ([#8316](https://issues.dp.la/issues/8316))
+* Krikri::AsyncUriGetter: Add support for "inline exceptions"
+* Let CodeClimate through webmock always
+* Remove Solr docs more carefully in test suite
+
 0.12.0 (7 March 2016)
 ---
 

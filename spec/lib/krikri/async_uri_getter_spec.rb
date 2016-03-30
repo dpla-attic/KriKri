@@ -92,15 +92,50 @@ describe Krikri::AsyncUriGetter do
         .to_raise(Faraday::ConnectionFailed)
     end
 
-    it 'propagates exceptions to the calling thread when #join is called' do
-      r = subject.add_request(uri: test_uri)
-      expect { r.join }.to raise_error(Faraday::ConnectionFailed)
+    context 'without inline exceptions' do
+      it 'propagates exceptions to the calling thread when #join is called' do
+        r = subject.add_request(uri: test_uri)
+        expect { r.join }.to raise_error(Faraday::ConnectionFailed)
+      end
+
+      it 'propagates exceptions when the response is requested' do
+        r = subject.add_request(uri: test_uri)
+        expect { r.with_response { |_| } }
+          .to raise_error(Faraday::ConnectionFailed)
+      end
     end
 
-    it 'propagates exceptions when the response is requested' do
+    context 'with inline exceptions' do
+      subject { described_class.new(opts: { inline_exceptions: true }) }
+
+      it 'does not throw an exception when #join is called' do
+        r = subject.add_request(uri: test_uri)
+        expect { r.join }.to_not raise_error
+      end
+
+      it 'passes the exception as a 5xx HTTP response' do
+        r = subject.add_request(uri: test_uri)
+        r.with_response do |response|
+          expect(response.status).to eq(500)
+          expect(response.body).to include('Exception')
+
+          headers = response.headers
+          expect(headers.keys).to include('X-Internal-Response')
+          expect(headers.keys).to include('X-Exception-Message')
+          expect(headers['X-Exception']).to be_kind_of(Exception)
+        end
+      end
+    end
+  end
+
+  context 'inline exceptions' do
+    subject { described_class.new(opts: { inline_exceptions: true }) }
+
+    it 'does not interfere with exceptions thrown by with_response' do
       r = subject.add_request(uri: test_uri)
-      expect { r.with_response { |_| } }
-        .to raise_error(Faraday::ConnectionFailed)
+      expect do
+        r.with_response { |_| raise "Programming error!" }
+      end.to raise_error
     end
   end
 end
