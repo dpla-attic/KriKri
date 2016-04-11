@@ -71,6 +71,21 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
         end
       end
 
+      context 'with description' do
+        before do
+          aggregation.sourceResource.first.description = [desc, desc2]
+          subject.build
+        end
+
+        let(:desc) { 'Window of the Stonewall Bar N.Y. 1969.' }
+        let(:desc2) { 'A nice description' }
+
+        it 'has crosswalked multiple descriptions' do
+          expect(subject.hash[:sourceResource][:description])
+            .to contain_exactly(desc, desc2)
+        end
+      end
+
       context 'with place' do
         before do
           aggregation.sourceResource.first.spatial.first.label = label
