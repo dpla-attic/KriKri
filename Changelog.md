@@ -1,3 +1,13 @@
+0.12.4 (11 April 2016)
+---
+
+* Fix bug in handling of EDTF intervals in the extended date parser
+* Add an enrichment to splits a resource into multiple resources when
+  multiple providedLabels are present.
+* Make language code matching case insensitive. E.g. "Eng" now matches
+  the code `eng`.
+* Allow multiple descriptions in the MAP 3.1 crosswalk.
+
 0.12.3 (17 March 2016)
 ---
 

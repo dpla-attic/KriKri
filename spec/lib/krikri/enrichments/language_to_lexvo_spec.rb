@@ -142,6 +142,11 @@ describe Krikri::Enrichments::LanguageToLexvo do
       expect(subject.match_iso('eng').rdf_subject)
         .to eq english
     end
+
+    it 'finds 3 letter ISO codes case insensitively' do
+      expect(subject.match_iso('Eng').rdf_subject)
+        .to eq english
+    end
   end
 
   describe '#match_label' do
