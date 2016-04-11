@@ -125,7 +125,7 @@ module Krikri::Enrichments
     # @param code [#to_sym] a three letter iso code
     # @return [DPLA::MAP::Controlled::Language]
     def match_iso(code)
-      match = QNAMES.find { |c| c == code.to_sym }
+      match = QNAMES.find { |c| c == code.downcase.to_sym }
       from_sym(match)
     end
 
