@@ -115,7 +115,7 @@ module Krikri
           get_label(creator)
         end
 
-        set_value(sr, :description, parent_sr.description, true)
+        set_value(sr, :description, parent_sr.description)
         set_value(sr, :format, parent_sr.dcformat)
         set_value(sr, :identifier, parent_sr.identifier)
 
