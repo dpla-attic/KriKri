@@ -12,7 +12,7 @@ module Krikri
   #   `Enumerator<#entities>`.
   class SearchIndex
     def initialize(opts)
-      @bulk_update_size = opts.delete(:bulk_update_size) { 10 }
+      @bulk_update_size = opts.delete(:bulk_update_size) { 1000 }
     end
 
     ##
