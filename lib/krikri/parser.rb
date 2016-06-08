@@ -213,6 +213,14 @@ module Krikri
       end
 
       ##
+      # @param idx [#to_i, Range]
+      # @return [ValueArray] an array containing the node(s) in the 
+      #   specified index posiition(s).
+      def at(idx)
+        self.class.new(Array(@array[idx]))
+      end
+
+      ##
       # Accesses a given field. Use multiple arguments to travel down the node
       # hierarchy.
       #

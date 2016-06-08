@@ -39,6 +39,25 @@ describe Krikri::Parser::ValueArray do
     end
   end
 
+  describe '#at' do
+    it 'returns a ValueArray' do
+      expect(subject.at(0)).to be_a described_class
+    end
+
+    it 'returns the correct nodes' do
+      expect(subject.at(0)).to contain_exactly values[0]
+    end
+
+    it 'returns the correct nodes with range' do
+      range = 0..-2
+      expect(subject.at(range)).to contain_exactly(*values[range])
+    end
+
+    it 'returns empty when out of bounds' do
+      expect(subject.at(10_000)).to be_empty
+    end
+  end
+
   shared_context 'with fields' do
     before do
       values.each do |val|
