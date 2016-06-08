@@ -315,6 +315,12 @@ module Krikri
         self.class.new([@array.last].compact, @top)
       end
 
+      ##
+      # @see Array#compact
+      # @return [ValueArray]
+      def compact
+        self.class.new(@array.compact, @top)
+      end
 
       ##
       # @see Array#concat
