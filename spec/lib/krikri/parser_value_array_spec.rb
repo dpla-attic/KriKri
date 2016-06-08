@@ -262,6 +262,18 @@ describe Krikri::Parser::ValueArray do
     end
   end
 
+  describe '#compact' do
+    before { values << nil }
+
+    it 'removes nil values' do
+      expect(subject.compact).not_to include nil
+    end
+
+    it 'returns an instance of its class' do
+      expect(subject.concat(subject)).to be_a described_class
+    end
+  end
+
   describe '#concat' do
     it 'gives union of two arrays' do
       vals = subject.to_a.dup
