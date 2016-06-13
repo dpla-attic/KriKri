@@ -9,6 +9,8 @@ gem 'rubocop', require: false
 gem 'yajl-ruby', require: 'yajl'
 gem 'database_cleaner', '~> 1.3.0', require: false
 
+gem 'krikri-spec', github: 'dpla/krikri-spec', branch: 'develop'
+
 group :development do
   gem 'pry-rescue'
 end
