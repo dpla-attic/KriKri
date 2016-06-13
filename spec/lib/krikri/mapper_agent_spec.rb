@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+require 'krikri/spec/software_agent'
+
 describe Krikri::Mapper::Agent do
   before(:all) do
     DatabaseCleaner.clean_with(:truncation)

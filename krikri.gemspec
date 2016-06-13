@@ -54,6 +54,7 @@ Gem::Specification.new do |s|
   # properly.
   s.add_dependency "bootstrap-sass", "3.3.4.1"
 
+  s.add_development_dependency 'krikri-spec', '~> 0.0'
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "jettywrapper", '~> 2.0'
   s.add_development_dependency "rspec-rails", '~> 3.3'

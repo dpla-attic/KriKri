@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+require 'krikri/spec/software_agent'
+
 describe Krikri::Enricher do
 
   subject { described_class.new generator_uri: mapping_activity_uri }

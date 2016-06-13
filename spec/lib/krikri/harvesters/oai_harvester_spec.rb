@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'spec_helper'
+require 'krikri/spec/harvester'
 
 describe Krikri::Harvesters::OAIHarvester do
 

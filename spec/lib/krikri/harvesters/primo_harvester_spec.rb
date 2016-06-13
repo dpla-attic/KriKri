@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'krikri/spec/harvester'
 
 describe Krikri::Harvesters::PrimoHarvester do
   let(:args) do
