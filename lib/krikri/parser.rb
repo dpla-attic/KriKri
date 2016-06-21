@@ -220,6 +220,30 @@ module Krikri
       end
 
       ##
+      # Returns to a bound variable unless the current value is empty. If no 
+      # variable is given, returns to the top of the call chain.
+      #
+      # This allows checking complex conditionals, where mappings depend on 
+      # data from deep within multiple branches of the tree. 
+      #
+      # @example use with `#bind`
+      #   value_array.field(:subject).bind(:subj)
+      #     .field('some', 'subfield')
+      #     .select { |a| condition(a) }
+      #     .and(:subj).field(:label)
+      #   
+      # @param from [#to_sym] a symbol respresenting a bound variable name; 
+      #   default: :top
+      # @return [ValueArray] self
+      #
+      # @raise [ArgumentError] when an unbound variable is given as `var`
+      def and(from: :top)
+        return self if self.empty?
+        bindings[from.to_sym] or
+          raise ArgumentError, "Tried to return to unbound variable: #{from}"
+      end
+
+      ##
       # Binds the current array to the variable name given
       #
       # @param var [#to_sym] a symbol respresenting the variable name
@@ -277,7 +301,10 @@ module Krikri
       end
 
       ##
-      # Sets the top of the call chain to self and returns or yields self
+      # Sets the top of the call chain to self and returns or yields self.
+      #
+      # This is syntactic sugar for `#bind(:top)`, with the addition of block 
+      # syntax.
       #
       # @example with method chain syntax
       #   value_array.if.field(:a_field).else do |arry|
@@ -291,7 +318,7 @@ module Krikri
       # @yield gives self
       # @yieldparam arry [ValueArray] self
       #
-      # @return [ValueArray] the result of the block, if given; or self with @top set
+      # @return [ValueArray] the result of the block, if given; or self with :top set
       def if(&block)
         bind(:top)
         return yield self if block_given?
@@ -350,7 +377,7 @@ module Krikri
       # @see Array#compact
       # @return [ValueArray]
       def compact
-        self.class.new(@array.compact, @top)
+        self.class.new(@array.compact, bindings)
       end
 
       ##

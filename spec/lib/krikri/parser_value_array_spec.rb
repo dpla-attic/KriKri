@@ -105,15 +105,38 @@ describe Krikri::Parser::ValueArray do
     end
   end
 
+  describe '#and' do
+    include_context 'with fields'
+
+    before do 
+      values.each { |val| allow(val).to receive(:attribute?).and_return(false) }
+    end
+
+    it 'returns top by default' do
+      expect(subject.field(:field_name).and)
+        .to equal subject.bindings[:top]
+    end
+
+    it 'returns bound variable if values are present' do
+      expect(subject.field(:field_name).bind(:bound)
+              .field(:nested_name).and(from: :bound))
+        .to equal subject.bindings[:bound]
+    end
+
+    it 'raises ArgumentError for unbound variables' do
+      expect { subject.and(from: :unbound) }.to raise_error ArgumentError
+    end
+  end
+
   describe '#bind' do
     include_context 'with fields'
 
     it 'returns self' do
-      expect(subject.bind(:moomin)).to eq subject
+      expect(subject.bind(:moomin)).to equal subject
     end
 
     it 'binds the variable' do
-      expect(subject.bind(:moomin).bindings[:moomin]).to eq subject
+      expect(subject.bind(:moomin).bindings[:moomin]).to equal subject
     end
   end
 
