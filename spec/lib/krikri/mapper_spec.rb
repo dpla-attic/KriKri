@@ -13,16 +13,22 @@ describe Krikri::Mapper do
             providedLabel record.field('dc:creator')
           end
 
-          contributor :class => DPLA::MAP::Agent, :each => record.field('dc:creator').map { |v| v.value }, :as => :ident do
+          contributor :class => DPLA::MAP::Agent,
+                      :each => record.field('dc:creator'),
+                      :as => :ident do
             providedLabel ident
           end
 
-          spatial :class => DPLA::MAP::Place, :each => ['nyc', 'bos', 'pdx'], :as => :place do
+          spatial :class => DPLA::MAP::Place,
+                  :each => %w('nyc bos pdx'),
+                  :as => :place do
             providedLabel place
           end
         end
 
-        provider :class => DPLA::MAP::Agent, :each => header.field('xmlns:identifier'), :as => :ident do
+        provider :class => DPLA::MAP::Agent,
+                 :each => header.field('xmlns:identifier'),
+                 :as => :ident do
           providedLabel ident
         end
       end
@@ -38,11 +44,12 @@ describe Krikri::Mapper do
 
       expect(mapped.sourceResource.first.contributor.first.providedLabel)
         .to contain_exactly record.root['dc:creator'].first.value
-      expect(mapped.sourceResource.first.contributor.map(&:providedLabel).flatten)
+      expect(mapped.sourceResource.first
+              .contributor.map(&:providedLabel).flatten)
         .to eq record.root['dc:creator'].to_a.map(&:value)
 
       expect(mapped.sourceResource.first.spatial.map(&:providedLabel).flatten)
-        .to eq ['nyc', 'bos', 'pdx']
+        .to eq %w('nyc bos pdx')
 
       expect(mapped.sourceResource.first.identifier)
         .to eq Array(record.header.first['xmlns:identifier'].first.value)
@@ -76,7 +83,7 @@ describe Krikri::Mapper do
     end
 
     it 'passes parser_args to mapping' do
-      args = [1,2,3]
+      args = [1, 2, 3]
       expect(Krikri::Mapping).to receive(:new)
         .with(DPLA::MAP::Aggregation, Krikri::XmlParser, *args).once
       Krikri::Mapper.define(:klass_map, parser_args: args)
@@ -126,7 +133,7 @@ describe Krikri::Mapper do
         before do
           records.each do |rec|
             expect(mapping).to receive(:process_record).with(rec)
-                                .and_return(:mapped_record).ordered
+              .and_return(:mapped_record).ordered
           end
         end
 
@@ -142,7 +149,7 @@ describe Krikri::Mapper do
 
           records.each do |rec|
             allow(mapping).to receive(:process_record).with(rec)
-                               .and_raise(StandardError.new)
+              .and_raise(StandardError.new)
           end
         end
 
