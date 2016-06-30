@@ -39,6 +39,7 @@ Gem::Specification.new do |s|
   s.add_dependency "analysand", "4.0.0"
   s.add_dependency "yajl-ruby"
   s.add_dependency "elasticsearch", "~>0.4.0"
+  s.add_dependency "nokogiri", ">=1.6.8"
 
   ##
   # FIXME on Rails 4.2 upgrade: pin bootstrap-sass to 3.3.4.1
