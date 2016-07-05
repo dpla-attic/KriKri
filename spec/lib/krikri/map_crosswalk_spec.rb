@@ -132,15 +132,32 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
 
       context 'with timespan containing prefLabel' do
         before do
-          aggregation.sourceResource.first.date.first.prefLabel = prefLabel
-          subject.build
+          aggregation.sourceResource.first.
+            date.first.providedLabel = providedLabel
         end
-
-        let(:prefLabel) { '1969' }
+        
+        let(:providedLabel) { '1968' }
 
         it 'has a displayDate' do
+          subject.build
+
           expect(subject.hash[:sourceResource][:date].first[:displayDate])
-            .to eq prefLabel
+            .to eq providedLabel
+        end
+
+        context 'with prefLabel' do
+          before do 
+            aggregation.sourceResource.first.date.first.prefLabel = prefLabel
+          end
+
+          let(:prefLabel) { '1969' }
+
+          it 'uses prefLabel as displayDate' do
+            subject.build
+          
+            expect(subject.hash[:sourceResource][:date].first[:displayDate])
+              .to eq prefLabel
+          end
         end
       end
       
