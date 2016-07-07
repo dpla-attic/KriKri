@@ -39,6 +39,7 @@ Gem::Specification.new do |s|
   s.add_dependency "analysand", "4.0.0"
   s.add_dependency "yajl-ruby"
   s.add_dependency "elasticsearch", "~>0.4.0"
+  s.add_dependency "nokogiri", ">=1.6.8"
 
   ##
   # FIXME on Rails 4.2 upgrade: pin bootstrap-sass to 3.3.4.1
@@ -54,9 +55,10 @@ Gem::Specification.new do |s|
   # properly.
   s.add_dependency "bootstrap-sass", "3.3.4.1"
 
+  s.add_development_dependency 'krikri-spec', '~> 0.0'
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "jettywrapper", '~> 2.0'
-  s.add_development_dependency "rspec-rails", '~> 3.2'
+  s.add_development_dependency "rspec-rails", '~> 3.3'
   s.add_development_dependency 'webmock'
   s.add_development_dependency 'factory_girl_rails', '~>4.4.0'
   s.add_development_dependency 'pry-rails'

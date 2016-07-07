@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'spec_helper'
-require 'pry'
+require 'krikri/spec/harvester'
 
 describe Krikri::Harvesters::CouchdbHarvester do
 

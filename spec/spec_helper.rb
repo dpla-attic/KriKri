@@ -21,6 +21,8 @@ require 'rdf/marmotta'
 
 require 'devise'
 
+require 'krikri/spec'
+
 Rails.backtrace_cleaner.remove_silencers!
 
 # Load support files
@@ -43,6 +45,9 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
   config.infer_base_class_for_anonymous_controllers = false
   config.order = 'random'
+
+  # Use krikri matchers
+  config.include Krikri::Spec::Matchers
 
   def clear_repository
     Krikri::Repository.clear!

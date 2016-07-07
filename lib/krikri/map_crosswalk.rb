@@ -176,7 +176,12 @@ module Krikri
       def build_time_span(source)
         return unless source.is_a? DPLA::MAP::TimeSpan
         date = {}
+
         set_value(date, :displayDate, source.prefLabel, true, &:as_json)
+        set_value(date, :displayDate,
+                  source.providedLabel, true, &:as_json) unless
+          date.has_key?(:displayDate)
+
         set_value(date, :begin, source.begin, true, &:as_json)
         set_value(date, :end, source.end, true, &:as_json)
 

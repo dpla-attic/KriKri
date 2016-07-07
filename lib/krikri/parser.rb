@@ -157,27 +157,48 @@ module Krikri
     # of literal values (retrieved from Parser::Value#value), or a single
     # literal value.
     #
-    # Uses `@top` to track a base node for recovery via `#else`. Methods that 
-    # return a `ValueArray` should pass `@top` down to the new instance.
+    # Uses `#bindings` to track variables for recovery via `#else`, `#from`, and
+    #`#back`. Methods that return a `ValueArray` pass `#bindings` down to the 
+    # new instance.
     #
-    # @example conditional recovery. `#if` sets `@top`, `#else` rewinds if empty
+    # @example
+    #   
+    #   my_value_array.field('dc:creator').bind(:creator)
     #
-    #     my_value_array.field('dc:creator', 'foaf:name').if.field('empty:field')
-    #       .else { |vs| vs.field('some:otherField') }
+    #
+    # @example `#if` sets `bindings[:top]`, `#else` recoveres if empty
+    #
+    #   my_value_array.field('dc:creator', 'foaf:name').if.field('empty:field')
+    #     .else { |vs| vs.field('some:otherField') }
     #
     class ValueArray
       include Enumerable
 
+      # @!attribute [r] bindings
+      #   A hash containing bindings of variables to (Symbols) to ValueArrays
+      attr_reader :bindings
+
       delegate :[], :each, :empty?, :to_a, :to_ary,
          :to => :@array
-
+      
       ##
       # @param array [Array] an array of values to delegate array operations to
-      # @param top [ValueArray] an instance of this class to use as a recovery 
-      #   node in, e.g. `#else`. Defaults to `self` if none is passed.
-      def initialize(array = [], top = nil)
+      # @param bindings [Hash<Symbol, ValueArray] a set of variable bindings
+      #   This is overloaded to accept an instance of this class to use as a 
+      #   `:top` recovery node in, e.g. `#else`. `:top` to `self` if none is
+      #   passed.
+      def initialize(array = [], bindings = {})
         @array = array
-        @top = top || self
+
+        if bindings.is_a?(ValueArray)
+          # this way is deprected!
+          # how should we handle deprecations?
+          @bindings = {}
+          @bindings[:top] ||= bindings
+        else
+          @bindings = bindings
+          @bindings[:top] ||= self
+        end
       end
 
       ##
@@ -199,10 +220,44 @@ module Krikri
       end
 
       ##
+      # Returns to a bound variable unless the current value is empty. If no 
+      # variable is given, returns to the top of the call chain.
+      #
+      # This allows checking complex conditionals, where mappings depend on 
+      # data from deep within multiple branches of the tree. 
+      #
+      # @example use with `#bind`
+      #   value_array.field(:subject).bind(:subj)
+      #     .field('some', 'subfield')
+      #     .select { |a| condition(a) }
+      #     .and(:subj).field(:label)
+      #   
+      # @param from [#to_sym] a symbol respresenting a bound variable name; 
+      #   default: :top
+      # @return [ValueArray] self
+      #
+      # @raise [ArgumentError] when an unbound variable is given as `var`
+      def and(from: :top)
+        return self if self.empty?
+        bindings[from.to_sym] or
+          raise ArgumentError, "Tried to return to unbound variable: #{from}"
+      end
+
+      ##
+      # Binds the current array to the variable name given
+      #
+      # @param var [#to_sym] a symbol respresenting the variable name
+      # @return [ValueArray] self
+      def bind(var)
+        bindings[var.to_sym] = self
+        self
+      end
+
+      ##
       # @see Array#concat
       # @return [ValueArray]
       def concat(*args, &block)
-        self.class.new(@array.concat(*args, &block), @top)
+        self.class.new(@array.concat(*args, &block), bindings)
       end
 
       ##
@@ -210,6 +265,14 @@ module Krikri
       # @see Parser::Value#value
       def values
         @array.map { |v| v.respond_to?(:value) ? v.value : v }
+      end
+
+      ##
+      # @param idx [#to_i, Range]
+      # @return [ValueArray] an array containing the node(s) in the 
+      #   specified index posiition(s).
+      def at(idx)
+        self.class.new(Array(@array[idx]))
       end
 
       ##
@@ -234,11 +297,14 @@ module Krikri
         results = args.map do |f|
           field(*Array(f))
         end
-        self.class.new(results.flatten, @top)
+        self.class.new(results.flatten, bindings)
       end
 
       ##
-      # Sets the top of the call chain to self and returns or yields self
+      # Sets the top of the call chain to self and returns or yields self.
+      #
+      # This is syntactic sugar for `#bind(:top)`, with the addition of block 
+      # syntax.
       #
       # @example with method chain syntax
       #   value_array.if.field(:a_field).else do |arry|
@@ -252,16 +318,16 @@ module Krikri
       # @yield gives self
       # @yieldparam arry [ValueArray] self
       #
-      # @return [ValueArray] the result of the block, if given; or self with @top set
+      # @return [ValueArray] the result of the block, if given; or self with :top set
       def if(&block)
-        @top = self
+        bind(:top)
         return yield self if block_given?
         self
       end
 
       ##
       # Short circuits if `self` is not empty, else passes the top of the call
-      # chain (`@top`) to the given block.
+      # chain (`@bindings[:top]`) to the given block.
       #
       # @example usage with `#if`
       #   value_array.if { |arry| arry.field(:a_field) }
@@ -274,15 +340,15 @@ module Krikri
       # @example standalone use; resetting to record root
       #   value_array.field(:a_field).else { |arry| arry.field(:alternate_field) }
       #
-      # @yield gives `@top` if self is empty
-      # @yieldparam arry [ValueArray] the value of `@top`
+      # @yield gives `@bindings[:top]` if self is empty
+      # @yieldparam arry [ValueArray] the value of `@bindings[:top]`
       #
       # @return [ValueArray] `self` unless empty; otherwise the result of the
       #   block
       def else(&block)
         raise ArgumentError, 'No block given for `#else`' unless block_given?
         return self unless self.empty?
-        yield @top
+        yield bindings[:top]
       end
 
       ##
@@ -293,7 +359,7 @@ module Krikri
       # @return [ValueArray] a Krikri::Parser::ValueArray for first n elements
       def first_value(*args)
         return self.class.new(@array.first(*args)) unless args.empty?
-        self.class.new([@array.first].compact, @top)
+        self.class.new([@array.first].compact, bindings)
       end
 
       ##
@@ -304,15 +370,21 @@ module Krikri
       # @return [ValueArray] a Krikri::Parser::ValueArray for last n elements
       def last_value(*args)
         return self.class.new(@array.last(*args)) unless args.empty?
-        self.class.new([@array.last].compact, @top)
+        self.class.new([@array.last].compact, bindings)
       end
 
+      ##
+      # @see Array#compact
+      # @return [ValueArray]
+      def compact
+        self.class.new(@array.compact, bindings)
+      end
 
       ##
       # @see Array#concat
       # @return [ValueArray]
       def flatten(*args, &block)
-        self.class.new(@array.flatten(*args, &block), @top)
+        self.class.new(@array.flatten(*args, &block), bindings)
       end
 
       ##
@@ -321,7 +393,7 @@ module Krikri
       # @see Array#map
       # @return [ValueArray]
       def map(*args, &block)
-        self.class.new(@array.map(*args, &block), @top)
+        self.class.new(@array.map(*args, &block), bindings)
       end
 
       ##
@@ -330,7 +402,7 @@ module Krikri
       # @see Array#select
       # @return [ValueArray]
       def select(*args, &block)
-        self.class.new(@array.select(*args, &block), @top)
+        self.class.new(@array.select(*args, &block), bindings)
       end
 
       ##
@@ -339,7 +411,7 @@ module Krikri
       # @see Array#reject
       # @return [ValueArray]
       def reject(*args, &block)
-        self.class.new(@array.reject(*args, &block), @top)
+        self.class.new(@array.reject(*args, &block), bindings)
       end
 
       ##
@@ -405,7 +477,7 @@ module Krikri
       protected
 
       def get_field(name)
-        self.class.new(flat_map { |val| val[name] }, @top)
+        self.class.new(flat_map { |val| val[name] }, bindings)
       end
 
       private

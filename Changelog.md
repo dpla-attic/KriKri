@@ -1,3 +1,20 @@
+0.13.0 (July 2016)
+---
+
+* Mapping DSL improvements
+  * Add #at and #compact methods
+  * Support binding arbitrary named variables for later recall;
+    (#bind, #and(from:))
+* Change MAP 3.1 mapping to allow use of providedLabels from TimeSpan
+* Raise default bulk index batch size (now: 1000)
+* Migrate shared engine examples to new `krikri-spec` gem.
+  * This supports including examples in implementing apps; better testing
+    of upstream Harvesters, &tc...
+* Upgrade RSpec to `~> 3.3`
+* Upgrade Nokogiri (security fix)
+* Remove development dependency on Guard
+
+
 0.12.4 (11 April 2016)
 ---
 

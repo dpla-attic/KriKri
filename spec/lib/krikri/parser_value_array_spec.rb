@@ -39,6 +39,25 @@ describe Krikri::Parser::ValueArray do
     end
   end
 
+  describe '#at' do
+    it 'returns a ValueArray' do
+      expect(subject.at(0)).to be_a described_class
+    end
+
+    it 'returns the correct nodes' do
+      expect(subject.at(0)).to contain_exactly values[0]
+    end
+
+    it 'returns the correct nodes with range' do
+      range = 0..-2
+      expect(subject.at(range)).to contain_exactly(*values[range])
+    end
+
+    it 'returns empty when out of bounds' do
+      expect(subject.at(10_000)).to be_empty
+    end
+  end
+
   shared_context 'with fields' do
     before do
       values.each do |val|
@@ -86,12 +105,50 @@ describe Krikri::Parser::ValueArray do
     end
   end
 
+  describe '#and' do
+    include_context 'with fields'
+
+    before do 
+      values.each { |val| allow(val).to receive(:attribute?).and_return(false) }
+    end
+
+    it 'returns top by default' do
+      expect(subject.field(:field_name).and)
+        .to equal subject.bindings[:top]
+    end
+
+    it 'returns bound variable if values are present' do
+      expect(subject.field(:field_name).bind(:bound)
+              .field(:nested_name).and(from: :bound))
+        .to equal subject.bindings[:bound]
+    end
+
+    it 'raises ArgumentError for unbound variables' do
+      expect { subject.and(from: :unbound) }.to raise_error ArgumentError
+    end
+  end
+
+  describe '#bind' do
+    include_context 'with fields'
+
+    it 'returns self' do
+      expect(subject.bind(:moomin)).to equal subject
+    end
+
+    it 'binds the variable' do
+      expect(subject.bind(:moomin).bindings[:moomin]).to equal subject
+    end
+  end
 
   describe '#if' do
     include_context 'with fields'
 
-    it 'returns self with top set' do
+    it 'returns self' do
       expect(subject.if).to eq subject
+    end
+
+    it 'returns with top set' do
+      expect(subject.if.bindings[:top]).to eq subject
     end
 
     context 'with block given' do
@@ -128,7 +185,7 @@ describe Krikri::Parser::ValueArray do
     end
 
     context 'with #if' do
-      it 'recovers from @top set by #if' do
+      it 'recovers from `top` set by #if' do
         expect(
           subject.field(:field_name).if.field(:nonexistent_field).else do |rec|
             rec.field(:nested_name)
@@ -240,6 +297,18 @@ describe Krikri::Parser::ValueArray do
       it 'returns an empty ValueArray' do
         expect(subject.last_value).to be_empty
       end
+    end
+  end
+
+  describe '#compact' do
+    before { values << nil }
+
+    it 'removes nil values' do
+      expect(subject.compact).not_to include nil
+    end
+
+    it 'returns an instance of its class' do
+      expect(subject.concat(subject)).to be_a described_class
     end
   end
 
