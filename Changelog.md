@@ -1,4 +1,9 @@
-0.13.0 (July 2016)
+0.13.1 (11 July 2016)
+---
+
+* Add enrichment to generate a label from an existing TimeSpan
+
+0.13.0 (6 July 2016)
 ---
 
 * Mapping DSL improvements
