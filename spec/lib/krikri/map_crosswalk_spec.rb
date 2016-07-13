@@ -63,9 +63,9 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
           aggregation.dataProvider.first.label = label
           subject.build
         end
-        
+
         let(:label) { 'nypl' }
-        
+
         it 'uses prefLabel' do
           expect(subject.hash[:dataProvider]).to eq label
         end
@@ -88,7 +88,7 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
 
       context 'with place' do
         before do
-          aggregation.sourceResource.first.spatial.first.label = label
+          aggregation.sourceResource.first.spatial.first.providedLabel = label
           aggregation.sourceResource.first.spatial.first.lat   = lat
           aggregation.sourceResource.first.spatial.first.long  = long
           subject.build
@@ -97,7 +97,7 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
         let(:lat) { '35.14953' }
         let(:long) { '-90.04898' }
         let(:label) { 'Memphis (Tenn.)' }
-        
+
         it 'has lat & long' do
           expect(subject.hash[:sourceResource][:spatial].first[:coordinates])
             .to eq [lat, long].join(', ')
@@ -119,12 +119,12 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
         let(:label) { 'English' }
         let(:match) { RDF::ISO_639_3.eng }
 
-        it 'has a name' do 
+        it 'has a name' do
           expect(subject.hash[:sourceResource][:language].first[:name])
             .to eq label
         end
 
-        it 'has a match' do 
+        it 'has a match' do
           expect(subject.hash[:sourceResource][:language].first[:iso639_3])
             .to eq 'eng'
         end
@@ -135,7 +135,7 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
           aggregation.sourceResource.first.
             date.first.providedLabel = providedLabel
         end
-        
+
         let(:providedLabel) { '1968' }
 
         it 'has a displayDate' do
@@ -146,7 +146,7 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
         end
 
         context 'with prefLabel' do
-          before do 
+          before do
             aggregation.sourceResource.first.date.first.prefLabel = prefLabel
           end
 
@@ -154,13 +154,13 @@ describe Krikri::MapCrosswalk::CrosswalkHashBuilder do
 
           it 'uses prefLabel as displayDate' do
             subject.build
-          
+
             expect(subject.hash[:sourceResource][:date].first[:displayDate])
               .to eq prefLabel
           end
         end
       end
-      
+
       context 'with mistyped values' do
         before do
           # Currently, the factory in dpla_map for the dpla:SourceResource

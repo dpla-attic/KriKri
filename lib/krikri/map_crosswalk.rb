@@ -214,7 +214,7 @@ module Krikri
 
         if source.exactMatch.any?
           lexvo = source.exactMatch.first
-          lang[:iso639_3] = lexvo.rdf_subject.to_s.split('/').last unless 
+          lang[:iso639_3] = lexvo.rdf_subject.to_s.split('/').last unless
             lexvo.node?
         end
 
@@ -224,8 +224,8 @@ module Krikri
       def build_place(source)
         return unless source.is_a? DPLA::MAP::Place
         place = {}
-        place[:name] = source.label.first if source.label.any?
-        place[:name] ||= source.providedLabel.first if source.providedLabel.any?
+        place[:name] = source.providedLabel.first if source.providedLabel.any?
+        place[:name] ||= source.label.first if source.label.any?
         place[:coordinates] = "#{source.lat.first}, #{source.long.first}" if
           source.lat.any? && source.long.any?
         place.any? ? place : nil

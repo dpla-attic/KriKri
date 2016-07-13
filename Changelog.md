@@ -1,3 +1,8 @@
+0.13.2 (13 July 2016)
+---
+
+* Change MAP 3.1 Crosswalk to use `providedLabel` for Place display labels
+
 0.13.1 (11 July 2016)
 ---
 
