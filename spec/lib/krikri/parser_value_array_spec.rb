@@ -424,4 +424,60 @@ describe Krikri::Parser::ValueArray do
         .to contain_exactly(values[1], values[2])
     end
   end
+
+  describe '#match_child' do
+    let(:child_nodes) { ['first:child', 'second:child']}
+    
+    before do
+      values.each do |val| 
+        allow(val).to receive(:children).and_return(child_nodes)
+      end
+    end
+
+    it 'selects nodes with matching children' do
+      expect(subject.match_child('first:child'))
+        .to contain_exactly(*subject.to_a)
+
+      expect(subject.match_child('second:child'))
+        .to contain_exactly(*subject.to_a)
+    end
+    
+    it 'passes over nodes without matching children' do
+      expect(subject.match_child('not_a_child')).to be_empty
+    end
+
+    it 'matches nodes only when children match' do
+      allow(subject.first).to receive(:children).and_return(['new_child'])
+      
+      expect(subject.match_child('new_child'))
+        .to contain_exactly(subject.first)
+    end
+  end
+
+  describe '#reject_child' do
+    let(:child_nodes) { ['first:child', 'second:child']}
+    
+    before do
+      values.each do |val| 
+        allow(val).to receive(:children).and_return(child_nodes)
+      end
+    end
+
+    it 'passes over nodes without matching children' do
+      expect(subject.reject_child('not_a_child'))
+        .to contain_exactly(*subject.to_a)
+    end
+    
+    it 'rejects nodes when children match' do
+      expect(subject.reject_child('first:child')).to  be_empty
+      expect(subject.reject_child('second:child')).to be_empty
+    end
+
+    it 'rejects nodes only when children match' do
+      allow(subject.first).to receive(:children).and_return(['new_child'])
+      
+      expect(subject.reject_child('new_child'))
+        .to contain_exactly(*subject.to_a[1..-1])
+    end
+  end
 end
