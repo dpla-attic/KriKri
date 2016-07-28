@@ -177,9 +177,8 @@ module Krikri
         return unless source.is_a? DPLA::MAP::TimeSpan
         date = {}
 
-        set_value(date, :displayDate, source.prefLabel, true, &:as_json)
-        set_value(date, :displayDate,
-                  source.providedLabel, true, &:as_json) unless
+        set_value(date, :displayDate, source.providedLabel, true, &:as_json) 
+        set_value(date, :displayDate, source.prefLabel, true, &:as_json) unless
           date.has_key?(:displayDate)
 
         set_value(date, :begin, source.begin, true, &:as_json)
