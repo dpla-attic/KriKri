@@ -449,6 +449,15 @@ module Krikri
       end
 
       ##
+      # @param *children [Array<String>]
+      #
+      # @return [ValueArray] an array containing nodes for which the specified
+      #   attribute does not have a child node matching the given child name
+      def match_child(*children)
+        select { |v| !(v.children & children).empty? }
+      end
+
+      ##
       # @param name [#to_sym] an attribute name
       # @param other [Object] an object to check for equality with the
       #   values from the given attribute.
@@ -463,6 +472,15 @@ module Krikri
       #   #select.
       def reject_attribute(name, other = nil, &block)
         reject(&compare_to_attribute(name, other, &block))
+      end
+
+      ##
+      # @param *children [Array<String>]
+      #
+      # @return [ValueArray] an array containing nodes for which the specified
+      #   attribute does not have a childnode matching the given child name
+      def reject_child(*children)
+        reject { |v| !(v.children & children).empty? }
       end
 
       ##
