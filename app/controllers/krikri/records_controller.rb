@@ -52,28 +52,46 @@ module Krikri
       # facet bar
 
       config.add_facet_field 'sourceResource_type_name',
-                             label: 'Type',
+                             label: 'Type (pref)',
+                             limit: 20
+      config.add_facet_field 'sourceResource_type_providedLabel',
+                             label: 'Type (provided)',
                              limit: 20
       config.add_facet_field 'sourceResource_format',
                              label: 'Format',
                              limit: 20
       config.add_facet_field 'sourceResource_language_providedLabel',
-                             label: 'Language',
+                             label: 'Language (provided)',
+                             limit: 20
+      config.add_facet_field 'sourceResource_spatial_name',
+                             label: 'Place (pref)',
                              limit: 20
       config.add_facet_field 'sourceResource_spatial_providedLabel',
-                             label: 'Place',
+                             label: 'Place (provided)',
+                             limit: 20
+      config.add_facet_field 'sourceResource_subject_name',
+                             label: 'Subject (pref)',
                              limit: 20
       config.add_facet_field 'sourceResource_subject_providedLabel',
-                             label: 'Subject',
+                             label: 'Subject (provided)',
                              limit: 20
       config.add_facet_field 'sourceResource_collection_title',
-                             label: 'Collection',
+                             label: 'Collection (pref)',
+                             limit: 20
+      config.add_facet_field 'sourceResource_collection_providedLabel',
+                             label: 'Collection (provided)',
+                             limit: 20
+      config.add_facet_field 'dataProvider_name',
+                             label: 'Data Provider (pref)',
                              limit: 20
       config.add_facet_field 'dataProvider_providedLabel',
-                             label: 'Data Provider',
+                             label: 'Data Provider (provided)',
+                             limit: 20
+      config.add_facet_field 'sourceResource_creator_name',
+                             label: 'Creator (pref)',
                              limit: 20
       config.add_facet_field 'sourceResource_creator_providedLabel',
-                             label: 'Creator',
+                             label: 'Creator (provided)',
                              limit: 20
 
       # Have BL send all facet field names to Solr, which has been the default
