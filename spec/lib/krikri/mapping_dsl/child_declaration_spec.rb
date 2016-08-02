@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe Krikri::MappingDSL::ChildDeclaration do
   include_context 'mapping dsl'
   it_behaves_like 'a named property'
@@ -28,11 +30,11 @@ describe Krikri::MappingDSL::ChildDeclaration do
 
     let(:opts)         { { :each => record_proxy, :as => :my_val } }
     let(:values)       { [:a, :b, :c] }
-    let(:record_proxy) { double('record proxy') }
+    let(:record_proxy) { values }
 
     before do
       allow(target).to receive(:my_property).and_return(double)
-      allow(record_proxy).to receive(:call).and_return(values)
+      allow(record_proxy).to receive(:call).with(record).and_return(values)
 
       allow(mapping).to receive(:process_record).with(record)
         .and_return(*values)
@@ -44,10 +46,10 @@ describe Krikri::MappingDSL::ChildDeclaration do
     end
 
     it 'defines DSL method for access to individual value in mapping scope' do
-      values.each { |v| allow(target.my_property).to receive(:<<).with(v) }
+      values.each { |v| expect(target.my_property).to receive(:<<).with(v) }
 
       subject.to_proc.call(target, record)
-      expect(mapping.my_val).to eq values.last
+      expect(mapping.my_val).to contain_exactly values.last
     end
   end
 end

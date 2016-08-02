@@ -13,6 +13,12 @@ describe Krikri::Mapper do
             providedLabel record.field('dc:creator')
           end
 
+          rightsHolder :class => DPLA::MAP::Agent,
+                       :each => record.bind(:rec).field('dc:creator').and(from: :rec),
+                       :as => :ident do
+            providedLabel ident.field('dc:creator')
+          end
+
           contributor :class => DPLA::MAP::Agent,
                       :each => record.field('dc:creator'),
                       :as => :ident do
@@ -36,14 +42,22 @@ describe Krikri::Mapper do
 
     let(:record) { Krikri::OaiDcParser.new(build(:oai_dc_record)) }
 
+    it 'does not error' do
+      expect(Krikri::Mapper.map(:integration, record).first).not_to be_nil
+    end
+
     it 'maps nested values' do
       mapped = Krikri::Mapper.map(:integration, record).first
 
-      expect(mapped.sourceResource.first.creator.first.providedLabel)
+      expect(mapped.sourceResource.first.creator.map(&:providedLabel).flatten)
+        .to contain_exactly(*record.root['dc:creator'].to_a.map(&:value))
+
+      expect(mapped.sourceResource.first.rightsHolder.first.providedLabel)
         .to eq record.root['dc:creator'].to_a.map(&:value)
 
       expect(mapped.sourceResource.first.contributor.first.providedLabel)
         .to contain_exactly record.root['dc:creator'].first.value
+
       expect(mapped.sourceResource.first
               .contributor.map(&:providedLabel).flatten)
         .to eq record.root['dc:creator'].to_a.map(&:value)
