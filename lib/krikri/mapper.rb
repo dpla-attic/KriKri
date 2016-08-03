@@ -57,10 +57,12 @@ module Krikri
     #
     # @see Mapping
     def map(name, records)
+      mapping = Registry.get(name)
       records = Array(records) unless records.is_a? Enumerable
+
       result = records.map do |rec|
         begin
-          Registry.get(name).process_record(rec)
+          mapping.process_record(rec)
         rescue => e
           Rails.logger.error(e.message)
           nil
