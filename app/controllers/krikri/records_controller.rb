@@ -60,6 +60,9 @@ module Krikri
       config.add_facet_field 'sourceResource_format',
                              label: 'Format',
                              limit: 20
+      config.add_facet_field 'sourceResource_language_name',
+                             label: 'Language (pref)',
+                             limit: 20
       config.add_facet_field 'sourceResource_language_providedLabel',
                              label: 'Language (provided)',
                              limit: 20
@@ -76,10 +79,7 @@ module Krikri
                              label: 'Subject (provided)',
                              limit: 20
       config.add_facet_field 'sourceResource_collection_title',
-                             label: 'Collection (pref)',
-                             limit: 20
-      config.add_facet_field 'sourceResource_collection_providedLabel',
-                             label: 'Collection (provided)',
+                             label: 'Collection',
                              limit: 20
       config.add_facet_field 'dataProvider_name',
                              label: 'Data Provider (pref)',

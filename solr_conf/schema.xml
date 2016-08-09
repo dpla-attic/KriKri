@@ -555,7 +555,6 @@ v         currently supported on types that are sorted internally as strings
 
    <field name="sourceResource_collection_id" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_collection_type" type="string" indexed="false" stored="false" multiValued="true" />
-   <field name="sourceResource_collection_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_collection_title" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_collection_description" type="text" indexed="true" stored="true" multiValued="true" />
 
@@ -574,6 +573,7 @@ v         currently supported on types that are sorted internally as strings
    <field name="sourceResource_date_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="sourceResource_date_begin" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_date_end" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="sourceResource_date_name" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_date_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
 
    <field name="sourceResource_description" type="text" indexed="true" stored="true" multiValued="true" />
@@ -584,11 +584,12 @@ v         currently supported on types that are sorted internally as strings
    <field name="sourceResource_language_id" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_language_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_language_type" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="sourceResource_language_name" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="sourceResource_genre" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_genre_id" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_genre_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_genre_type" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="sourceResource_genre_name" type="string" indexed="true" stored="true" multiValued="true" />
 
    <field name="sourceResource_publisher_id" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_publisher_type" type="string" indexed="false" stored="false" multiValued="true" />
@@ -599,7 +600,6 @@ v         currently supported on types that are sorted internally as strings
    <field name="sourceResource_isReplacedBy" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_replaces" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_rights" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="sourceResource_rightsHolder" type="string" indexed="true" stored="true" multiValued="true" />
 
    <field name="sourceResource_rightsHolder_id" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_rightsHolder_type" type="string" indexed="false" stored="false" multiValued="true" />
@@ -617,15 +617,18 @@ v         currently supported on types that are sorted internally as strings
    <field name="sourceResource_spatial_name" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_spatial_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="sourceResource_specType_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="sourceResource_specType_type" type="string" indexed="false" stored="false" multiValued="true" />
-
    <field name="sourceResource_subject_id" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_subject_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="sourceResource_subject_name" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_subject_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="sourceResource_temporal" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="sourceResource_temporal_id" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="sourceResource_temporal_type" type="string" indexed="false" stored="true" multiValued="true" />
+   <field name="sourceResource_temporal_name" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="sourceResource_temporal_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="sourceResource_temporal_begin" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="sourceResource_temporal_end" type="string" indexed="true" stored="true" multiValued="true" />
+
    <field name="sourceResource_title" type="string" indexed="true" stored="true" multiValued="true" />
 
    <field name="sourceResource_type_id" type="string" indexed="true" stored="true" multiValued="true" />
@@ -714,29 +717,36 @@ v         currently supported on types that are sorted internally as strings
   <copyField source="provider_name" dest="text" />
   <copyField source="provider_providedLabel" dest="text" />
   <copyField source="sourceResource_alternative" dest="text" />
-  <copyField source="sourceResource_collection_providedLabel" dest="text" />
   <copyField source="sourceResource_collection_title" dest="text" />
+  <copyField source="sourceResource_collection_description" dest="text" />
   <copyField source="sourceResource_contributor_name" dest="text" />
   <copyField source="sourceResource_contributor_providedLabel" dest="text" />
   <copyField source="sourceResource_creator_name" dest="text" />
   <copyField source="sourceResource_creator_providedLabel" dest="text" />
+  <copyField source="sourceResource_date_name" dest="text" />
   <copyField source="sourceResource_date_providedLabel" dest="text" />
+  <copyField source="sourceResource_description" dest="text" />
   <copyField source="sourceResource_extent" dest="text" />
   <copyField source="sourceResource_format" dest="text" />
-  <copyField source="sourceResource_genre" dest="text" />
+  <copyField source="sourceResource_genre_name" dest="text" />
+  <copyField source="sourceResource_genre_providedLabel" dest="text" />
+  <copyField source="sourceResource_language_name" dest="text" />
+  <copyField source="sourceResource_language_providedLabel" dest="text" />
   <copyField source="sourceResource_publisher_name" dest="text" />
   <copyField source="sourceResource_publisher_providedLabel" dest="text" />
   <copyField source="sourceResource_relation" dest="text" />
-  <copyField source="sourceResource_isReplacedBy" dest="text" />
-  <copyField source="sourceResource_replaces" dest="text" />
   <copyField source="sourceResource_rights" dest="text" />
+  <copyField source="sourceResource_rightsHolder_name" dest="text" />
+  <copyField source="sourceResource_rightsHolder_providedLabel" dest="text" />
   <copyField source="sourceResource_spatial_name" dest="text" />
   <copyField source="sourceResource_spatial_providedLabel" dest="text" />
   <copyField source="sourceResource_subject_name" dest="text" />
   <copyField source="sourceResource_subject_providedLabel" dest="text" />
-  <copyField source="sourceResource_temporal" dest="text" />
+  <copyField source="sourceResource_temporal_name" dest="text" />
+  <copyField source="sourceResource_temporal_providedLabel" dest="text" />
   <copyField source="sourceResource_title" dest="text" />
   <copyField source="sourceResource_type_name" dest="text" />
+  <copyField source="sourceResource_type_providedLabel" dest="text" />
 
    <!-- Above, multiple source fields are copied to the [text] field.
 	  Another way to map multiple source fields to the same

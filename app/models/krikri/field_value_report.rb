@@ -45,7 +45,7 @@ module Krikri
        :sourceResource_rightsHolder_providedLabel,
        :sourceResource_spatial_providedLabel,
        :sourceResource_subject_providedLabel,
-       :sourceResource_temporal,
+       :sourceResource_temporal_providedLabel,
        :sourceResource_title,
        :sourceResource_type_name]
     end
