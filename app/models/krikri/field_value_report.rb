@@ -30,24 +30,37 @@ module Krikri
     ##
     # All of the fields for which a report can be created.
     def self.fields
-      [:dataProvider_providedLabel,
-       :sourceResource_alternative_providedLabel,
+      [:dataProvider_name,
+       :dataProvider_providedLabel,
+       :preview_id,
+       :sourceResource_alternative,
        :sourceResource_collection_title,
+       :sourceResource_contributor_name,
        :sourceResource_contributor_providedLabel,
+       :sourceResource_creator_name,
        :sourceResource_creator_providedLabel,
+       :sourceResource_date_name,
        :sourceResource_date_providedLabel,
        :sourceResource_description,
-       :sourceResource_format,
+       :sourceResource_genre_name,
        :sourceResource_genre_providedLabel,
+       :sourceResource_format,
+       :sourceResource_language_name,
        :sourceResource_language_providedLabel,
+       :sourceResource_publisher_name,
        :sourceResource_publisher_providedLabel,
        :sourceResource_rights,
+       :sourceResource_rightsHolder_name,
        :sourceResource_rightsHolder_providedLabel,
+       :sourceResource_spatial_name,
        :sourceResource_spatial_providedLabel,
+       :sourceResource_subject_name,
        :sourceResource_subject_providedLabel,
+       :sourceResource_temporal_name,
        :sourceResource_temporal_providedLabel,
        :sourceResource_title,
-       :sourceResource_type_name]
+       :sourceResource_type_name,
+       :sourceResource_type_providedLabel]
     end
 
     ##

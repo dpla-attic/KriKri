@@ -10,7 +10,7 @@ describe Krikri::FieldValueReport do
 
   let(:agg) do
     p = DPLA::MAP::Agent.new(RDF::URI(provider_base) / provider_id)
-    build(:aggregation, :provider => p)
+    build(:aggregation, provider: p)
   end
 
   shared_context 'item indexed in Solr' do
@@ -68,8 +68,7 @@ describe Krikri::FieldValueReport do
     end
 
     it 'returns "__MISSING__" for field without value' do
-      r = described_class.find('sourceResource_alternative_providedLabel',
-                               provider_id)
+      r = described_class.find('sourceResource_date_name', provider_id)
       expect(r.enumerate_rows.first).to include('__MISSING__')
     end
 
