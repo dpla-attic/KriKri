@@ -504,73 +504,44 @@ v         currently supported on types that are sorted internally as strings
    <!-- set multiValued to true in order to copyfield -->
    <field name="text" type="text" indexed="true" stored="false" multiValued="true" />
 
-   <field name="type" type="string" indexed="false" stored="false" multiValued="true" />
-
-   <field name="dataProvider_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="dataProvider_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="dataProvider_name" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="dataProvider_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
 
    <field name="hasView_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="hasView_type" type="string" indexed="false" stored="false" multiValued="true" />
-   <field name="hasView_format" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="hasView_rights" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="hasView_rightsStatement_id" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="intermediateProvider_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="intermediateProvider_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="intermediateProvider_name" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="intermediateProvider_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
 
    <field name="isShownAt_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="isShownAt_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="isShownAt_format" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="isShownAt_rights" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="isShownAt_rightsStatement_id" type="string" indexed="true" stored="true" multiValued="true" />
 
    <field name="object_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="object_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="object_format" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="object_rights" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="object_rightsStatement_id" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="originalRecord" type="string" indexed="true" stored="true" multiValued="true" />
-
    <field name="preview_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="preview_type" type="string" indexed="false" stored="false" multiValued="true" />
-   <field name="preview_format" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="preview_rights" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="preview_rightsStatement_id" type="string" indexed="true" stored="true" multiValued="true" />
 
    <field name="provider_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="provider_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="provider_name" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="provider_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
 
    <field name="rightsStatement_id" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="sourceResource_id" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="sourceResource_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="sourceResource_alternative" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="sourceResource_collection_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="sourceResource_collection_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="sourceResource_collection_title" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_collection_description" type="text" indexed="true" stored="true" multiValued="true" />
 
-   <field name="sourceResource_contributor_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="sourceResource_contributor_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="sourceResource_contributor_name" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_contributor_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="sourceResource_creator_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="sourceResource_creator_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="sourceResource_creator_name" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_creator_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
 
    <!-- TODO: Change date_begin and date_end type to "date" assuming they have been correctly formatted -->
-   <field name="sourceResource_date_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="sourceResource_date_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="sourceResource_date_begin" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_date_end" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_date_name" type="string" indexed="true" stored="true" multiValued="true" />
@@ -581,18 +552,12 @@ v         currently supported on types that are sorted internally as strings
    <field name="sourceResource_format" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_identifier" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="sourceResource_language_id" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_language_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="sourceResource_language_type" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_language_name" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="sourceResource_genre_id" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_genre_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="sourceResource_genre_type" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_genre_name" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="sourceResource_publisher_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="sourceResource_publisher_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="sourceResource_publisher_name" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_publisher_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
 
@@ -601,13 +566,9 @@ v         currently supported on types that are sorted internally as strings
    <field name="sourceResource_replaces" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_rights" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="sourceResource_rightsHolder_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="sourceResource_rightsHolder_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="sourceResource_rightsHolder_name" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_rightsHolder_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="sourceResource_spatial_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="sourceResource_spatial_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="sourceResource_spatial_exactMatch" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_spatial_countryCode" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_spatial_parentFeature_id" type="string" indexed="true" stored="true" multiValued="true" />
@@ -617,13 +578,9 @@ v         currently supported on types that are sorted internally as strings
    <field name="sourceResource_spatial_name" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_spatial_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="sourceResource_subject_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="sourceResource_subject_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="sourceResource_subject_name" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_subject_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
 
-   <field name="sourceResource_temporal_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="sourceResource_temporal_type" type="string" indexed="false" stored="true" multiValued="true" />
    <field name="sourceResource_temporal_name" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_temporal_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_temporal_begin" type="string" indexed="true" stored="true" multiValued="true" />
@@ -632,7 +589,6 @@ v         currently supported on types that are sorted internally as strings
    <field name="sourceResource_title" type="string" indexed="true" stored="true" multiValued="true" />
 
    <field name="sourceResource_type_id" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="sourceResource_type_type" type="string" indexed="false" stored="false" multiValued="true" />
    <field name="sourceResource_type_providedLabel" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="sourceResource_type_name" type="string" indexed="true" stored="true" multiValued="true" />
 
@@ -704,16 +660,12 @@ v         currently supported on types that are sorted internally as strings
    <!-- The source fields are copied into the text field to allow tokenization -->
   <copyField source="dataProvider_name" dest="text" />
   <copyField source="dataProvider_providedLabel" dest="text" />
-  <copyField source="hasView_format" dest="text" />
-  <copyField source="hasView_rights" dest="text" />
   <copyField source="intermediateProvider_name" dest="text" />
   <copyField source="intermediateProvider_providedLabel" dest="text" />
   <copyField source="isShownAt_format" dest="text" />
   <copyField source="isShownAt_rights" dest="text" />
   <copyField source="object_format" dest="text" />
   <copyField source="object_rights" dest="text" />
-  <copyField source="preview_format" dest="text" />
-  <copyField source="preview_rights" dest="text" />
   <copyField source="provider_name" dest="text" />
   <copyField source="provider_providedLabel" dest="text" />
   <copyField source="sourceResource_alternative" dest="text" />
