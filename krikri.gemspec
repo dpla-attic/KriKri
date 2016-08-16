@@ -10,7 +10,8 @@ Gem::Specification.new do |s|
   s.authors     = ['Audrey Altman',
                    'Mark Breedlove',
                    'Tom Johnson',
-                   'Mark Matienzo']
+                   'Mark Matienzo',
+                   'Scott Williams']
   s.email       = ["tech@dp.la"]
   s.homepage    = "http://github.com/dpla/KriKri"
   s.summary     = "A Rails engine for metadata aggregation, enhancement, and quality control."
