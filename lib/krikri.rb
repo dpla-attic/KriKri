@@ -4,6 +4,7 @@
 require 'rails'
 require 'devise'
 require 'blacklight'
+require 'blacklight/gallery'
 require 'audumbla'
 require 'krikri/engine'
 
