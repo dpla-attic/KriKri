@@ -99,28 +99,41 @@ module Krikri
       # handler defaults, or have no facets.
       config.add_facet_fields_to_solr_request!
 
-      # solr fields to be displayed in the index (search results) view
-      #   The ordering of the field names is the order of the display
+      # solr fields to be displayed in the index (search results) view.
+      #   The ordering of the field names is the order of the display.
+      # @note the :separator key is replaced by :separator_option in
+      #   Blacklight v6.0.0. :separator_option is used with Rails #to_sentence.
+      #   see https://github.com/projectblacklight/blacklight/wiki/Configuration---Results-View#fields
       config.add_index_field 'sourceResource_title', 
-                             label: 'Title'
+                             label: 'Title',
+                             separator: '; '
       config.add_index_field 'sourceResource_creator_providedLabel', 
-                             label: 'Creator'
+                             label: 'Creator',
+                             separator: '; '
       config.add_index_field 'sourceResource_date_providedLabel', 
-                             label: 'Date'
+                             label: 'Date',
+                             separator: '; '
       config.add_index_field 'sourceResource_description', 
-                             label: 'Description'
+                             label: 'Description',
+                             separator: '; '
       config.add_index_field 'sourceResource_type_name', 
-                             label: 'Type'
+                             label: 'Type',
+                             separator: '; '
       config.add_index_field 'sourceResource_format', 
-                             label: 'Format'
+                             label: 'Format',
+                             separator: '; '
       config.add_index_field 'sourceResource_subject_providedLabel',
-                             label: 'Subject'
+                             label: 'Subject',
+                             separator: '; '
       config.add_index_field 'sourceResource_rights', 
-                             label: 'Rights'
+                             label: 'Rights',
+                             separator: '; '
       config.add_index_field 'sourceResource_collection_title',
-                             label: 'Collection'
+                             label: 'Collection',
+                             separator: '; '
       config.add_index_field 'dataProvider_providedLabel', 
-                             label: 'Data Provider'
+                             label: 'Data Provider',
+                             separator: '; '
 
       config.index.thumbnail_field = :preview_id
 
