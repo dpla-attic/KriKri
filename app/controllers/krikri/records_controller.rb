@@ -12,6 +12,52 @@ module Krikri
 
     self.solr_search_params_logic += [:records_by_provider]
 
+    FACET_FIELDS = [
+      { 
+        key:   'sourceResource_type_name',
+        label: 'Type (pref)'
+      }, {
+        key:   'sourceResource_type_providedLabel',
+        label: 'Type (provided)'
+      }, {
+        key:   'sourceResource_format',
+        label: 'Format'
+      }, {
+        key:   'sourceResource_language_name',
+        label: 'Language (pref)'
+      }, {
+        key:   'sourceResource_language_providedLabel',
+        label: 'Language (provided)'
+      }, {
+        key:   'sourceResource_spatial_name',
+        label: 'Place (pref)'
+      }, {
+        key:   'sourceResource_spatial_providedLabel',
+        label: 'Place (provided)'
+      }, {
+        key:   'sourceResource_subject_name',
+        label: 'Subject (pref)'
+      }, {
+        key:   'sourceResource_subject_providedLabel',
+        label: 'Subject (provided)'
+      }, {
+        key:   'sourceResource_collection_title',
+        label: 'Collection'
+      }, {
+        key:   'dataProvider_name',
+        label: 'Data Provider (pref)'
+      }, {
+        key:   'dataProvider_providedLabel',
+        label: 'Data Provider (provided)'
+      }, {
+        key:   'sourceResource_creator_name',
+        label: 'Creator (pref)'
+      }, {
+        key:   'sourceResource_creator_providedLabel',
+        label: 'Creator (provided)'
+      }
+    ]
+
     ##
     # RecordsController has access to views in the following
     # directories:
@@ -52,48 +98,9 @@ module Krikri
       # :show may be set to false if you don't want the facet to be drawn in the
       # facet bar
 
-      config.add_facet_field 'sourceResource_type_name',
-                             label: 'Type (pref)',
-                             limit: 20
-      config.add_facet_field 'sourceResource_type_providedLabel',
-                             label: 'Type (provided)',
-                             limit: 20
-      config.add_facet_field 'sourceResource_format',
-                             label: 'Format',
-                             limit: 20
-      config.add_facet_field 'sourceResource_language_name',
-                             label: 'Language (pref)',
-                             limit: 20
-      config.add_facet_field 'sourceResource_language_providedLabel',
-                             label: 'Language (provided)',
-                             limit: 20
-      config.add_facet_field 'sourceResource_spatial_name',
-                             label: 'Place (pref)',
-                             limit: 20
-      config.add_facet_field 'sourceResource_spatial_providedLabel',
-                             label: 'Place (provided)',
-                             limit: 20
-      config.add_facet_field 'sourceResource_subject_name',
-                             label: 'Subject (pref)',
-                             limit: 20
-      config.add_facet_field 'sourceResource_subject_providedLabel',
-                             label: 'Subject (provided)',
-                             limit: 20
-      config.add_facet_field 'sourceResource_collection_title',
-                             label: 'Collection',
-                             limit: 20
-      config.add_facet_field 'dataProvider_name',
-                             label: 'Data Provider (pref)',
-                             limit: 20
-      config.add_facet_field 'dataProvider_providedLabel',
-                             label: 'Data Provider (provided)',
-                             limit: 20
-      config.add_facet_field 'sourceResource_creator_name',
-                             label: 'Creator (pref)',
-                             limit: 20
-      config.add_facet_field 'sourceResource_creator_providedLabel',
-                             label: 'Creator (provided)',
-                             limit: 20
+      FACET_FIELDS.each do |field|
+        config.add_facet_field field[:key], label: field[:label], limit: 20
+      end
 
       # Have BL send all facet field names to Solr, which has been the default
       # previously. Simply remove these lines if you'd rather use Solr request
