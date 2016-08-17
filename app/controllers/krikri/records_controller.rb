@@ -188,7 +188,10 @@ module Krikri
     ##
     # Sets values for blank facets.
     def set_blank_facets
-      @blank_facets = "1234"
+      fields = FACET_FIELDS.map { |f| f[:key] }
+      report = ValidationReport.new
+      report.provider_id = @provider_id
+      @blank_facets = report.for_fields(fields)
     end
   end
 end
