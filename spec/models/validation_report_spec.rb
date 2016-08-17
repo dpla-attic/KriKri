@@ -1,13 +1,14 @@
 require 'spec_helper'
 
 describe Krikri::ValidationReport do
-  describe '#all' do
-    it 'returns facet for each required field' do
-      count = described_class::REQUIRED_FIELDS.count
+  describe '#for_fields' do
+    it 'returns facet for each given field' do
+      params = ['isShownAt_id', 'preview_id']
+      count = params.count
       facet_field_const = Blacklight::SolrResponse::Facets::FacetField
       fields = Array.new(count, an_instance_of(facet_field_const))
 
-      expect(subject.all).to contain_exactly(*fields)
+      expect(subject.for_fields(params)).to contain_exactly(*fields)
     end
 
     context 'with missing value in record' do
@@ -15,8 +16,32 @@ describe Krikri::ValidationReport do
 
       it 'returns facets by provider' do
         subject.provider_id = provider.id
-        hits = subject.all.select { |fct| fct.name == 'sourceResource_title' }
-               .first.items.first.hits
+        hits = subject.for_fields(['sourceResource_title'])
+                      .select { |fct| fct.name == 'sourceResource_title' }
+                      .first.items.first.hits
+
+        expect(hits).to eq 1
+      end
+    end
+  end
+
+  describe '#for_required_fields' do
+    it 'returns facet for each required field' do
+      count = described_class::REQUIRED_FIELDS.count
+      facet_field_const = Blacklight::SolrResponse::Facets::FacetField
+      fields = Array.new(count, an_instance_of(facet_field_const))
+
+      expect(subject.for_required_fields).to contain_exactly(*fields)
+    end
+
+    context 'with missing value in record' do
+      include_context 'with missing values'
+
+      it 'returns facets by provider' do
+        subject.provider_id = provider.id
+        hits = subject.for_required_fields
+                      .select { |fct| fct.name == 'sourceResource_title' }
+                      .first.items.first.hits
 
         expect(hits).to eq 1
       end

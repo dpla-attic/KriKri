@@ -11,7 +11,8 @@ describe Krikri::ReportsController, :type => :controller do
       #   for all this mocking.
       allow(Krikri::ValidationReport).to receive(:new).and_return(report)
       allow(report).to receive(:provider_id=)
-      allow(report).to receive(:all).and_return(validation_reports)
+      allow(report).to receive(:for_required_fields)
+        .and_return(validation_reports)
 
       allow(Krikri::QAReport).to receive(:find_by).with(provider: provider_id)
                                   .and_return(qa_reports)

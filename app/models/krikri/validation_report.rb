@@ -7,27 +7,46 @@ module Krikri
                        'sourceResource_type_id']
 
     ##
+    # @param [Array<String>]
+    #
     # @example
-    #   ValidationReport.new.all
+    #   ValidationReport.new.for_fields['isShownAt_id', 'preview_id']
     #   => [#<Blacklight::SolrResponse::Facets::FacetField:0x007fce32f46fe8 ...]
     #
     # @example
     #   report = ValidationReport.new
     #   report.provider_id = '0123'
-    #   report.all
+    #   report.for_fields['isShownAt_id', 'preview_id']
     #   => [#<Blacklight::SolrResponse::Facets::FacetField:0x007fce32f46fe8 ...]
     #
     # @return [Array<Blacklight::SolrResponse::Facets::FacetField>] a report for
-    #   missing values in each of the `REQUIRED_FIELDS`
-    def all
+    #   missing values in each of the given fields
+    def for_fields(fields)
       query_params = { :rows => 0,
-                       'facet.field' => REQUIRED_FIELDS,
+                       'facet.field' => fields,
                        'facet.mincount' => 10000000,
                        'facet.missing' => true }
       query_params[:fq] = "provider_id:\"#{provider_uri}\"" if
         provider_id.present?
 
       Krikri::SolrResponseBuilder.new(query_params).response.facets
+    end
+
+    ##
+    # @example
+    #   ValidationReport.new.for_required_fields
+    #   => [#<Blacklight::SolrResponse::Facets::FacetField:0x007fce32f46fe8 ...]
+    #
+    # @example
+    #   report = ValidationReport.new
+    #   report.provider_id = '0123'
+    #   report.for_required_fields
+    #   => [#<Blacklight::SolrResponse::Facets::FacetField:0x007fce32f46fe8 ...]
+    #
+    # @return [Array<Blacklight::SolrResponse::Facets::FacetField>] a report for
+    #   missing values in each of the `REQUIRED_FIELDS`
+    def for_required_fields
+      for_fields(REQUIRED_FIELDS)
     end
 
     ##

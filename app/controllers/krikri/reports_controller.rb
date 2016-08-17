@@ -12,7 +12,7 @@ module Krikri
       @current_provider = params[:provider]
       report = Krikri::ValidationReport.new
       report.provider_id = @current_provider
-      @validation_reports = report.all
+      @validation_reports = report.for_required_fields
 
       if @current_provider
         @provider = Krikri::Provider.find(@current_provider)
