@@ -8,6 +8,7 @@ module Krikri
   # ApplicationController.
   class RecordsController < CatalogController
     before_action :authenticate_user!, :set_provider
+    before_action :set_blank_facets, only: :index
 
     self.solr_search_params_logic += [:records_by_provider]
 
@@ -175,6 +176,12 @@ module Krikri
     # Sets the provider id for use as a search filter/view
     def set_provider
       @provider_id = params[:provider]
+    end
+
+    ##
+    # Sets values for blank facets.
+    def set_blank_facets
+      @blank_facets = "1234"
     end
   end
 end

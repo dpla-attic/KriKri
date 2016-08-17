@@ -55,7 +55,7 @@ namespace :krikri do
       agg = build(:aggregation,
                   :originalRecord => ActiveTriples::Resource
                                       .new(original_record.rdf_subject),
-                  :sourceResource => build(:source_resource, title: nil),
+                  :sourceResource => build(:source_resource, language: nil),
                   :provider => provider)
 
       agg.mint_id!('krikri_sample_invalid')
