@@ -15,5 +15,12 @@ module Krikri
 
       doc.present? ? local_name(doc.id) : nil
     end
+
+    ##
+    # @param Blacklight::Configuration::FacetField
+    def blank_facet_count(facet_field)
+      return unless @blank_facets.present?
+      @blank_facets[facet_field.field]
+    end
   end
 end

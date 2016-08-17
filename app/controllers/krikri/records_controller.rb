@@ -191,7 +191,9 @@ module Krikri
       fields = FACET_FIELDS.map { |f| f[:key] }
       report = ValidationReport.new
       report.provider_id = @provider_id
-      @blank_facets = report.for_fields(fields)
+      @blank_facets = report.for_fields(fields).each_with_object({}) do |f, m|
+        m[f.name] = f.items.first.hits
+      end
     end
   end
 end

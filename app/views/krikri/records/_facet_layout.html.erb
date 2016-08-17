@@ -6,7 +6,7 @@
   </div>
   <div id="<%= facet_field_id(facet_field) %>" class="panel-collapse facet-content <%= should_collapse_facet?(facet_field) ? 'collapse' : 'in' %>">
     <div class="panel-body">
-      <%= render 'facet_blanks' %>
+      <%= render 'facet_blanks', facet_field: facet_field %>
       <%= yield %>
     </div>
   </div>
