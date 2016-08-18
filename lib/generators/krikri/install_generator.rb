@@ -45,6 +45,7 @@ module Krikri
 
     def run_required_generators
       generate "blacklight:install"
+      generate "blacklight_gallery:install"
     end
 
     ##

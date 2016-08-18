@@ -140,6 +140,8 @@ module Krikri
       config.show.route = { controller: 'records' }
 
       config.solr_document_model = Krikri::SearchIndexDocument
+
+      config.view.gallery.partials = []
     end
 
     private

@@ -41,6 +41,7 @@ Gem::Specification.new do |s|
   s.add_dependency "yajl-ruby"
   s.add_dependency "elasticsearch", "~>0.4.0"
   s.add_dependency "nokogiri", ">=1.6.8"
+  s.add_dependency "blacklight-gallery", "0.3.0"
 
   ##
   # FIXME on Rails 4.2 upgrade: pin bootstrap-sass to 3.3.4.1
