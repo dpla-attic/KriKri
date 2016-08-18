@@ -29,8 +29,7 @@ Gem::Specification.new do |s|
   s.add_dependency "dpla-map", "4.0.0.0.pre.13"
   s.add_dependency "rest-client"
   s.add_dependency "rdf-marmotta", '>= 0.0.6'
-  s.add_dependency "blacklight", "5.9.1"
-  s.add_dependency "rsolr", "~>1.0.11"
+  s.add_dependency "blacklight", "5.9.2"
   s.add_dependency "therubyracer"
   s.add_dependency "edtf", '~> 3.0'
   s.add_dependency "text"
