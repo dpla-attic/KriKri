@@ -1,3 +1,23 @@
+0.14.0 (22 Aug 2016)
+---
+
+* Match/reject mapping DSL nodes based on presence of child node
+* Fix RSpec warning on `raise_error`
+* Use providedLabel in TimeSpan for MAP 3.1
+* Avoid calling `Registry#get` repeatedly in mapping
+* Restore `ValueArray` in scoped DSL variables
+* Upgrade EDTF to 3.0
+* Drop support for ruby 2.3.0
+* Update solr schema
+  * Update fields to reflect most recent version of DPLA::MAP
+  * Remove un-necesary fields
+* Add QA features
+  * Gallery view for search results
+  * Deliminate feilds with semicolon in search results
+  * Add more field value reports
+  * Add facets for both pref and providedLabel
+* Add Scott as author
+
 0.13.2 (13 July 2016)
 ---
 

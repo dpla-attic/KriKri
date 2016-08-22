@@ -52,28 +52,46 @@ module Krikri
       # facet bar
 
       config.add_facet_field 'sourceResource_type_name',
-                             label: 'Type',
+                             label: 'Type (pref)',
+                             limit: 20
+      config.add_facet_field 'sourceResource_type_providedLabel',
+                             label: 'Type (provided)',
                              limit: 20
       config.add_facet_field 'sourceResource_format',
                              label: 'Format',
                              limit: 20
+      config.add_facet_field 'sourceResource_language_name',
+                             label: 'Language (pref)',
+                             limit: 20
       config.add_facet_field 'sourceResource_language_providedLabel',
-                             label: 'Language',
+                             label: 'Language (provided)',
+                             limit: 20
+      config.add_facet_field 'sourceResource_spatial_name',
+                             label: 'Place (pref)',
                              limit: 20
       config.add_facet_field 'sourceResource_spatial_providedLabel',
-                             label: 'Place',
+                             label: 'Place (provided)',
+                             limit: 20
+      config.add_facet_field 'sourceResource_subject_name',
+                             label: 'Subject (pref)',
                              limit: 20
       config.add_facet_field 'sourceResource_subject_providedLabel',
-                             label: 'Subject',
+                             label: 'Subject (provided)',
                              limit: 20
       config.add_facet_field 'sourceResource_collection_title',
                              label: 'Collection',
                              limit: 20
+      config.add_facet_field 'dataProvider_name',
+                             label: 'Data Provider (pref)',
+                             limit: 20
       config.add_facet_field 'dataProvider_providedLabel',
-                             label: 'Data Provider',
+                             label: 'Data Provider (provided)',
+                             limit: 20
+      config.add_facet_field 'sourceResource_creator_name',
+                             label: 'Creator (pref)',
                              limit: 20
       config.add_facet_field 'sourceResource_creator_providedLabel',
-                             label: 'Creator',
+                             label: 'Creator (provided)',
                              limit: 20
 
       # Have BL send all facet field names to Solr, which has been the default
@@ -81,34 +99,49 @@ module Krikri
       # handler defaults, or have no facets.
       config.add_facet_fields_to_solr_request!
 
-      # solr fields to be displayed in the index (search results) view
-      #   The ordering of the field names is the order of the display
+      # solr fields to be displayed in the index (search results) view.
+      #   The ordering of the field names is the order of the display.
+      # @note the :separator key is replaced by :separator_option in
+      #   Blacklight v6.0.0. :separator_option is used with Rails #to_sentence.
+      #   see https://github.com/projectblacklight/blacklight/wiki/Configuration---Results-View#fields
       config.add_index_field 'sourceResource_title', 
-                             label: 'Title'
+                             label: 'Title',
+                             separator: '; '
       config.add_index_field 'sourceResource_creator_providedLabel', 
-                             label: 'Creator'
+                             label: 'Creator',
+                             separator: '; '
       config.add_index_field 'sourceResource_date_providedLabel', 
-                             label: 'Date'
+                             label: 'Date',
+                             separator: '; '
       config.add_index_field 'sourceResource_description', 
-                             label: 'Description'
+                             label: 'Description',
+                             separator: '; '
       config.add_index_field 'sourceResource_type_name', 
-                             label: 'Type'
+                             label: 'Type',
+                             separator: '; '
       config.add_index_field 'sourceResource_format', 
-                             label: 'Format'
+                             label: 'Format',
+                             separator: '; '
       config.add_index_field 'sourceResource_subject_providedLabel',
-                             label: 'Subject'
+                             label: 'Subject',
+                             separator: '; '
       config.add_index_field 'sourceResource_rights', 
-                             label: 'Rights'
+                             label: 'Rights',
+                             separator: '; '
       config.add_index_field 'sourceResource_collection_title',
-                             label: 'Collection'
+                             label: 'Collection',
+                             separator: '; '
       config.add_index_field 'dataProvider_providedLabel', 
-                             label: 'Data Provider'
+                             label: 'Data Provider',
+                             separator: '; '
 
       config.index.thumbnail_field = :preview_id
 
       config.show.route = { controller: 'records' }
 
       config.solr_document_model = Krikri::SearchIndexDocument
+
+      config.view.gallery.partials = []
     end
 
     private
