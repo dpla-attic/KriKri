@@ -84,11 +84,15 @@ module Krikri::MappingDSL
         if each_val
           iter = each_val.respond_to?(:call) ? each_val.call(record) : each_val
           iter.each do |value|
-            map = ::Krikri::Mapping.new(target_class)
+            map = Krikri::Mapping.new(target_class)
 
-            # define as_sym on only this instance
+            # define as_sym to return the node (not the value) for this value, 
+            # only on this instance
             map.define_singleton_method(as_sym) do
-              value.respond_to?(:value) ? value.value : value
+              each_val.dup.select do |v|
+                v = v.value if v.respond_to? :value
+                v == value
+              end
             end
 
             map.instance_eval(&block)
@@ -97,7 +101,7 @@ module Krikri::MappingDSL
         # else, process a single child mapping over a single instance of 
         # `target_class`
         else
-          map = ::Krikri::Mapping.new(target_class)
+          map = Krikri::Mapping.new(target_class)
           map.instance_eval(&block)
           target.send(setter, map.process_record(record))
         end
