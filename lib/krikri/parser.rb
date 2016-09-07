@@ -301,6 +301,19 @@ module Krikri
       end
 
       ##
+      # Lists field names on this node.
+      #
+      # This can be useful in cases where the desired value is a key or child 
+      # node label, rather than a value.
+      #
+      # @return [ValueArray] an array containing the field names.
+      #
+      # @see #select_child, #reject_child for methods that filter on these names
+      def field_names
+        self.class.new(flat_map(&:children).uniq, bindings)
+      end
+
+      ##
       # Sets the top of the call chain to self and returns or yields self.
       #
       # This is syntactic sugar for `#bind(:top)`, with the addition of block 
