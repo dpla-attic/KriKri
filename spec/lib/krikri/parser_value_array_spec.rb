@@ -254,6 +254,22 @@ describe Krikri::Parser::ValueArray do
     end
   end
 
+  describe '#field_names' do
+    include_context 'with fields'
+
+    let(:child_nodes) { ['first:child', 'second:child']}
+    
+    before do
+      values.each do |val| 
+        allow(val).to receive(:children).and_return(child_nodes)
+      end
+    end
+    
+    it 'contains immediate child node field names' do
+      expect(subject.field_names).to contain_exactly(*child_nodes)
+    end
+  end
+
   describe '#first_value' do
     it 'returns a single item ValueArray without an arguments' do
       expect(subject.first_value).to contain_exactly values[0]

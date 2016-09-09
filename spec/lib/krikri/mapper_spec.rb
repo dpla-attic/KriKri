@@ -25,6 +25,12 @@ describe Krikri::Mapper do
             providedLabel ident
           end
 
+          relation :class => DPLA::MAP::Agent,
+                   :each => record.field_names,
+                   :as => :rel do
+            providedLabel rel
+          end
+
           spatial :class => DPLA::MAP::Place,
                   :each => %w('nyc bos pdx'),
                   :as => :place do
@@ -61,6 +67,9 @@ describe Krikri::Mapper do
       expect(mapped.sourceResource.first
               .contributor.map(&:providedLabel).flatten)
         .to eq record.root['dc:creator'].to_a.map(&:value)
+
+      expect(mapped.sourceResource.first.relation.map(&:providedLabel).flatten)
+        .to contain_exactly(*record.root.children.uniq)
 
       expect(mapped.sourceResource.first.spatial.map(&:providedLabel).flatten)
         .to eq %w('nyc bos pdx')
