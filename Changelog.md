@@ -1,3 +1,10 @@
+0.15.0 (10 Sep 2016)
+---
+
+* Add DSL method for accessing field names
+* Handle `JSONParser#get_child_node` for nested arrays
+* Allow Travis failures for unsupported Rubies
+
 0.14.0 (22 Aug 2016)
 ---
 
