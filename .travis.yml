@@ -17,4 +17,6 @@ env: CI=yes
 before_install: 'gem install bundler -v "~> 1.11.0"'
 matrix:
   allow_failures:
+    - rvm: 2.1.6
+    - rvm: 2.2.3
     - rvm: 2.3.0
