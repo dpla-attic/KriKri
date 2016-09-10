@@ -35,7 +35,7 @@ module Krikri
       end
 
       def value
-        @node.is_a?(Hash) ? nil : @node
+        @node.is_a?(Hash) ? @node.to_s : @node
       end
 
       def values?
@@ -49,12 +49,16 @@ module Krikri
       #
       # @param name_exp [String]  Object property name
       # @return [Krikri::Parser::ValueArray]
-      def get_child_nodes(name)
-        if @node[name].is_a?(Array)
-          vals = @node[name].map { |node| self.class.new(node) }
+      def get_child_nodes(name, node: @node)
+        return get_child_nodes(name, node: node.flatten.first) if
+          node.is_a?(Array)
+
+        if node[name].is_a?(Array)
+          vals = node[name].map { |node| self.class.new(node) }
         else
-          vals = Array(self.class.new(@node[name]))
+          vals = Array(self.class.new(node[name]))
         end
+
         vals.reject! { |n| n.node.nil? }
         Krikri::Parser::ValueArray.new(vals)
       end
