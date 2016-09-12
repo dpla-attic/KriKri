@@ -46,22 +46,22 @@ Run the tests with:
 
     rake ci
 
-Or you can start the dummy application with:
+Or you can start the dummy (test) application with:
 
     rake engine_cart:generate
     bundle update
     rake jetty:start
-    cd spec/internal
-    rails s
+    rake engine_cart:server
 
-To update/restart dummy application, from the root KriKri directory:
+The generated dummy application is located in `.internal_test_app` by default.
+
+To update/restart dummy (test) application, from the root KriKri directory:
 
     git pull
     bundle update
     rake engine_cart:clean
     rake engine_cart:generate
-    cd spec/internal
-    rails s
+    rake engine_cart:server
 
 To update/restart jetty, from the root KriKri directory:
 
