@@ -17,6 +17,7 @@ tomcat
 marmotta
 
 ./spec/internal
+.internal_test_app
 dump.rdb
 
 coverage
