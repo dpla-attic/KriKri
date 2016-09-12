@@ -55,6 +55,7 @@ Gem::Specification.new do |s|
   # has to be in the gemspec, and not the Gemfile for Krikri or the
   # application in which it is hosted, as the dependencies won't resolve
   # properly.
+  s.add_dependency "sass-rails", "~> 4.0.5"
   s.add_dependency "bootstrap-sass", "3.3.4.1"
 
   s.add_development_dependency 'krikri-spec', '~> 0.0'
