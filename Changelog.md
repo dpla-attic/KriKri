@@ -1,3 +1,9 @@
+0.15.1 (19 Sep 2016)
+---
+
+* Update engine_cart to ~> 1.0.1
+* Add two field value reports
+
 0.15.0 (10 Sep 2016)
 ---
 
