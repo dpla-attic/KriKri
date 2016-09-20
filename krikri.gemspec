@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.version     = Krikri::VERSION
   s.authors     = ['Audrey Altman',
                    'Mark Breedlove',
+                   'Michael Della Bitta',
                    'Tom Johnson',
                    'Mark Matienzo',
                    'Scott Williams']
