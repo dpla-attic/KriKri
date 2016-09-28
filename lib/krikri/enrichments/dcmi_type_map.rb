@@ -60,6 +60,7 @@ module Krikri::Enrichments
                     'writing' => RDF::DCMITYPE.Text,
                     'written' => RDF::DCMITYPE.Text,
                     'manuscript' => RDF::DCMITYPE.Text,
+                    'online text' => RDF::DCMITYPE.Text,
                     'audio' => RDF::DCMITYPE.Sound,
                     'sound' => RDF::DCMITYPE.Sound,
                     'oral history recording' => RDF::DCMITYPE.Sound,
