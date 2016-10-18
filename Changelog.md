@@ -1,3 +1,13 @@
+0.15.3 (18 Oct 2016)
+---
+* Fixup minor issues with 0.15.3 release
+
+0.15.2 (28 Sep 2016)
+---
+
+* Pin gems to minor version
+* Add DCMIType mapping for online text
+
 0.15.1 (19 Sep 2016)
 ---
 
