@@ -184,5 +184,5 @@ Please observe the following guidelines:
 Copyright & License
 --------------------
 
-  - Copyright Digital Public Library of America, 2014-2015
+  - Copyright Digital Public Library of America, 2014-2017
   - License: MIT
