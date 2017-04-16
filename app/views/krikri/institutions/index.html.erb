@@ -1,23 +1,29 @@
 <% content_for :title do %>Institutions<% end %>
 
-<h1>Institutions</h1>
+<%= render partial: 'shared/ajax_modal' %>
 
-<% @institutions.each do |institution| %>
-    <article>
-        <h1><%= institution.name %></h1>
-        <p><%= institution.notes %></p>
-        <div>
-        <%= link_to 'Show', institution_path(institution) %>
-        <%= link_to 'Edit', edit_institution_path(institution) %>
-        <%= button_to 'Delete', institution_path(institution),
-                                method: :delete,
-                                data:
-                                  { confirm: 'Do you really want to delete ' \
-                                             'this institution?'}
-        %>
-      </div>
-  </article>
-<% end %>
+<div id="main-container" class="container">
+  <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
 
-<%= link_to 'New', new_institution_path %>
-<%= link_to 'Home', main_app.root_path %>
+  <h1>Institutions</h1>
+
+  <% @institutions.each do |institution| %>
+      <article>
+          <h1><%= institution.name %></h1>
+          <p><%= institution.notes %></p>
+          <div>
+          <%= link_to 'Show', institution_path(institution) %>
+          <%= link_to 'Edit', edit_institution_path(institution) %>
+          <%= button_to 'Delete', institution_path(institution),
+                                  method: :delete,
+                                  data:
+                                    { confirm: 'Do you really want to delete ' \
+                                               'this institution?'}
+          %>
+        </div>
+    </article>
+  <% end %>
+
+  <%= link_to 'New', new_institution_path %> | 
+  <%= link_to 'Home', main_app.root_path %>
+</div>

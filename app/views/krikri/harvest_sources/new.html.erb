@@ -1,11 +1,16 @@
 <% content_for :title do %>New Harvest Source<% end %>
 
-<h1>New Harvest Source</h1>
+<%= render partial: 'shared/ajax_modal' %>
 
-<%= render partial: 'form', locals: { action: 'create' } %>
+<div id="main-container" class="container">
+  <%= render :partial=>'/flash_msg', layout: 'shared/flash_messages' %>
+    <h1>New Harvest Source</h1>
 
-<%= link_to 'Back',
-    institution_harvest_sources_path(
-      institution_id: @harvest_source.institution_id
-    )
-%>
+    <%= render partial: 'form', locals: { action: 'create' } %>
+
+    <%= link_to 'Back',
+        institution_harvest_sources_path(
+          institution_id: @harvest_source.institution_id
+        )
+    %>
+</div>
