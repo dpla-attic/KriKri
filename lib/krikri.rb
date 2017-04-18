@@ -21,5 +21,5 @@ module Krikri
            'krikri/entity_behaviors/aggregation_entity_behavior'
   autoload :OriginalRecordEntityBehavior,
            'krikri/entity_behaviors/original_record_entity_behavior'
-
+  autoload :SmithsonianParser,    'krikri/parsers/smithsonian_parser'
 end
