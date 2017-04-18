@@ -1,27 +1,44 @@
 require 'spec_helper'
 
 describe Krikri::ProvenanceQueryClient do
-  before do
-    Krikri::Repository.clear!
-  end
+  before { Krikri::Repository.clear! }
+  after  { Krikri::Repository.clear! }
 
-  after do
-    Krikri::Repository.clear!
-  end
-
-  let(:activity) { create(:krikri_activity) }
+  let(:activity)     { create(:krikri_activity) }
   let(:activity_uri) { activity.rdf_subject }
 
+  let(:not_exists_condition) do
+    'NOT EXISTS { ?record <http://www.w3.org/ns/prov#invalidatedAtTime> ?x }'
+  end
+
   shared_context 'with matching subjects' do
-    before { record.save(activity_uri) }
+    before       { record.save(activity_uri) }
     let(:record) { build(:krikri_original_record) }
   end
 
-  describe '#find_by_activity' do
-    let(:not_exists_condition) do
-      'NOT EXISTS { ?record <http://www.w3.org/ns/prov#invalidatedAtTime> ?x }'
+  describe '#count_by_activity' do
+    it 'returns a zero count' do
+      expect(subject.count_by_activity(activity_uri)).to eq 0
     end
 
+    context 'with matching subjects' do
+      include_context 'with matching subjects'
+
+      xit 'returns a correct count' do
+        expect(subject.count_by_activity(activity_uri)).to eq 1
+      end
+    end
+  end
+
+  describe '#add_invalidated_filter' do
+    it 'adds a filter on :record to an arbitrary query' do
+      query = SPARQL::Client::Query.select.where([:s, :p, :o])
+      expect(subject.add_invalidated_filter(query).to_s)
+        .to include not_exists_condition
+    end
+  end
+
+  describe '#find_by_activity' do
     it 'raises an argument error for non-uris' do
       expect { subject.find_by_activity(activity_uri.to_s) }
         .to raise_error ArgumentError
